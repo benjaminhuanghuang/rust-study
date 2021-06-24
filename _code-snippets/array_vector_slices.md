@@ -21,6 +21,11 @@
 ```
 
 ## Vector
+Create
+```
+  let v: Vec<i8> = Vec::new();
+```
+
 ```
   let list: Vec<i32> = vec![1,2,3];
 
