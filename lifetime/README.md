@@ -18,13 +18,12 @@
 
 ```
   let a;
-  
   {
     let b = String::from("Hello");
     a = &b;   // ERROR! the memory that B owns is cleaned up at the end of the inner. a will be garbage.
   }          
 
-  println!("{}", a); // works fine
+  println!("{}", a);  // ERROR!
 ```
 
 ## 
