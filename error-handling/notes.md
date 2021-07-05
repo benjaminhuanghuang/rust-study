@@ -12,11 +12,12 @@ fn guess(n: i32) -> bool {
 ```
 
 
-## unwrap
+## unwrap, expect
 Get the **result**, and if there was an error, just panic and stop the program
 
-unwrap calls panic()
+unwrap and expecxe calls panic()
 
+expect can send text message to panic
 ```
 fn main() {
     let mut argv = env::args();
@@ -79,6 +80,9 @@ impl<T> Option<T> {
 
 
 ## Result, unwrap in Result
+
+可能产生异常的函数的返回值都是 Result 类型
+
 ```
 enum Result<T, E> {
     Ok(T),
