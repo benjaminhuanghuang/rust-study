@@ -2,6 +2,23 @@ use std::sync::mpsc;
 use std::thread;
 use std::time::Duration;
 
+fn demo1() {
+  let (sender, receiver) = mpsc::channel();
+
+  thread::spawn(move || {
+    for i in 0..10 {
+      thread::sleep(Duration::from_millis(100));
+      sender.send(i).unwrap();
+    }
+  });
+
+  while let Ok(v) = receiver.recv() {
+    println!("{}", v)
+  }
+}
+
+
+
 const THREAD_COUNT: usize = 20;
 
 fn thread_start(d: usize, tx: mpsc::Sender<usize>) {
