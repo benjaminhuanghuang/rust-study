@@ -8,13 +8,12 @@ fn do_something_that_might_fail(i: i32) -> Result<f32, String> {
 
 fn main() -> Result<(), String> {
   let result = do_something_that_might_fail(12);
-
   match result {
       Ok(v) => v,
       Err(e) => return Err(e),
   }
 
-  //==
+  // 等价于
   let v = do_something_that_might_fail(42)?;
   
   println!("found {}", v);

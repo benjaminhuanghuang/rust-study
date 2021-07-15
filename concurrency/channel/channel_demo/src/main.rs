@@ -2,7 +2,7 @@ use std::sync::mpsc;
 use std::thread;
 use std::time::Duration;
 
-fn demo1() {
+fn channel_demo1() {
   let (sender, receiver) = mpsc::channel();
 
   thread::spawn(move || {
