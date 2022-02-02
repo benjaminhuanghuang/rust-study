@@ -1,3 +1,8 @@
+# Rust Error Handling
+
+- return a Reust<Data, Error>
+
+
 
 
 ## panic

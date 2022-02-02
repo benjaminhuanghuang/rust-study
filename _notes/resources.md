@@ -10,6 +10,8 @@
 
 - Hands-On Data Structures and Algorithms with Rust | Packt
 
+- Introduction to the series [1 of 35] | Rust for Beginners  (By MS)
+
 
 ## Videos
 
