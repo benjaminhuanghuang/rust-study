@@ -20,3 +20,6 @@
 Enum vs Struct
 - in enum each variant can have a different type
 - All variants sorted under the custom enum type / 节省空间
+
+https://kaisery.github.io/trpl-zh-cn/ch06-01-defining-an-enum.html
+

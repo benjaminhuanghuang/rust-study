@@ -1,5 +1,5 @@
 
-## Use panic macro to quit program
+## Use panic! macro to quit program
 
 program will crash with a message
 
