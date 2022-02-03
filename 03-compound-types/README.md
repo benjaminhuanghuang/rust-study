@@ -12,7 +12,16 @@
 
 
 ## Struct
+```
+// Classic struct with named fields
+struct Student { name: String, level: u8, remote: bool }
 
+// Tuple struct with data types only
+struct Grades(char, char, char, char, f32);
+
+// Unit structs are most commonly used as markers
+struct Unit;
+```
 
 
 ## Enum
