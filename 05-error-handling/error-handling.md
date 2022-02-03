@@ -5,17 +5,6 @@
 
 
 
-## panic
-program will crash with a message
-```
-fn guess(n: i32) -> bool {
-    if n < 1 || n > 10 {
-        panic!("Invalid number: {}", n);
-    }
-    n == 5
-}
-```
-
 
 ## unwrap, expect
 Get the **result**, and if there was an error, just panic and stop the program
