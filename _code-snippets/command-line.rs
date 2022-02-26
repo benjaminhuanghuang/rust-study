@@ -1,6 +1,7 @@
 use std::env;
 
 fn main() {
+  // next() return the first option
   let name = env::args().skip(1).next();
 
   // mactch parameter
