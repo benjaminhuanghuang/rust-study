@@ -2,6 +2,7 @@
 # 张汉东的 Rust 实战课
 - https://time.geekbang.org/course/intro/100060601
 - https://www.bilibili.com/video/BV15U4y177oh?p=2&spm_id_from=pageDriver
+- https://www.youtube.com/watch?v=oiqGaAuoQW4&ab_channel=%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%96%99
 
 
 
