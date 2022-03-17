@@ -10,3 +10,33 @@
 
 {:#?} to include newlines and indentations to help me read the output called pretty-printing
 
+
+indicates the width of the field as six characters with the text aligned to the right
+< for left-justified 
+and ^ for centered text
+```
+println!("{:>6}\t{}", line_num, line)
+```
+
+## Print error to STDERR
+```
+eprintln!("{}", e);
+
+eprint!("{}", e);
+```
+## pretty print 
+```
+  println!("{:#?}", config);
+```
+
+## print debug
+```
+dbg! (debug)
+```
+
+
+## Format
+```
+let expected = format!("{}: .* [(]os error 2[)]", bad);
+```
+

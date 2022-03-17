@@ -1,5 +1,4 @@
-默
-认情况下，rust 采用多线程并行执行所有测试，当有串行需要时可以执行：cargo test -- --test-threads={thread_numbers}来控制执行测试的线程数。
+默认情况下，rust 采用多线程并行执行所有测试，当有串行需要时可以执行：cargo test -- --test-threads={thread_numbers}来控制执行测试的线程数。
 
 rust 默认不打印 passed test 的任何输出，当有需要打印输出时，执行：cargo test -- --show-output
 
@@ -9,3 +8,20 @@ rust 默认不打印 passed test 的任何输出，当有需要打印输出时�
 
 期望 ignore 测试时，在测试函数上添加： #[ignore] attribute
 
+
+## Code snippets
+```
+unimplemented!();
+```
+
+
+## cfg
+The cfg enables conditional compilation, so this module will be compiled only when testing.
+
+```
+#[cfg(test)]
+mod tests {
+
+}
+
+```
