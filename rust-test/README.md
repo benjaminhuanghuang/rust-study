@@ -6,22 +6,4 @@ rust 默认不打印 passed test 的任何输出，当有需要打印输出时�
 
 当期望只运行某一类测试时，执行：cargo test {test_function_name_matcher}
 
-期望 ignore 测试时，在测试函数上添加： #[ignore] attribute
 
-
-## Code snippets
-```
-unimplemented!();
-```
-
-
-## cfg
-The cfg enables conditional compilation, so this module will be compiled only when testing.
-
-```
-#[cfg(test)]
-mod tests {
-
-}
-
-```
