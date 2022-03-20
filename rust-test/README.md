@@ -7,3 +7,20 @@ rust 默认不打印 passed test 的任何输出，当有需要打印输出时�
 当期望只运行某一类测试时，执行：cargo test {test_function_name_matcher}
 
 
+
+
+## 异步测试
+```
+[dependencies]
+actix-web = "3"
+actix-rt = "1.1.1"
+
+```
+
+
+```
+  #[actix_rt::test]
+  async fn post_course_test(){
+  
+  }
+```
