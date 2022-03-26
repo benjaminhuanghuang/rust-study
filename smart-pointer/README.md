@@ -7,6 +7,8 @@ Smart Pointer:
 
 
 ## Box
+Box is a smart pointer with a `fixed size` which places its value `on the heap`
+
 ```
 type TestResult = Result<(), Box<dyn std::error::Error>>;
 ```

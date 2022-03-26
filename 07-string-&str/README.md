@@ -28,3 +28,11 @@ The Slice Type
 ## String literals
 Embedded into the binary
 String literals are all of type &str.
+
+
+## multi-lines
+```
+r#"SELECT id, teacher_id, name, time 
+    FROM course
+    WHERE teacher_id = $1 and id = $2"#,
+```

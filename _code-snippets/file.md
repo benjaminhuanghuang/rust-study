@@ -1,4 +1,29 @@
 
+```
+  use std::fs::File;
+  use std::io::{self, BufReader, BufWriter, Read, Result};
+```
+
+## Read
+```
+  // Box is a smart pointer with a fixed size
+  let mut reader: Box<dyn Read> = if !infile.is_empty() {
+      Box::new(BufReader::new(File::open(infile)?))
+  } else {
+      Box::new(BufReader::new(io::stdin()))
+  };
+
+```
+
+## Write
+```    
+ let mut writer: Box<dyn Write> = if !outfile.is_empty() {
+    Box::new(BufWriter::new(File::create(outfile)?))
+  } else {
+    Box::new(BufWriter::new(io::stdout()))
+  };
+
+``` 
 
 
 
