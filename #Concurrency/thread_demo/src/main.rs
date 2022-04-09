@@ -16,7 +16,7 @@ fn main() {
   
   // 阻止主线程退出
   for t in threads {
-    t.join();  
+    t.join().unwrap();  
   }
   println!("Main thread")
 }

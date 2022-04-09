@@ -1,4 +1,5 @@
 ## Sample
+Creat channel
 ```
   let (tx, rx) = mpsc::channel();
 
