@@ -11,14 +11,17 @@ fn main() {
     // 
     let mut s = String::from("foo");
     s.push_str("bar");
-    s.replace_range(.., "replaced")
-
+    s.replace_range(.., "replaced");
 
     // Concatenate
     let s1: String = String::from("Hello");
     let s2: String = String::from("wrold!");
     let s3: String  = s1 + &s2; // s1 was moved to s3 and not exited, String type must be first
+    
+    let s1: String = String::from("Hello");
     let s3: String = s1 + "test";
+    
+    let s1: String = String::from("Hello");
     let s3: String  = format!("{}{}", s1, s2);
     let s3: String  =["first", "sceond"].concat();
     
