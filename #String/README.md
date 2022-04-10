@@ -1,3 +1,13 @@
+
+# str vs String
+```
+let _val= "hello";                        // primitive string type immutable by default
+
+
+let _val1= String::from("Hello, World!"); // Growable and mutable
+```
+
+
 ## Strings
 - UTF-8 Encoded
 
