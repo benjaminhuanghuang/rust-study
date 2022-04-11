@@ -18,6 +18,10 @@ and ^ for centered text
 println!("{:>6}\t{}", line_num, line)
 ```
 
+format 9 to 0009 
+``` 
+  let file_name = format!("{:>04}", id);
+```
 ## Print error to STDERR
 ```
 eprintln!("{}", e);
