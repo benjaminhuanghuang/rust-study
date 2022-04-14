@@ -14,7 +14,7 @@ fn main() {
           println!("found a number 3 to 9 inclusively");
       }
       // 我们可以将匹配数值绑定到变量
-      matched_num @ 10..=100 => {
+      matched_num @ 10..=100 => { 
           println!("found {} number between 10 to 100!", matched_num);
       }
       // default
