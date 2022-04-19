@@ -25,3 +25,13 @@ mod tests {
     }
 }
 ```
+
+## Put test in a seperate folder
+
+```
+// region:    Test
+#[cfg(test)]
+#[path = "../_tests/model_todo.rs"]
+mod tests;
+// endregion: Test
+```
