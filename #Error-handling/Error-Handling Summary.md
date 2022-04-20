@@ -57,14 +57,24 @@ enum Result<T, E> {
     Err(E),
 }
 ```
-
-## Error
-在 Result 中，“错误”其实可以是任意类型。rust 定义了一个 trait: Error
+## Error trait
+在 Result<T, E> 中，“错误”其实可以是任意类型。
+creating custom error types the std::error::Error trait helps us to convert any type to an Err type
 ```
-  pub trait Error: Debug + Display {
-    // snip
-    fn source(&self) -> Option<&(dyn Error + 'static)> { None }
-  }
+use std::fmt::{Debug, Display};
+
+pub trait Error: Debug + Display {
+    fn source(&self) -> Option<&(Error + 'static)> { ... }
+}
 ```
 
+## From trait
+Each crate uses their own error types. However, if we are using our own error type, we should convert those errors into our error type. For these conversions, we can use the standardized trait std::convert::From.
+```
+// traits inside Rust standard library core convert module/ std::convert
+pub trait From<T>: Sized {
+  fn from(_: T) -> Self;
+}
+```
+For example String::from() function is used to create a String from &str data type
 
