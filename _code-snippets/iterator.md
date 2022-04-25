@@ -1,3 +1,20 @@
+## Chars in string 
+```
+  for (index, letter) in "abc".chars().enumerate() {
+    println!("#{}. letter in the alphabet: {}", index + 1, letter);
+  }
+
+```
+## Generate alphabetic
+In order to be iterable, the range-type has to implement Step. char doesn't, so you wouldn't be able to use 'A'..'D' as an iterator.
+```
+   let alphabet: Vec<_> = (b'A' .. b'z' + 1) // Start as u8
+        .map(|c| c as char)            // Convert all to chars
+        .filter(|c| c.is_alphabetic()) // Filter only alphabetic chars
+        .collect(); // Collect as Vec<char>
+
+```
+
 ## String lines
 ```
   for line in quote.lines(){
@@ -10,6 +27,8 @@ index and line
 
   }
 ```
+
+
 
 ## Array
 ```

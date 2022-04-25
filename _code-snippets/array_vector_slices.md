@@ -58,7 +58,10 @@ Create
 
   print("{:?}", list);
 ```
-
+- Range to vec
+```
+  let bucket = range[count..count + bucket_size].to_vec();
+```
 
 ## Iterator
 ```
