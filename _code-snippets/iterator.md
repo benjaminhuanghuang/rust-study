@@ -1,3 +1,22 @@
+## enumerate()
+enumerate() chains from the iterator iter() and yields the current count and the element during iteration
+
+```
+fn print_all(all: Vec<i32>) {
+    for (i, a) in all.iter().enumerate() {
+        println!("{}: {}", i, a);
+    }
+}
+```
+## mutable iterator 
+```
+fn double_all(all: &mut Vec<i32>) {
+    for a in all.iter_mut() {
+        *a += *a;
+    }
+}
+```
+
 ## Chars in string 
 ```
   for (index, letter) in "abc".chars().enumerate() {
