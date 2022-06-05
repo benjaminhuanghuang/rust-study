@@ -95,3 +95,10 @@ Create
     println!("{}", item);
   }
 ```
+
+## nieghbour cells
+```
+   let _nei: Vec<Position> = (x - 1..=x + 1)
+      .flat_map(|i| (y - 1..=y + 1).map(move |j| (i, j)))
+      .collect();
+```
