@@ -4,6 +4,9 @@ use clap::Parser;
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
 struct Args {
+  #[clap(value_parser)]
+  message: Option<String>,
+
   /// Name of the person to greet
   #[clap(short, long)]
   name: String,
@@ -17,11 +20,19 @@ fn main() {
   let args = Args::parse();
 
   for _ in 0..args.count {
-    println!("Hello {}!", args.name)
+    println!(
+      "{} {}!",
+      args.message.as_deref().unwrap_or("hello"),
+      args.name
+    )
   }
 }
 
 /*
 
- Usage: cargo run -- -n Ben -c 3
+ Usage:
+
+ cargo run -- hello -n Ben -c 3
+
+ cargo run -- "Good evening"  -n Ben -c 2
 */
