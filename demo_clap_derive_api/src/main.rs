@@ -20,3 +20,8 @@ fn main() {
     println!("Hello {}!", args.name)
   }
 }
+
+/*
+
+ Usage: cargo run -- -n Ben -c 3
+*/
