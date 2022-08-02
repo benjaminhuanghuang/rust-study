@@ -2,4 +2,10 @@
 
 https://www.bilibili.com/video/BV14q4y1s7UB
 
-https://github.com/pymongo/beginning_linux_programming
+https://github.com/pymongo/linux_commands_rewritten_in_rust
+
+Run
+
+```
+  cargo r -- filename
+```
