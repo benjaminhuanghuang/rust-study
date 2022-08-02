@@ -23,8 +23,11 @@ fn main() {
 
 fn my_stat(filename: &str) {
   let filename_with_nul = format!("{}\0", filename);
+
   let mut file_stat = unsafe { std::mem::zeroed() };
+
   syscall!(stat(filename_with_nul.as_ptr().cast(), &mut file_stat));
+
   println!("  File: {}", filename);
   println!(
     "  Size: {:<15} Blocks: {:<10} IO Block: {:<6} {}",
