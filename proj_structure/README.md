@@ -1,18 +1,33 @@
 ## Folder structure
+https://course.rs/cargo/guide/package-layout.html
+
 ```
-project
-   |
-   ——src  【项目代码目录】
-   |
-   ——targets 【编译后自动生成目录】
-   |
-   ——tests 【测试用例目录】
-   |
-   ——bench 【性能测试目录】
-   |
-   ——example 【用例目录】
-   |
-   ——cargo.toml 【不写[[bin]]标签默认执行src/main.rs】
+├── Cargo.lock
+├── Cargo.toml
+├── src/
+│   ├── lib.rs
+│   ├── main.rs
+│   └── bin/
+│       ├── named-executable.rs
+│       ├── another-executable.rs
+│       └── multi-file-executable/
+│           ├── main.rs
+│           └── some_module.rs
+├── benches/
+│   ├── large-input.rs
+│   └── multi-file-bench/
+│       ├── main.rs
+│       └── bench_module.rs
+├── examples/
+│   ├── simple.rs
+│   └── multi-file-example/
+│       ├── main.rs
+│       └── ex_module.rs
+└── tests/
+    ├── some-integration-tests.rs
+    └── multi-file-test/
+        ├── main.rs
+        └── test_module.rs
 ```
 
 ## Package
