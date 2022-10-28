@@ -1,3 +1,20 @@
+## Folder structure
+```
+project
+   |
+   ——src  【项目代码目录】
+   |
+   ——targets 【编译后自动生成目录】
+   |
+   ——tests 【测试用例目录】
+   |
+   ——bench 【性能测试目录】
+   |
+   ——example 【用例目录】
+   |
+   ——cargo.toml 【不写[[bin]]标签默认执行src/main.rs】
+```
+
 ## Package
 `cargo new` will create a package
 
@@ -25,4 +42,6 @@ mod nation {
     }
 }
 ```
+
+
 
