@@ -1,4 +1,4 @@
-fn largest<'a>(str1: &'a str, str2: &'a str) -> &'a str {
+fn longerStr<'a>(str1: &'a str, str2: &'a str) -> &'a str {
   if str1.len() > str2.len() {
     str1
   } else {
@@ -8,10 +8,8 @@ fn largest<'a>(str1: &'a str, str2: &'a str) -> &'a str {
 
 fn main() {
   let str1 = "Hello";
-
   let str2 = "HelloWorld";
 
-  let result = largest(str1, str2);
-
-  println!("Largest: {}", result);
+  let result = longerStr(str1, str2);
+  println!("Longer string: {}", result);
 }
