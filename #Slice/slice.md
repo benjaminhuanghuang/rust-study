@@ -1,3 +1,5 @@
+https://rust-book.junmajinlong.com/ch3/08_slice.html
+
 ```
 fn main() {
     // an array of numbers
