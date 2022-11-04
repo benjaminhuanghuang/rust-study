@@ -13,3 +13,5 @@ String 实现了
 因此继承了 str 的所有方法,可以通过&操作变成&str
 
 String 由 3 部分组成: pointer, length, capacity
+
+![](./string-str-Deref.png)
