@@ -1,4 +1,10 @@
-Rust programs are free from
+## Resource: memory, socket, file problem
+  - Use after free
+  - Double free
+  - Memory leak
+
+
+## Rust programs are free from
 
 - Dangling pointer — Live references to data that has become invalid over the course of the program 
 
