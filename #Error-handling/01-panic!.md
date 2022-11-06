@@ -1,4 +1,21 @@
 
+## What is panic
+Stop program in invalid states
+
+```
+  panic!("Unknown arg: {}", arg);
+
+  unreachable!()
+
+  unimplemented!()  
+
+  assert!, assert_eq!, assert_ne!
+```
+## When
+- continuing would be incorrect
+- no way to recover
+- unexpected
+
 ## Use panic! macro to quit program
 
 program will crash with a message

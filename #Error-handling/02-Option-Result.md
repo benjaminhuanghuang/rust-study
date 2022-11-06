@@ -1,7 +1,5 @@
 ## Option
-
-Manages the possibility of nonexistent values
-
+Have something or nothing
 ```
   enum Option<T> {
     None,
@@ -11,13 +9,14 @@ Manages the possibility of nonexistent values
 
 
 ## Result
-Used for recoveralbe errors, for example: file access, data validation, parsing strings
+Used for recoverable errors, for example: file access, data validation, parsing strings
 ```
   enum Result<T, E> {
     Ok(T),
     Err(E)
   }
 ```
+![](./result-match.png)
 
 ```
 // Unwrapping a `Some` variant will extract the value wrapped.

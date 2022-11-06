@@ -6,22 +6,7 @@
 
 
 
-## unwrap, expect
-Get the **result**, and if there was an error, just panic and stop the program
 
-unwrap and expecxe calls panic()
-
-expect can send text message to panic
-```
-fn main() {
-    let mut argv = env::args();
-    let arg: String = argv.nth(1).unwrap(); // error 1
-    let n: i32 = arg.parse().unwrap(); // error 2
-    println!("{}", 2 * n);
-}
-```
-
-Both `Option` and `Result` type have a method `unwrap()` defined on them.
 
 ## Option, Some, None, pattern matching, unwrap in Option
 ```
