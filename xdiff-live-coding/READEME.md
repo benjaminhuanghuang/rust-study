@@ -13,6 +13,11 @@ https://github.com/Tubitv/xdiff
   cargo add serde_yaml
 ```
 
+- Serialize http method
+```
+  cargo add http_serde
+  cargo add url --features serde 
+```
 - tokio
 ```
   cargo add tokio --features full
@@ -23,6 +28,8 @@ https://github.com/Tubitv/xdiff
   cargo add anyhow
 ```
 - reqwest 
+  
+  reqwest use native tls by default
 ```
   cargo add reqwest --features rustls --no-default-features
 ```
@@ -36,4 +43,5 @@ https://github.com/mitsuhiko/similar
 ## Run example
 ```
   cargo run --example similar.rs
+  cargo run --example config
 ```
