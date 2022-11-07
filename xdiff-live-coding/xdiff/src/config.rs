@@ -51,4 +51,19 @@ impl DiffConfig{
   pub fn from_yaml(content: &str) -> anyhow::Result<Self> {
     Ok(serde_yaml::from_str(content)?)
   }
+
+  pub fn get_profile(&self, name: &str) -> Option<&DiffProfile>{
+    self.profiles.get(name)
+  }
+}
+
+
+impl DiffProfile {
+  pub async fn diff(&self, args: DiffArgs ) -> Result< String> {
+    let res1 = req1.send(&args).await?;
+    let res2 = req2.send(&args).await?;
+
+    let text1 = res1.filter_text(&self.res).await?;
+    let text2 = res2.filter_text(&self.res).await?;
+  }
 }

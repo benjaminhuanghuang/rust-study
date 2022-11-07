@@ -40,8 +40,13 @@ https://github.com/mitsuhiko/similar
   cargo add similar
 ```
 
-## Run example
+- Run example
 ```
   cargo run --example similar.rs
   cargo run --example config
 ```
+
+
+## Rust 项目实操 - xdiff (2)：使用 clap 构建 CLI
+https://www.youtube.com/watch?v=kWzR9CMS47k&t=61s
+
