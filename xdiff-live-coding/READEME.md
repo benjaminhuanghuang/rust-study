@@ -1,0 +1,39 @@
+
+## Rust 项目实操 - xdiff (1)：基本思路和数据结构
+https://www.youtube.com/watch?v=lsFBnfnY_EM
+https://github.com/Tubitv/xdiff
+
+
+- clap for command line
+  ```
+    cargo add clap --features derive
+  ```
+- yaml for config
+```
+  cargo add serde_yaml
+```
+
+- tokio
+```
+  cargo add tokio --features full
+```
+
+- anyhow 
+```
+  cargo add anyhow
+```
+- reqwest 
+```
+  cargo add reqwest --features rustls --no-default-features
+```
+
+- compare and color output
+https://github.com/mitsuhiko/similar
+```
+  cargo add similar
+```
+
+## Run example
+```
+  cargo run --example similar.rs
+```
