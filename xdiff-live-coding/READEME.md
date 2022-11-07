@@ -1,7 +1,7 @@
 
 ## Rust 项目实操 - xdiff (1)：基本思路和数据结构
 https://www.youtube.com/watch?v=lsFBnfnY_EM
-https://github.com/Tubitv/xdiff
+https://github.com/tyrchen/rust-training/tree/master/live_coding/xdiff-live
 
 
 - clap for command line

@@ -1,8 +1,8 @@
-use reqwest::{header::HeaderMap, Method};
+use super::{is_default, LoadConfig, ValidateConfig};
+use crate::{diff_text, ExtraArgs, RequestProfile};
+use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
-use std::{collections::HashMap};
-use url::Url;
-use tokio::fs;
+use std::collections::HashMap;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct DiffConfig {
@@ -59,11 +59,17 @@ impl DiffConfig{
 
 
 impl DiffProfile {
-  pub async fn diff(&self, args: DiffArgs ) -> Result< String> {
-    let res1 = req1.send(&args).await?;
-    let res2 = req2.send(&args).await?;
+  pub fn new(req1: RequestProfile, req2: RequestProfile, res: ResponseProfile) -> Self {
+    Self { req1, req2, res }
+}
 
-    let text1 = res1.filter_text(&self.res).await?;
-    let text2 = res2.filter_text(&self.res).await?;
-  }
+pub async fn diff(&self, args: ExtraArgs) -> Result<String> {
+    let res1 = self.req1.send(&args).await?;
+    let res2 = self.req2.send(&args).await?;
+
+    let text1 = res1.get_text(&self.res).await?;
+    let text2 = res2.get_text(&self.res).await?;
+
+    diff_text(&text1, &text2)
+}
 }
