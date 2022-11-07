@@ -1,7 +1,7 @@
 use anyhow::{Context, Result};
+use reqwest::{header::HeaderMap, Method};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use reqwest::{header::HeaderMap, Method};
 use tokio::fs;
 use url::Url;
 
@@ -44,7 +44,7 @@ pub struct ResponseProfile {
   pub skip_body: Vec<String>,
 }
 
-impl DiffConfig{
+impl DiffConfig {
   pub async fn load_yaml(path: &str) -> anyhow::Result<Self> {
     let content = fs::read_to_string(path).await?;
     Self::from_yaml(&content)
@@ -54,18 +54,17 @@ impl DiffConfig{
     Ok(serde_yaml::from_str(content)?)
   }
 
-  pub fn get_profile(&self, name: &str) -> Option<&DiffProfile>{
+  pub fn get_profile(&self, name: &str) -> Option<&DiffProfile> {
     self.profiles.get(name)
   }
 }
 
-
 impl DiffProfile {
   pub fn new(req1: RequestProfile, req2: RequestProfile, res: ResponseProfile) -> Self {
     Self { req1, req2, res }
-}
+  }
 
-pub async fn diff(&self, args: ExtraArgs) -> Result<String> {
+  pub async fn diff(&self, args: ExtraArgs) -> Result<String> {
     // let res1 = self.req1.send(&args).await?;
     // let res2 = self.req2.send(&args).await?;
 
@@ -73,7 +72,8 @@ pub async fn diff(&self, args: ExtraArgs) -> Result<String> {
     // let text2 = res2.get_text(&self.res).await?;
 
     // diff_text(&text1, &text2)
-
-    todo!()
-}
+    println!("profile: {:?}", self);
+    println!("args: {:?}", args);
+    Ok("".to_string())
+  }
 }
