@@ -1,8 +1,11 @@
-use super::{is_default, LoadConfig, ValidateConfig};
-use crate::{diff_text, ExtraArgs, RequestProfile};
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use reqwest::{header::HeaderMap, Method};
+use tokio::fs;
+use url::Url;
+
+use crate::ExtraArgs;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct DiffConfig {
@@ -16,12 +19,12 @@ pub struct DiffProfile {
   pub req2: RequestProfile,
   pub res: ResponseProfile,
 }
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct RequestProfile {
   #[serde(with = "http_serde::method", default)]
   pub method: Method,
   pub url: Url,
-  #[serde(with = "http_serde::method", default)]
+  #[serde(skip_serializing_if = "Option::is_none", default)]
   pub params: Option<serde_json::Value>,
   #[serde(
     skip_serializing_if = "HeaderMap::is_empty",
@@ -41,10 +44,9 @@ pub struct ResponseProfile {
   pub skip_body: Vec<String>,
 }
 
-
 impl DiffConfig{
   pub async fn load_yaml(path: &str) -> anyhow::Result<Self> {
-    let content= fs::read_to_string(path).await?;
+    let content = fs::read_to_string(path).await?;
     Self::from_yaml(&content)
   }
 
@@ -64,12 +66,14 @@ impl DiffProfile {
 }
 
 pub async fn diff(&self, args: ExtraArgs) -> Result<String> {
-    let res1 = self.req1.send(&args).await?;
-    let res2 = self.req2.send(&args).await?;
+    // let res1 = self.req1.send(&args).await?;
+    // let res2 = self.req2.send(&args).await?;
 
-    let text1 = res1.get_text(&self.res).await?;
-    let text2 = res2.get_text(&self.res).await?;
+    // let text1 = res1.get_text(&self.res).await?;
+    // let text2 = res2.get_text(&self.res).await?;
 
-    diff_text(&text1, &text2)
+    // diff_text(&text1, &text2)
+
+    todo!()
 }
 }

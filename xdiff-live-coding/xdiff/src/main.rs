@@ -1,3 +1,6 @@
+use crate::cli::Args;
+
+
 async fn main() {
   let args: Args = Args::parse();
 
@@ -20,5 +23,8 @@ async fn run(args: RunArgs) ->Result<()> {
       args.profile,
       config_file
     )
-  })
+  })?;
+
+  let extra_args = args.extra_params.into();
+  profile.diff(extra_args).await?;
 }
