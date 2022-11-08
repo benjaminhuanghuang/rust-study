@@ -1,23 +1,27 @@
 use anyhow::Result;
 use clap::Parser;
 use std::io::Write;
-use dialoguer::{theme::ColorfulTheme, Input};
+use dialoguer::{theme::ColorfulTheme, Input, MultiSelect};
 use std::fmt::Write as _;
 use std::io::Write as _;
 
-use xdiff::{cli::{Args, Action, RunArgs}, DiffConfig};
+use xdiff::{
+  cli::{Action, Args, RunArgs},
+  highlight_text, process_error_output, DiffConfig, DiffProfile, ExtraArgs, LoadConfig,
+  RequestProfile, ResponseProfile,
+};
 
 #[tokio::main]
 async fn main() -> Result<()> {
   let args: Args = Args::parse();
 
-  match args.action {
-    Action::Run(args) => run(args).await?,
-    Action::Parse => parse()?,
+  let result = match args.action {
+    Action::Run(args) => run(args).await,
+    Action::Parse => parse().await,
     _ => panic!("Not implemented"),
-  }
+};
 
-  Ok(())
+  process_error_output(result)
 }
 
 async fn run(args: RunArgs) -> Result<()> {
@@ -44,25 +48,41 @@ async fn run(args: RunArgs) -> Result<()> {
 
 async fn parse() -> Result<()> {
   let theme = ColorfulTheme::default();
-  let url: String = Input::with_theme(&theme)
-      .with_prompt("Url")
+  let url1: String = Input::with_theme(&theme)
+      .with_prompt("Url1")
       .interact_text()?;
-  let profile: RequestProfile = url.parse()?;
+  let url2: String = Input::with_theme(&theme)
+      .with_prompt("Url2")
+      .interact_text()?;
+
+  let req1: RequestProfile = url1.parse()?;
+  let req2: RequestProfile = url2.parse()?;
 
   let name: String = Input::with_theme(&theme)
       .with_prompt("Profile")
       .interact_text()?;
 
-  let config = RequestConfig::new(vec![(name, profile)].into_iter().collect());
+  let res = req1.send(&ExtraArgs::default()).await?;
+
+  let headers = res.get_header_keys();
+  let chosen = MultiSelect::with_theme(&theme)
+      .with_prompt("Select headers to skip")
+      .items(&headers)
+      .interact()?;
+
+  let skip_headers = chosen.iter().map(|i| headers[*i].to_string()).collect();
+
+  let res = ResponseProfile::new(skip_headers, vec![]);
+  let profile = DiffProfile::new(req1, req2, res);
+  let config = DiffConfig::new(vec![(name, profile)].into_iter().collect());
   let result = serde_yaml::to_string(&config)?;
 
   let stdout = std::io::stdout();
   let mut stdout = stdout.lock();
   if atty::is(atty::Stream::Stdout) {
-      write!(stdout, "---\n{}", highlight_text(&result, "yaml", None)?)?;
+      write!(stdout, "{}", highlight_text(&result, "yaml", None)?)?;
   } else {
       write!(stdout, "{}", result)?;
   }
-
   Ok(())
 }

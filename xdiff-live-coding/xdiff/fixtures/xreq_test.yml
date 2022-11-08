@@ -1,0 +1,14 @@
+---
+todo:
+  req1:
+    url: https://jsonplaceholder.typicode.com/todos/1
+    params:
+      a: 100
+      b: 200
+todo-new:
+  req1:
+    url: https://jsonplaceholder.typicode.com/todos/1
+    method: POST
+    body:
+      title: 'hello'
+      completed: false

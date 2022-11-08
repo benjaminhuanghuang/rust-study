@@ -51,6 +51,7 @@ https://github.com/mitsuhiko/similar
 ## Rust 项目实操 - xdiff (2)：使用 clap 构建 CLI
 https://www.youtube.com/watch?v=kWzR9CMS47k&t=61s
 
+-p profile
 -c config file
 -e extra args
 
@@ -81,3 +82,28 @@ Add sub command: Parse
 ```
   cargo add dialoguer
 ```
+
+## Rust 项目实操 - xdiff (6)：语法高亮以及支持 xreq
+https://www.youtube.com/watch?v=rWi1fdcVM4g&list=PL2XM89iiOzksOyZsNssA2-WA8N2eZ46wG&index=6
+
+语法高亮
+```
+cargo add syntect
+```
+
+support xreq
+```
+  xreq -p todo -e @title="hello"
+```
+
+Cargo.toml
+```
+[[bin]]
+name = "xdiff"
+path = "src/bin/xdiff.rs"
+
+[[bin]]
+name = "xreq"
+path = "src/bin/xreq.rs"
+```
+

@@ -3,17 +3,30 @@ name = "xdiff"
 version = "0.1.0"
 edition = "2021"
 
+# 2 bins 
+[[bin]]
+name = "xdiff"
+path = "src/bin/xdiff.rs"
+
+[[bin]]
+name = "xreq"
+path = "src/bin/xreq.rs"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 anyhow = "1.0.66"
+async-trait = "0.1.57"
 clap = { version = "4.0.19", features = ["derive"] }
+console = "0.15.1"
 http-serde = "1.1.2"
 reqwest = { version = "0.11.12", default-features = false, features = ["rustls"] }
 serde = { version = "1.0.147", features = ["derive"] }
 serde_json = "1.0.87"
+serde_qs = "0.10.1"
 serde_yaml = "0.9.14"
-similar = "2.2.0"
+serde_urlencoded = "0.7.1"
+similar =  { version = "2.2.0", features = ["inline"] }
 tokio = { version = "1.21.2", features = ["full"] }
 url = { version = "2.3.1", features = ["serde"] }
 syntect = "5.0.0"
