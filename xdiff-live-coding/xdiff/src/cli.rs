@@ -25,7 +25,7 @@ pub struct RunArgs {
   /// Overrides args. Could be used to override the query, headers and body of the request.
   /// For query params, use `-e key=value`.
   /// For headers, use `-e %key=value`.
-  /// For body, use `-e @key=value`.
+  /// For body, use `-e @key=value`. use "@key=value" in windows command line
   #[clap(short, long, value_parser = parse_key_val, number_of_values = 1)]
   pub extra_params: Vec<KeyVal>,
 
@@ -33,7 +33,6 @@ pub struct RunArgs {
   #[clap(short, long, value_parser)]
   pub config: Option<String>,
 }
-
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum KeyValType {
@@ -76,22 +75,22 @@ fn parse_key_val(s: &str) -> Result<KeyVal> {
 
 impl From<Vec<KeyVal>> for ExtraArgs {
   fn from(args: Vec<KeyVal>) -> Self {
-      let mut headers = vec![];
-      let mut query = vec![];
-      let mut body = vec![];
+    let mut headers = vec![];
+    let mut query = vec![];
+    let mut body = vec![];
 
-      for arg in args {
-          match arg.key_type {
-              KeyValType::Header => headers.push((arg.key, arg.value)),
-              KeyValType::Query => query.push((arg.key, arg.value)),
-              KeyValType::Body => body.push((arg.key, arg.value)),
-          }
+    for arg in args {
+      match arg.key_type {
+        KeyValType::Header => headers.push((arg.key, arg.value)),
+        KeyValType::Query => query.push((arg.key, arg.value)),
+        KeyValType::Body => body.push((arg.key, arg.value)),
       }
+    }
 
-      Self {
-          headers,
-          query,
-          body,
-      }
+    Self {
+      headers,
+      query,
+      body,
+    }
   }
 }

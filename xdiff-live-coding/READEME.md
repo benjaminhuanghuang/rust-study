@@ -51,6 +51,17 @@ https://github.com/mitsuhiko/similar
 ## Rust 项目实操 - xdiff (2)：使用 clap 构建 CLI
 https://www.youtube.com/watch?v=kWzR9CMS47k&t=61s
 
+-c config file
+-e extra args
+
+```
+  cargo run -- run -p rust -c fixtures\test.yml -e a=100 -e %c=3 -e @m=3
+
+  ./xdiff.exe run -p rust -c ..\..\fixtures\test.yml -e a=100 -e %c=3 -e @m=3
+```
 
 
 ## Rust 项目实操 - xdiff (3)：实现核心逻辑
+https://www.youtube.com/watch?v=1iJzZjxCQB8&list=PL2XM89iiOzksOyZsNssA2-WA8N2eZ46wG&index=3
+
+Move RequestProfile into req.rs
