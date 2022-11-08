@@ -2,8 +2,6 @@ use anyhow::Result;
 use clap::Parser;
 use std::io::Write;
 use dialoguer::{theme::ColorfulTheme, Input, MultiSelect};
-use std::fmt::Write as _;
-use std::io::Write as _;
 
 use xdiff::{
   cli::{Action, Args, RunArgs},
@@ -17,8 +15,7 @@ async fn main() -> Result<()> {
 
   let result = match args.action {
     Action::Run(args) => run(args).await,
-    Action::Parse => parse().await,
-    _ => panic!("Not implemented"),
+    Action::Parse => parse().await
 };
 
   process_error_output(result)

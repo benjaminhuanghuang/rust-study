@@ -16,7 +16,6 @@ async fn main() -> Result<()> {
     let result = match args.action {
         Action::Run(args) => run(args).await,
         Action::Parse => parse().await,
-        _ => panic!("Not implemented"),
     };
 
     process_error_output(result)
