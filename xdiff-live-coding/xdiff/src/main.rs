@@ -1,6 +1,9 @@
 use anyhow::Result;
 use clap::Parser;
 use std::io::Write;
+use dialoguer::{theme::ColorfulTheme, Input};
+use std::fmt::Write as _;
+use std::io::Write as _;
 
 use xdiff::{cli::{Args, Action, RunArgs}, DiffConfig};
 
@@ -10,6 +13,7 @@ async fn main() -> Result<()> {
 
   match args.action {
     Action::Run(args) => run(args).await?,
+    Action::Parse => parse()?,
     _ => panic!("Not implemented"),
   }
 
@@ -30,9 +34,35 @@ async fn run(args: RunArgs) -> Result<()> {
   let extra_args = args.extra_params.into();
   let output = profile.diff(extra_args).await?;
 
-  // let stdout = std::io::stdout();
-  // let mut stdout = stdout.lock();
-  // write!(stdout, "{}", output)?;
+  let stdout = std::io::stdout();
+  let mut stdout = stdout.lock();
+  write!(stdout, "{}", output)?;
+
+  Ok(())
+}
+
+
+async fn parse() -> Result<()> {
+  let theme = ColorfulTheme::default();
+  let url: String = Input::with_theme(&theme)
+      .with_prompt("Url")
+      .interact_text()?;
+  let profile: RequestProfile = url.parse()?;
+
+  let name: String = Input::with_theme(&theme)
+      .with_prompt("Profile")
+      .interact_text()?;
+
+  let config = RequestConfig::new(vec![(name, profile)].into_iter().collect());
+  let result = serde_yaml::to_string(&config)?;
+
+  let stdout = std::io::stdout();
+  let mut stdout = stdout.lock();
+  if atty::is(atty::Stream::Stdout) {
+      write!(stdout, "---\n{}", highlight_text(&result, "yaml", None)?)?;
+  } else {
+      write!(stdout, "{}", result)?;
+  }
 
   Ok(())
 }

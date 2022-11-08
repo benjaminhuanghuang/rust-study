@@ -65,3 +65,19 @@ https://www.youtube.com/watch?v=kWzR9CMS47k&t=61s
 https://www.youtube.com/watch?v=1iJzZjxCQB8&list=PL2XM89iiOzksOyZsNssA2-WA8N2eZ46wG&index=3
 
 Move RequestProfile into req.rs
+
+
+
+## Rust 项目实操 - xdiff (4)：提供更友好的错误提示
+https://www.youtube.com/watch?v=e5mitBpoIlQ&list=PL2XM89iiOzksOyZsNssA2-WA8N2eZ46wG&index=4
+
+Add DiffConfig.validate
+
+
+## Rust 项目实操 - xdiff (5)：交互式生成配置
+https://www.youtube.com/watch?v=TnIeSL74TeA&list=PL2XM89iiOzksOyZsNssA2-WA8N2eZ46wG&index=5
+
+Add sub command: Parse
+```
+  cargo add dialoguer
+```

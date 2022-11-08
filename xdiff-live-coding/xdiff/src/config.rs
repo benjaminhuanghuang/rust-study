@@ -14,15 +14,20 @@ pub struct DiffConfig {
   pub profiles: HashMap<String, DiffProfile>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct DiffProfile {
-  pub req1: RequestProfile,
-  pub req2: RequestProfile,
-  pub res: ResponseProfile,
+    pub req1: RequestProfile,
+    pub req2: RequestProfile,
+    #[serde(skip_serializing_if = "is_default", default)]
+    pub res: ResponseProfile,
+}
+
+pub fn is_default<T: Default + PartialEq>(v: &T) -> bool {
+  v == &T::default()
 }
 
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, PartialEq, Eq)]
 pub struct ResponseProfile {
   #[serde(skip_serializing_if = "Vec::is_empty", default)]
   pub skip_header: Vec<String>,
@@ -31,6 +36,10 @@ pub struct ResponseProfile {
 }
 
 impl DiffConfig {
+  pub fn new(profiles: HashMap<String, DiffProfile>) -> Self {
+    Self { profiles }
+}
+
   pub async fn load_yaml(path: &str) -> anyhow::Result<Self> {
     let content = fs::read_to_string(path).await?;
     Self::from_yaml(&content)
@@ -51,15 +60,16 @@ impl DiffProfile {
   }
 
   pub async fn diff(&self, args: ExtraArgs) -> Result<String> {
-    // let res1 = self.req1.send(&args).await?;
-    // let res2 = self.req2.send(&args).await?;
+    // println!("profile: {:?}", self);
+    // println!("args: {:?}", args);
+    // Ok("".to_string())
+    let res1 = self.req1.send(&args).await?;
+    let res2 = self.req2.send(&args).await?;
 
-    // let text1 = res1.get_text(&self.res).await?;
-    // let text2 = res2.get_text(&self.res).await?;
+    let text1 = res1.get_text(&self.res).await?;
+    let text2 = res2.get_text(&self.res).await?;
 
-    // diff_text(&text1, &text2)
-    println!("profile: {:?}", self);
-    println!("args: {:?}", args);
-    Ok("".to_string())
+    diff_text(&text1, &text2)
+
   }
 }
