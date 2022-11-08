@@ -94,6 +94,8 @@ cargo add syntect
 support xreq
 ```
   xreq -p todo -e @title="hello"
+
+  cargo run --bin xreq -- run -p todo -c fixtures\xreq_test.yml -e a=100 -e %c=3 -e @m=3
 ```
 
 Cargo.toml
@@ -106,4 +108,8 @@ path = "src/bin/xdiff.rs"
 name = "xreq"
 path = "src/bin/xreq.rs"
 ```
+
+## Rust 项目实操 - xdiff (7)：支持管道和重定向
+https://www.youtube.com/watch?v=DVjNglWn8rk&list=PL2XM89iiOzksOyZsNssA2-WA8N2eZ46wG&index=7
+
 
