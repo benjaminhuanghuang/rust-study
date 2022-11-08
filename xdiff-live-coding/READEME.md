@@ -156,4 +156,6 @@ Test the public function in config/mod.rs
 ## Rust 项目实操 - xdiff (9)：使用 trycmd 撰写 CLI 集成测试
 https://www.youtube.com/watch?v=74lH_JUjvPs&list=PL2XM89iiOzksOyZsNssA2-WA8N2eZ46wG&index=
 
-
+```
+  mkdir tests
+```
