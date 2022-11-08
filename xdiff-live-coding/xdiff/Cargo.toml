@@ -35,3 +35,5 @@ dialoguer = "0.10.2"
 
 [dev-dependencies]
 console = "0.15.0"
+mockito = "0.31.0"
+trycmd = "0.13.6"
