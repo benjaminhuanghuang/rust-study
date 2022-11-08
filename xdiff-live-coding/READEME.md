@@ -112,4 +112,40 @@ path = "src/bin/xreq.rs"
 ## Rust 项目实操 - xdiff (7)：支持管道和重定向
 https://www.youtube.com/watch?v=DVjNglWn8rk&list=PL2XM89iiOzksOyZsNssA2-WA8N2eZ46wG&index=7
 
+atty: is output console or pipeline
+```
+  cargo add atty
+```
 
+```
+  if atty::is(atty::Stream::Stdout) {
+    // add color when output to console/tty
+  } else {
+    // without color when output to pipeline
+    write!(&mut output, "{}", body)?;
+  }
+```
+
+## Rust 项目实操 - xdiff (8)：撰写基本的 unit test
+https://www.youtube.com/watch?v=AkWucnxkNsg&list=PL2XM89iiOzksOyZsNssA2-WA8N2eZ46wG&index=8
+
+Test the public function in config/mod.rs
+
+- Test runner
+```
+  cargo install cargo-nextest
+  cargo nextest run
+```
+
+- Mock http request
+```
+  cargo add mockito --dev
+```
+
+- test async function
+```
+  #[tokio::test]
+  async fn response_should_work() {
+    
+  }
+```
