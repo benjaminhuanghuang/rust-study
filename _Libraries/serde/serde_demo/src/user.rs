@@ -11,6 +11,9 @@ pub enum Gender {
   Female = 2,
 }
 
+/*
+PartialEq is used for assert_eq!(user, user1);
+*/
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct User {
   pub name: String,
