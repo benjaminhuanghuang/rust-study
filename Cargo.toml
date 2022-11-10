@@ -1,0 +1,2 @@
+[workspace]
+members = ["_Libraries\\serde\\serde_demo"]
