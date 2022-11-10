@@ -2,3 +2,5 @@
 target
 *.lock
 *.exe
+temp
+temp/
