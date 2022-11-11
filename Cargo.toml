@@ -1,2 +1,5 @@
 [workspace]
-members = ["_Libraries\\serde\\serde_demo"]
+members = [
+  "_Libraries\\serde\\serde_demo",
+  "#Lifetime\\lifetime_demo"
+]
