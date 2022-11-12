@@ -1,5 +1,5 @@
 
-## String的切片和普通的切片有些不同。
+## String的切片和普通的切片有些不同
 
 String的切片类型是str，而非[String]，String切片的引用是&str而非&[String]。
 
