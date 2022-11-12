@@ -1,5 +1,6 @@
 [workspace]
 members = [
   "_Libraries\\serde\\serde_demo",
-  "#Lifetime\\lifetime_demo"
+  "#Lifetime\\lifetime_demo",
+  "#Concurrency\\semaphore_demo"
 ]
