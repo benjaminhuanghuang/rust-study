@@ -6,7 +6,9 @@ use url::Url;
 
 mod web2image;
 use web2image::web2image;
-
+/*
+  web2image <url> --output <path>
+*/
 #[derive(Debug, Clap)]
 #[clap(version = "0.1", author = "Tyr Chen <awesome@gmail.com>")]
 #[clap(setting = AppSettings::ColoredHelp)]
