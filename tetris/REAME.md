@@ -11,3 +11,9 @@ C:\Users\benjhuang\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\
 https://github.com/libsdl-org/SDL_image/releases
 copy file in SDL2_image-devel-2.6.2-VC.zip to 
 C:\Users\benjhuang\.rustup\toolchains\stable-x86_64-pc-windows-msvc\lib\rustlib\x86_64-pc-windows-msvc\lib
+
+By default, you can't use the image module with sdl2, we need to activate it. 
+```
+ [features]
+    default = ["sdl2/image"]
+```
