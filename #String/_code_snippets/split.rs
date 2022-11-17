@@ -5,3 +5,11 @@ fn test() {
     eprintln!("debug: {:?} -> {:?}", record, fields);
   }
 }
+
+
+let v: Vec<&str> = "Mary had a little lamb".split(' ').collect();
+assert_eq!(v, ["Mary", "had", "a", "little", "lamb"]);
+
+
+let (hello, world) = "helloworld".split_at(5);
+println!("{}, {}!", hello, world);
