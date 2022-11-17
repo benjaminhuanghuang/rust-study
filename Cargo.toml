@@ -3,6 +3,6 @@ members = [
   "_Libraries\\serde\\serde_demo",
   "#Lifetime\\lifetime_demo",
   "#Concurrency\\semaphore_demo",
-  "tetris",
+  "_samples\\sdl2-tetris",
   "_samples\\rusty-journal"
 ]
