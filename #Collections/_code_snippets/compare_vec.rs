@@ -29,3 +29,8 @@ pub fn sublist<T: PartialEq>(a: &[T], b: &[T]) -> Comparison {
   }
   Comparison::Unequal
 }
+
+
+let a = [10, 20, 30, 40]; // a plain array
+let v = vec![10, 20, 30, 40]; // TODO: declare your vector here with the macro for vectors
+assert_eq!(a, v[..]);
