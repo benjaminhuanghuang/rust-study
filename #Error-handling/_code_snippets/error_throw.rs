@@ -22,3 +22,11 @@ pub fn total_cost(item_quantity: &str) -> Result<i32, ParseIntError> {
 
   Ok(qty * cost_per_item + processing_fee)
 }
+
+fn main() -> Result<(), Box<dyn error::Error>> {
+  let pretend_user_input = "42";
+  // Throw the error
+  let x: i64 = pretend_user_input.parse()?;
+  println!("output={:?}", PositiveNonzeroInteger::new(x)?);
+  Ok(())
+}
