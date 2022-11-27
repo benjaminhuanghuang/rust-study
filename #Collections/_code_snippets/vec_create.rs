@@ -4,6 +4,7 @@ let mut v = Vec::new();
 
 // Create N elements in vector
 let mut vec![0; count]
+let mut result = vec!['a'; 10];
 
 
 // Create and init
