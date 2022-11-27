@@ -9,6 +9,13 @@ enum Fruit {
   Pineapple,
 }
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Progress {
+    None,
+    Some,
+    Complete,
+}
+
 //------------------------------------------------
 // Create
 //------------------------------------------------
@@ -55,6 +62,23 @@ let t2 = scores.entry(team_2_name.clone()).or_insert(Team {
 // Count
 //------------------------------------------------
 let count_fruit_kinds = basket.len();
+
+
+fn count_for(map: &HashMap<String, Progress>, value: Progress) -> usize {
+  let mut count = 0;
+  for val in map.values() {
+      if val == &value {
+          count += 1;
+      }
+  }
+  count
+}
+
+fn count_iterator(map: &HashMap<String, Progress>, value: Progress) -> usize {
+  // map is a hashmap with String keys and Progress values.
+  // map = { "variables1": Complete, "from_str": None, ... }
+  map.values().filter(|x| value == **x).count()
+}
 
 //------------------------------------------------
 // Check

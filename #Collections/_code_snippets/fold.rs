@@ -10,3 +10,9 @@ fold 第一个是初始值，第二个是一个闭包，闭包第一个参数是
  let vec = vec![1, 2, 3, 4, 5];
  let res = vec.iter().fold(0, |acc, x| acc + x);
  eprint!("{}", res);
+
+
+
+pub fn factorial(num: u64) -> u64 {
+  (1..=num).fold(1, |acc, elem| acc * elem)
+}
