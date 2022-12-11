@@ -25,3 +25,15 @@ the heap by putting the return value into a Box, which is a pointer with a known
     
   }
 ```
+
+
+To get data from a Box in Rust, you can use the .as_ref() or .as_mut() method to convert the Box into a reference, then access the data using the reference. For example:
+```
+let mut box_data = Box::new(5);
+
+// Convert the Box into a mutable reference using .as_mut()
+let data = box_data.as_mut();
+
+// Access the data using the reference
+println!("Data from Box: {}", *data);
+```
