@@ -49,12 +49,46 @@ Heap
   printlin!("{}", heap_i8_2);    
 ```
 
-Borrow ownerhsip as a reference with the ampershand
+### Move
 ```
+  let x = vec![1, 2, 3];
+  let y = x;
+  // x is move to y
+
+
   let heap_i8_2 = &heap_i8;            // Ownership MOVEed to heap_i8_2
+
+
+  let s = String::from("abc");
+  takes_ownership(s);              // give ownership to function
+
+
+  fn give_ownership() -> String {
+    "give".to_string()
+  }
+  let str = give_ownership();
 ```
 
-Clone
+## Borrow: immutable or mutable
+
+Borrow ownership as a reference with the ampershand
+```
+  let x = vec![1, 2, 3];
+  println!("{:?}", x);    // borrow
+```
+
+mutable reference
+```
+fn change_str(str: &mut String) {
+  str.push_str(", hi");
+}
+
+let mut s = String::from("foo");
+change_str(&mut str);
+println("{}", s);
+```
+
+## Clone, deep copy
 ```
   let heap_i8_2 = heap_i8.clone();     // Create a copy of the memory. Is relatively expensive.
 ```
