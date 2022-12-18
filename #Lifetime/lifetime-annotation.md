@@ -1,5 +1,10 @@
 
 
+lifetime annotations just describe the relationship of the lifetimes of the multiple references to each other without
+actually affecting their lifetimes
+
+
+
 ```
 // 含义：foo的生命周期不能超出 'a 和 'b 中任一个的周期
 
