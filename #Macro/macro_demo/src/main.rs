@@ -9,13 +9,31 @@ macro_rules! calculate {
   }};
 }
 
+macro_rules! gcd {
+  ($a: expr, $b: expr) => {
+    let mut m = $b;
+
+    let mut n = $a;
+
+    while m != 0 {
+      if m < n {
+        let t = m;
+        m = n;
+        n = t;
+      }
+      m = m % n;
+    }
+    n
+  };
+}
 
 fn main() {
-    
-  calculate!{
+  calculate! {
     eval 1+2
   }
-  calculate!{
+  calculate! {
     eval (1+2) + (3+4)
   }
+
+  println!("{}", gcd!(14, 15))
 }
