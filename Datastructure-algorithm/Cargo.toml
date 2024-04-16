@@ -1,0 +1,10 @@
+[workspace]
+members = [
+  "hmap",
+  "LinkedList\\linked-list-ryan",
+  "DoubleLinkedList\\double-linked-list-nyxtom",
+  "rust-playground",
+  "LRU_cache\\lru_cache_nyxtom",
+  "Trie\\trie_nyxtom",
+  "Vec\\vec_ryan"
+]
