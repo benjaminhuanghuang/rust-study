@@ -1,5 +1,7 @@
 # STRIKE training
 
+By Ryan Levick
+
 https://eng.ms/docs/more/rust/intro/getting-started
 
 https://learningplayer.microsoft.com/activity/s9202352/launch
