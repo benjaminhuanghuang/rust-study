@@ -8,6 +8,14 @@ Struct std::collections::LinkedList
 NOTE: It is almost always better to use Vec or VecDeque because array-based containers are generally faster, more memory efficient, and make better use of CPU cache.
 
 
+- Learn Rust With Entirely Too Many Linked Lists
+  - https://rust-unofficial.github.io/too-many-lists/
+
+- https://www.bilibili.com/video/BV1eb4y1Q7FA/
+
+
+
+
 ## Implementation 1
 ```
 enum Node {
@@ -84,6 +92,3 @@ enum Node {
 let node: &Node = &Node::Empty;
 let list: Node = Node::NonEmpty(123, node);
 ```
-
-
-
