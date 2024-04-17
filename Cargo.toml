@@ -4,5 +4,6 @@ members = [
   "#Lifetime\\lifetime_demo",
   "#Concurrency\\semaphore_demo",
   "#File\\file_demo",
-  "#Unsafe\\unsafe-demo"
+  "#Unsafe\\unsafe-demo",
+  "#String\\string-demo"
 ]
