@@ -1,8 +1,9 @@
 mod Backtracking;
-mod solution1;
+mod BacktrackingString;
+mod ForLoop;
 
 fn main() {
-  let res = solution1::solve_n_queens(9);
+  let res = ForLoop::solve_n_queens(9);
   println!("{} solutions found", res.len());
   // for sol in res {
   //   for row in sol {
