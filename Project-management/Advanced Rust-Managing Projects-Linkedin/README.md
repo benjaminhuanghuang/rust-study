@@ -110,18 +110,20 @@ When made public all enum variants are all public.
 
 To Structure, need to add pub to all fields.
 
-
-
 ## Path
+
 - Reference items within the module system
 - can be relative or absolute
 
-Abolute path
+```rust
+// Absolute path
+crate::hello::english::greet();
+
+// Relative path
+hello::english::greet();
+supper::hello::english::greet();
 ```
-  crate::
-  or
-  <creat-name>::
-```
+
 Relatvie Path, starts from the current module. Can start from `self` or `super` or module name
 
 尽量使用 relative path，以免rename module影响很多代码
