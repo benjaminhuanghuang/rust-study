@@ -2,7 +2,11 @@
   51. N-Queens
   placing n queens on an n x n chessboard
   https://leetcode.com/problems/n-queens/description/
+
+  Brutal force solution
+  Time complexity: O(N^2)
 */
+
 fn sq_to_idx(col: i32, row: i32, n: i32) -> i32 {
   n * row + col
 }
@@ -42,8 +46,9 @@ fn generate(curr: &Vec<Vec<i32>>, n: i32) -> Vec<Vec<i32>> {
   ret
 }
 
-fn solve_n_queens(n: i32) -> Vec<Vec<String>> {
+pub fn solve_n_queens(n: i32) -> Vec<Vec<String>> {
   let mut solutions: Vec<Vec<i32>> = Vec::new();
+  // place the first queen in each column, save queen position n * row + col to vec[col]
   for file in 0..n {
     solutions.push(vec![sq_to_idx(0, file, n)]);
   }
@@ -63,17 +68,6 @@ fn solve_n_queens(n: i32) -> Vec<Vec<String>> {
   }
 
   ret
-}
-
-fn main() {
-  let res = solve_n_queens(9);
-  println!("{} solutions found", res.len());
-  // for sol in res {
-  //   for row in sol {
-  //     println!("{}", row);
-  //   }
-  //   println!("-------------");
-  // }
 }
 
 #[cfg(test)]

@@ -1,4 +1,4 @@
-# PRIVACY IN RUST
+# Privacy In Rust
 
 - All items in a module are `private` by default
 - Parent modules cannot use private items in a child module
