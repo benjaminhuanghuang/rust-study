@@ -1,0 +1,5 @@
+[workspace]
+members=[
+  "core-1",
+  "core-2", 
+  "core_3"]
