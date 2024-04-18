@@ -1,6 +1,9 @@
+<<<<<<< HEAD
 use mockall::automock;
 
 #[automock] // create a mock obj named MockWeatherApi
+=======
+>>>>>>> a2f82b60ed9d1fcc77737a2c2719e0613b5fcf40
 pub trait WeatherApi {
   fn get_weather(&self, zip_code: &str) -> String;
 }
