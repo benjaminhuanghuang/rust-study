@@ -1,6 +1,5 @@
 [workspace]
 members = [
-  "hmap",
   "LinkedList\\linked-list-ryan",
   "DoubleLinkedList\\double-linked-list-nyxtom",
   "rust-playground",
