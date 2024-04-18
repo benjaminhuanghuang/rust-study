@@ -5,5 +5,8 @@ members = [
   "#Concurrency\\semaphore_demo",
   "#File\\file_demo",
   "#Unsafe\\unsafe-demo",
-  "#String\\string-demo"
-]
+  "#String\\string-demo", 
+  "#Regex/regex_demo", 
+  "Projects/minesweeper", "#Test/testlib"]
+
+resolver = "2"

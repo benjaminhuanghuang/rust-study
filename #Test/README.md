@@ -1,11 +1,30 @@
-默认情况下，rust 采用多线程并行执行所有测试，当有串行需要时可以执行：cargo test -- --test-threads={thread_numbers}来控制执行测试的线程数。
+# Rust Test
 
-rust 默认不打印 passed test 的任何输出，当有需要打印输出时，执行：cargo test -- --show-output
+## Run test
 
-当期望只运行某个特定测试时，执行：cargo test {test_function_name}
+Rust run tests with muliti-threads
 
-当期望只运行某一类测试时，执行：cargo test {test_function_name_matcher}
+```sh
+cargo test -- --help
+
+cargo test -- --test-threads=4
+cargo test -- --show-output
+
+cargo test {test_function_name}
+
+cargo test {test_function_name_matcher}
+```
 
 
 
+## Expected panics
 
+```rust
+#[should_panic(expected = "message")]
+```
+
+## Ignore test
+
+```rust
+#[ignore]
+```
