@@ -1,0 +1,3 @@
+/*
+entry point into the imagix library
+*/

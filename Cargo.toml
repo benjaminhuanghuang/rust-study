@@ -7,6 +7,6 @@ members = [
   "#Unsafe\\unsafe-demo",
   "#String\\string-demo", 
   "#Regex/regex_demo", 
-  "Projects/minesweeper", "#Test/testlib", "Projects/minesweeper_exercism", "Projects/minesweeper_gui"]
+  "Projects/minesweeper", "#Test/testlib", "Projects/minesweeper_exercism", "Projects/minesweeper_gui", "System/dotenv_demo"]
 
 resolver = "2"

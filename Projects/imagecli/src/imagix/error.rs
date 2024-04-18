@@ -1,0 +1,3 @@
+/*
+ custom error type and error handling code
+*/
