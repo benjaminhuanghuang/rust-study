@@ -1,5 +1,7 @@
 
+
 ## Examples of Non-Deterministic Resources
+
 - API
 - External APls
 - Databases
@@ -8,6 +10,7 @@
 - Environmental factors
 
 ## Reasons for Mocking
+
 - Control Over Test Environment
 - Isolation of Components for Unit Testing
 - Improved Test Stability and Reliability
