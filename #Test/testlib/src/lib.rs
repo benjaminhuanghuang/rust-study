@@ -31,7 +31,8 @@ impl Person {
   pub fn create_greeting(&self) -> String {
     let name_message = message_name::create_message_name(&self.name);
     let birthday_message = message_birthday::create_message_birthday(self.date_of_birth);
-    let weather_message = message_wether::create_message_weather(&self.zip_code);
+    let api = message_wether::RealWeatherApi;
+    let weather_message = message_wether::create_message_weather(&api, &self.zip_code);
 
     format!("{}{}{}", name_message, birthday_message, weather_message)
   }
