@@ -1,0 +1,18 @@
+{
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug executable 'debugging-rust'",
+      "cargo": {
+        "args": ["build", "--bin=debugging-rust", "--package=debugging-rust"],
+        "filter": {
+          "name": "debugging-rust",
+          "kind": "bin"
+        }
+      },
+      "args": ["module_3: check_outstanding_orders"],
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}
