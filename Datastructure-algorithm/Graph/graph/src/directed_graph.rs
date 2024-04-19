@@ -34,5 +34,10 @@ mod tests {
       graph.adjacency_matrix().get("A").unwrap(),
       &vec![(String::from("B"), 1)]
     );
+
+    assert_eq!(
+      graph.adjacency_matrix().get("B").unwrap(),
+      &vec![(String::from("C"), 2), (String::from("A"), 4)]
+    );
   }
 }

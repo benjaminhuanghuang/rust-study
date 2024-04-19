@@ -29,9 +29,10 @@ Complete graph: there is an edge between every pair of vertices
 
 - Adjacency list
   
+## Depth First Search
 
-
-
+1. Start from a vertex
+2. Make sure to track the visited vertex
 
 
 
