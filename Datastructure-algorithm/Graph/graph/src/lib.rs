@@ -1,6 +1,8 @@
 mod directed_graph;
 mod graph;
 mod undirected_graph;
+use std::cmp::Ordering;
+use std::collections::BinaryHeap;
 use std::collections::{HashSet, LinkedList, VecDeque};
 
 #[derive(Copy, Clone, PartialEq, Eq, Hash)]
@@ -49,25 +51,21 @@ impl From<(u8, u8)> for Edge {
 }
 
 // Use a stack
-pub fn depth_first_search_history(
-  graph: &Graph,
-  start: Vertex,
-  objective: Vertex,
-) -> Option<Vec<u8>> {
+pub fn depth_first_search_history(graph: &Graph, start: Vertex, target: Vertex) -> Option<Vec<u8>> {
   let mut visited: HashSet<Vertex> = HashSet::new();
   let mut history: Vec<u8> = Vec::new();
-  let mut queue: VecDeque<Vertex> = VecDeque::new(); // Use a stack
+  let mut stack: LinkedList<Vertex> = LinkedList::new(); // Use a stack
 
-  queue.push_back(start);
-  while let Some(curr_vertex) = queue.pop_front() {
+  stack.push_back(start);
+  while let Some(curr_vertex) = stack.pop_back() {
     history.push(curr_vertex.value());
-    if curr_vertex == objective {
+    if curr_vertex == target {
       return Some(history);
     }
     // Go through all the neighbors of the current vertex
     for neighbor in curr_vertex.neighbors(graph).into_iter().rev() {
       if !visited.contains(&neighbor) {
-        queue.push_front(neighbor);
+        stack.push_back(neighbor);
         visited.insert(neighbor);
       }
     }
@@ -76,7 +74,7 @@ pub fn depth_first_search_history(
 }
 
 // Use a stack
-pub fn depth_first_search(graph: &Graph, start: Vertex, objective: Vertex) -> Option<Vec<u8>> {
+pub fn depth_first_search(graph: &Graph, start: Vertex, target: Vertex) -> Option<Vec<u8>> {
   let mut visited: HashSet<Vertex> = HashSet::new();
   let mut stack: LinkedList<Vertex> = LinkedList::new();
   let mut result: Vec<u8> = Vec::new();
@@ -86,14 +84,101 @@ pub fn depth_first_search(graph: &Graph, start: Vertex, objective: Vertex) -> Op
 
   while let Some(curr_vertex) = stack.pop_back() {
     result.push(curr_vertex.value());
-    if curr_vertex == objective {
+    if curr_vertex == target {
       return Some(result);
     }
     // Go through all the neighbors of the current vertex
-    for neighbor in curr_vertex.neighbors(graph).into_iter() {
+    for neighbor in curr_vertex.neighbors(graph) {
       if !visited.contains(&neighbor) {
         stack.push_back(neighbor);
         visited.insert(neighbor);
+      }
+    }
+  }
+  None
+}
+
+// Use a queue
+pub fn breath_first_search_history(
+  graph: &Graph,
+  start: Vertex,
+  target: Vertex,
+) -> Option<Vec<u8>> {
+  let mut visited: HashSet<Vertex> = HashSet::new();
+  let mut history: Vec<u8> = Vec::new();
+  let mut queue: VecDeque<Vertex> = VecDeque::new(); // Use a queue
+
+  visited.insert(start);
+  queue.push_back(start);
+
+  while let Some(curr_vertex) = queue.pop_front() {
+    history.push(curr_vertex.value());
+    if curr_vertex == target {
+      return Some(history);
+    }
+    // Go through all the neighbors of the current vertex
+    for neighbor in curr_vertex.neighbors(graph) {
+      if !visited.contains(&neighbor) {
+        queue.push_back(neighbor);
+        visited.insert(neighbor);
+      }
+    }
+  }
+  None
+}
+
+#[derive(Copy, Clone, PartialEq, Eq)]
+struct State {
+  cost: usize,
+  position: usize,
+}
+
+impl Ord for State {
+  // Compare cost and position
+  fn cmp(&self, other: &Self) -> Ordering {
+    other
+      .cost
+      .cmp(&self.cost)
+      .then_with(|| self.position.cmp(&other.position))
+  }
+}
+
+impl PartialOrd for State {
+  fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+    Some(self.cmp(other))
+  }
+}
+
+struct StateWay {
+  node: usize,
+  cost: usize,
+}
+
+fn shortest_path(graph: &Vec<Vec<StateWay>>, start: usize, target: usize) -> Option<usize> {
+  let mut dist = (0..graph.len()).map(|_| usize::MAX).collect::<Vec<_>>();
+  let mut visited = BinaryHeap::new();
+  dist[start] = 0;
+  visited.push(State {
+    cost: 0,
+    position: start,
+  });
+
+  while let Some(State { cost, position }) = visited.pop() {
+    if position == target {
+      return Some(cost);
+    }
+    if cost > dist[position] {
+      continue;
+    }
+
+    for edge in &graph[position] {
+      let next = State {
+        cost: cost + edge.cost,
+        position: edge.node,
+      };
+      if next.cost < dist[next.position] {
+        visited.push(next);
+        dist[next.position] = next.cost;
       }
     }
   }
@@ -109,14 +194,14 @@ mod tests {
     let vertices = vec![1, 2, 3, 4, 5, 6, 7];
     let edges = vec![(1, 2), (1, 3), (2, 4), (2, 5), (3, 6), (3, 7)];
     let root = 1;
-    let objective = 7;
+    let target = 7;
     let expect = vec![1, 2, 4, 5, 3, 6, 7];
 
     let graph = Graph::new(
       vertices.into_iter().map(|v| v.into()).collect(),
       edges.into_iter().map(|e| e.into()).collect(),
     );
-    let result = depth_first_search_history(&graph, root.into(), objective.into());
+    let result = depth_first_search_history(&graph, root.into(), target.into());
     assert_eq!(result, Some(expect));
   }
 
@@ -125,14 +210,54 @@ mod tests {
     let vertices = vec![1, 2, 3, 4, 5, 6, 7];
     let edges = vec![(1, 2), (1, 3), (2, 4), (2, 5), (3, 6), (3, 7)];
     let root = 1;
-    let objective = 7;
+    let target = 7;
     let expect = vec![1, 3, 7];
 
     let graph = Graph::new(
       vertices.into_iter().map(|v| v.into()).collect(),
       edges.into_iter().map(|e| e.into()).collect(),
     );
-    let result = depth_first_search(&graph, root.into(), objective.into());
+    let result = depth_first_search(&graph, root.into(), target.into());
     assert_eq!(result, Some(expect));
+  }
+
+  #[test]
+  fn test_bfs_history() {
+    let vertices = vec![1, 2, 3, 4, 5, 6, 7];
+    let edges = vec![(1, 2), (1, 3), (2, 4), (2, 5), (3, 6), (3, 7)];
+    let root = 1;
+    let target = 7;
+    let expect = vec![1, 2, 3, 4, 5, 6, 7];
+
+    let graph = Graph::new(
+      vertices.into_iter().map(|v| v.into()).collect(),
+      edges.into_iter().map(|e| e.into()).collect(),
+    );
+    let result = breath_first_search_history(&graph, root.into(), target.into());
+    assert_eq!(result, Some(expect));
+  }
+
+  #[test]
+  fn test_shortest_path() {
+    let graph = vec![
+      // node - 0
+      vec![
+        StateWay { node: 1, cost: 6 },
+        StateWay { node: 2, cost: 4 },
+        StateWay { node: 3, cost: 1 },
+      ],
+      //node 1
+      vec![StateWay { node: 0, cost: 6 }, StateWay { node: 2, cost: 3 }],
+      // node 2
+      vec![
+        StateWay { node: 0, cost: 4 },
+        StateWay { node: 1, cost: 3 },
+        StateWay { node: 3, cost: 1 },
+      ],
+      // node 3
+      vec![StateWay { node: 0, cost: 1 }, StateWay { node: 2, cost: 1 }],
+    ];
+
+    assert!(shortest_path(&graph, 0, 1) == Some(5));
   }
 }
