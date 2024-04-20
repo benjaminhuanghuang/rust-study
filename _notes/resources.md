@@ -15,5 +15,24 @@
 
 - Take your first steps with Rust (by MS)
   - https://docs.microsoft.com/en-us/learn/paths/rust-first-steps/?WT.mc_id=academic-29077-cxa
+
+https://rust.bootcss.com/title-page.html
+
+https://doc.rust-lang.org/nomicon/intro.html
+
+https://book.rust.team/
+
+
 ## Videos
 
+
+
+## web site
+• https://github.com/RustMagazine
+• https://github.com/RustStudy
+• https://github.com/rust-unofficial
+• https://www.resource.rs/
+• https://rustwiki.org/
+• https://users.rust-lang.org/
+• https://rustcc.cn/
+• https://wiki.mozilla.org/Rust
