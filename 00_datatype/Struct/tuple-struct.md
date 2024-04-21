@@ -3,7 +3,7 @@ Store a collection of mixed data without named fields
 
 Distinguishable as unique data type
 
-```
+```rust
   struct Color(u8,u8, u8);
 
   let red = Color(255, 0, 0);
@@ -24,4 +24,3 @@ fn add_distances(d1: Meters, d2: Meters){
 
 }
 ```
-
