@@ -9,22 +9,34 @@ rustc --version
 
 ```
 
-Rust is installed and managed by the `rustup`
-```
-  rustup 
-
-  rustup update
-```
-
 Check version
+
 ```
   rustc -- version
 ```
 
+Update
+
+```
+  rsutup update
+```
+
+Uninstall
+
+```
+  rustup self uninstall
+```
+
+### Mac
+
+```
+  curl https://sh.rustup.rs -sSf | sh
+
+  russtc --version
+```
 
 ## IDE: VS Code
 rust-analyzer
-
 
 
 ## Build and run
