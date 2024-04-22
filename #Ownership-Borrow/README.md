@@ -1,6 +1,6 @@
 # Ownership and Borrowing
 
-Remember, the owner is a function(), which has the responsibility to free the memory. If the owner goes out of scope, the memory will be freed.
+Remember, the owner is a function() or a code section{}, which has the responsibility to free the memory. If the owner goes out of scope, the memory will be freed.
 
 ## String
 

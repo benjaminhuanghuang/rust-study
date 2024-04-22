@@ -11,4 +11,8 @@ my_numbers.push(2);
 my_numbers.push(3);
 
 my_numbers.pop(4);
+
+for num in &my_numbers {  // Should borrow the vector in the for loop code scope
+    println!("{}", num);
+}   
 ```

@@ -1,5 +1,8 @@
 # String vs str
 
+Sting owned the memory,
+&str borrowed the  string slice.
+
 ## What is String
 
 ```rust
