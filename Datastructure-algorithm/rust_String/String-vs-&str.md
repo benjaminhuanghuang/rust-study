@@ -1,7 +1,23 @@
+
 # String vs str
 
-Sting owned the memory,
-&str borrowed the  string slice.
+Sting owned the memory. Store string in a struct.
+
+```rust
+let owned_string = String::from("Hello");
+
+let owned_string2 = "Hello".to_owned();
+
+struct Employee {
+    name: String
+}
+```
+
+&str borrowed the  string slice. Use &str when passing string to function
+
+```rust
+print_it("a string slice"); // borrowed
+```
 
 ## What is String
 
