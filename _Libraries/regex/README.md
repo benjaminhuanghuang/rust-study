@@ -1,6 +1,0 @@
-
-```
-[dependencies]
-regex = "1"
-```
-

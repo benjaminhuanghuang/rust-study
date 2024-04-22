@@ -6,4 +6,4 @@ members = [
   "LRU_cache\\lru_cache_nyxtom",
   "Trie\\trie_nyxtom",
   "Vec\\vec_ryan"
-]
+, "Sort/sort_demo"]

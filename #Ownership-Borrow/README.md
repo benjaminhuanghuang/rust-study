@@ -1,15 +1,12 @@
+# Ownership and Borrowing
 
-
-
-
-
-
-
+Remember, the owner is a function(), which has the responsibility to free the memory. If the owner goes out of scope, the memory will be freed.
 
 ## String
+
 string slice does not own a memory slot.
 
-```
+```rust
   let some_string: String = String::from("Hello");   // String are always on the heap
   let some_str: &str = "Partner";                    // &str is a pointer to either stack of heap.
 

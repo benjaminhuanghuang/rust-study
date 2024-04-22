@@ -5,3 +5,8 @@
 ```sh
 cargo add regex
 ```
+
+```
+[dependencies]
+regex = "1"
+```
