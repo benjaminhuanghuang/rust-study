@@ -1,4 +1,6 @@
 use std::fmt::Debug;
+mod merge_sort;
+mod quick_sort;
 
 pub fn bubble_sort<T: PartialOrd>(v: &mut [T]) {
   for _ in 0..v.len() - 1 {
