@@ -23,7 +23,7 @@ pub fn quick_sort<T: PartialOrd + Debug>(v: &mut [T]) {
   println!("{:?}", v);
   let (a, b) = v.split_at_mut(p);
   quick_sort(a);
-  quick_sort(&mut b[1..])
+  quick_sort(&mut b[1..]); // Middle element already sorted
 }
 
 #[cfg(test)] // don't include normal code
