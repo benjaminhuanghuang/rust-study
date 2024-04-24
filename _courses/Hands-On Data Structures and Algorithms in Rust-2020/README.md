@@ -3,6 +3,8 @@
 by Matthew Stoodley, May 2020
 https://learning.oreilly.com/course/hands-on-data-structures/9781839211942/
 
+https://github.com/PacktPublishing/Hands-On-Data-Structures-and-Algorithms-in-Rust
+
 ## Table of contents
 
 - Chapter 1 : Getting to Grips with Rust and its Syntax
