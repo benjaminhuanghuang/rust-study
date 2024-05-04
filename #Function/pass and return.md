@@ -1,5 +1,7 @@
 # Function
 
+From: Rust Programming Part 2: Rust Advanced Concepts and Real-World Projects
+
 ## Passing parameters by value
 
 ```rs
@@ -31,3 +33,62 @@ When you pass a non-copyable value (e.g., String):
 • The original function loses ownership of the value!
 
 ## Passing parameters by reference
+
+You can pass reference parameters to a function, preceded by the & symbol.
+The calling function retains ownership
+The calling function can continue to use the value afterwards
+
+The called function receives a reference
+The called function borrows the value
+When a function receives a reference parameter, uses * to deference, to obtain the underlying value
+
+Rust allows a invoking method on a reference without explicit * dereferencing
+Rust will automatically dereference when you invoke a method on a reference, so explicit dereferencing is optional.
+
+
+If you declare a &str parameter: You can pass in a &String or &str
+If you declare a &String parameter: You must pass in a &String
+
+Displaying Reference Parameters
+When you have a reference parameter:
+• The default formatter {} displays the value
+• The print formatter {:p} displays the address (i.e., pointer)
+
+## Passing mutable reference
+
+To pass a mutable reference parameter into a function:Precede the parameter with &mut
+
+When a function receives a mutable reference parameter: Use * to deference, to obtain/modify the underlying value
+
+## Returning a value
+
+Returning a Copyable Value
+• When you return a copyable value (e.g., 132), Rust bit-copies the value back to the caller
+• When you return a non-copyable value (e.g., String): Rust moves ownership of the value back to the caller
+
+## Returning a reference
+
+You have to make ure the lifetime of the referred object whose lifetime is long enough.
+
+Rust doesn't allow you to return a dangling reference
+  • You can't return a reference to a local stack-based object
+
+Return a string literal
+```rs
+fn some_func() -> &'static str {
+    "Hello, World!"
+}
+```
+Tell compiler the referred text is statically allocated. so it is valid for the lifetime of the program
+
+## Returning a mutable reference
+
+• Do comply with the borrow checker
+• Don't return a dangling reference
+
+
+## Lifetime management
+
+The common way to ensure the lifetime of an object:
+  • Pass an object by reference into a function
+  • In the function, return a reference to the same object
