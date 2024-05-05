@@ -16,6 +16,19 @@ If a closure in Rust intends to modify the values of captured external variables
 • Last expression in the closure is the return value
 
 ```rust
+fun outer_function() {
+  let some_closure = |params| {
+    // Closure body
+  };
+
+  // Call the closure
+  some_closure(params);
+}
+
+```
+
+
+```rust
 let get_timestamp = || => DateTime<Utc> {
   Utc::now()
 };
