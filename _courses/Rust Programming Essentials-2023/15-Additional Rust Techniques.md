@@ -31,3 +31,14 @@ process_employee(boxed_employee) ;  // boxed_employee moved,
 ```
 
 Box does implement the `Drop` trait. When a Box object goes out of scope, drop () is called drop () deallocates the heap-based storage
+
+## Using Box
+
+Define a recursive data structure with Box
+
+```rust
+struct NodeBad {
+    data: i32,
+    next: Option<NodeBad>,
+}
+whenever you define a structure, the compiler needs to know how big it is in bytes, so we can know how much space to allocate on the stack.
