@@ -1,6 +1,5 @@
-
-
 ## String to int
+
 ```
   fn parse_positive_int(val: &str) -> MyResult<usize> {
     match val.parse() {
@@ -11,7 +10,8 @@
   }
 ```
 
-## conver &str to error
+## convert &str to error
+
 ```
   Err(From::from(val))
 
@@ -19,4 +19,3 @@
 
   Err(Inot::into(val))
 ```
-

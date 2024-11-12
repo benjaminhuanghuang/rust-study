@@ -1,14 +1,20 @@
 [workspace]
 members = [
-  "_Libraries\\serde\\serde_demo",
-  "#Lifetime\\lifetime_demo",
-  "#Concurrency\\semaphore_demo",
-  "#File\\file_demo",
-  "#Unsafe\\unsafe-demo",
-  "#Regex/regex_demo", 
-  "Projects/minesweeper", "#Test/testlib", "Projects/minesweeper_exercism", 
-  "Projects/minesweeper_gui", "System/dotenv_demo", "Projects/kilo-ed", 
-  "_Courses/Hands-On Data Structures and Algorithms in Rust-2020/02-Sorting/v1-sorting", 
-  "_Courses/Hands-On Data Structures and Algorithms in Rust-2020/03-LinkdedList/v1-ll"]
+  "_Libraries/serde/serde_demo",
+  "#Lifetime/lifetime_demo",
+  "#Concurrency/semaphore_demo",
+  "#File/file_demo",
+  "#Unsafe/unsafe-demo",
+  "#Regex/regex_demo",
+  "Projects/minesweeper",
+  "#Test/testlib",
+  "Projects/minesweeper_exercism",
+  "Projects/minesweeper_gui",
+  "System/dotenv_demo",
+  "Projects/kilo-ed",
+  "_Courses/Hands-On Data Structures and Algorithms in Rust-2020/02-Sorting/v1-sorting",
+  "_Courses/Hands-On Data Structures and Algorithms in Rust-2020/03-LinkdedList/v1-ll",
+  "Tauri/tauri-counter/src-tauri",
+]
 
 resolver = "2"
