@@ -24,7 +24,7 @@ struct AppInfo {
   running_time_formatted: String,
   memory_in_bytes: u64,
 }
-fn is_valid(process: &sysinfo::Process) -> bool {
+fn is_valid(process: &Process) -> bool {
   let helper_keywords = vec!["helper", "service", "daemon", "agent", "."];
   if let Some(exe_path) = process.exe().unwrap().to_str() {
     let is_in_app_dir = APPLICATION_DIRS.iter().any(|dir| exe_path.starts_with(dir));
@@ -114,6 +114,7 @@ pub fn run() {
   tauri::Builder::default()
     .plugin(tauri_plugin_shell::init())
     .invoke_handler(tauri::generate_handler![
+      greet,
       list_process,
       max_memory,
       max_running_process

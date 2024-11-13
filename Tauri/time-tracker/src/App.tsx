@@ -7,8 +7,8 @@ import "./App.css";
 interface ProcessInfo {
   id: string;
   name: string;
-  running_time: string;
-  memory: number;
+  running_time_formatted: string;
+  memory_in_bytes: number;
 }
 
 const App: React.FC = () => {
@@ -21,7 +21,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const processList = await invoke<ProcessInfo[]>("list_processes");
+      const processList = await invoke<ProcessInfo[]>("list_process");
       const maxMemory = await invoke<ProcessInfo>("max_memory");
       const maxRunning = await invoke<ProcessInfo>("max_running_process");
 
@@ -50,7 +50,7 @@ const App: React.FC = () => {
               <span>
                 {process.name} (ID: {process.id})
               </span>
-              <span>Running Time: {process.running_time}</span>
+              <span>Running Time: {process.running_time_formatted}</span>
               <span>Memory: {process.memory} bytes</span>
             </div>
           );
