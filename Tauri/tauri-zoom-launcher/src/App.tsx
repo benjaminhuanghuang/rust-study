@@ -38,6 +38,7 @@ const commands: Option[] = [
     isUIOption: true,
   },
 ];
+
 function App() {
   const [selectedCommand, setSelectedCommand] = useState<string>(
     "run_with_local_source"

@@ -3,6 +3,11 @@ use std::fs;
 use std::process::{Child, Command};
 use sysinfo::{Process, Signal, System};
 
+/*
+  Configuration:
+  path of zoombridge
+  path of zoom client
+*/
 #[cfg(target_os = "macos")]
 const APPLICATION_DIRS: &[&str] = &["/Applications", "/Users/*/Applications"];
 
@@ -46,6 +51,15 @@ fn run_from_installed() -> CommandOutput {
     .information
     .push(format!("Run command: {}", "run_from_installed"));
 
+  kill_application("zoomdev.us");
+  kill_npm_processes();
+  start_mail_client();
+  /*
+   Tell Zoom client to load js code from the installed package
+  */
+  set_user_preferences("");
+
+  start_zoom_client();
   result
 }
 
@@ -62,6 +76,15 @@ fn run_with_local_source() -> CommandOutput {
     .information
     .push(format!("Run command: {}", "run_with_local_source"));
 
+  kill_application("zoomdev.us");
+  kill_npm_processes();
+  start_mail_client();
+  /*
+   modify user preferences to tell Zoom client to load local js code
+  */
+  set_user_preferences("http://127.0.0.1:8080");
+  set_webview();
+  start_zoom_client();
   result
 }
 
@@ -78,8 +101,20 @@ fn run_with_local_source_bridge() -> CommandOutput {
     .information
     .push(format!("Run command: {}", "run_with_local_source_bridge"));
 
+  kill_application("zoomdev.us");
+  kill_npm_processes();
+
+  start_zoom_bridge();
+  /*
+   modify user preferences to tell Zoom client to load local js code from the bridge
+  */
+  set_user_preferences("http://localhost:3000");
+  start_mail_client_with_bridge();
+
+  start_zoom_client();
   result
 }
+
 #[tauri::command]
 fn close_zoom_client() -> CommandOutput {
   let mut result = CommandOutput {
@@ -122,6 +157,87 @@ fn kill_application(app_name: &str) -> bool {
     }
   }
   true
+}
+
+fn kill_npm_processes() {
+  Command::new("pkill")
+    .arg("-f") // Match the full command line
+    .arg("npm") // Target the npm processes
+    .status()
+    .expect("Failed to execute pkill");
+}
+
+fn start_mail_client() {
+  let mut child = Command::new("npm")
+    .arg("run")
+    .arg("serve:enable-proxy")
+    .current_dir("/Users/BenjaminHuang/workspace/client-email")
+    .spawn()
+    .expect("Failed to execute command");
+
+  let status = child.wait().expect("Failed to wait on child process");
+  if !status.success() {
+    println!("Failed to start mail client");
+  }
+}
+
+fn start_mail_client_with_bridge() {
+  let mut child = Command::new("npm")
+    .arg("run")
+    .arg("serve:enable-proxy")
+    .current_dir("/Users/BenjaminHuang/workspace/client-email")
+    .spawn()
+    .expect("Failed to execute command");
+
+  let status = child.wait().expect("Failed to wait on child process");
+  if !status.success() {
+    println!("Failed to start mail client");
+  }
+}
+/*
+  Start zoom bridge
+  node apps/commandline/bin/zoom-bridge.js start --port 3000
+*/
+fn start_zoom_bridge() {
+  Command::new("node")
+    .arg("apps/commandline/bin/zoom-bridge.js")
+    .arg("start")
+    .arg("--port")
+    .arg("3000")
+    .current_dir("/Users/BenjaminHuang/workspace/zoombridge")
+    .spawn()
+    .expect("Failed to execute command");
+}
+
+fn set_user_preferences(url: &str) {
+  Command::new("defaults")
+    .arg("write")
+    .arg("ZoomChat")
+    .arg("mail.localHtmlPath")
+    .arg(url)
+    .status()
+    .expect("Failed to execute first command");
+}
+
+fn set_webview() {
+  Command::new("defaults")
+    .arg("write")
+    .arg("ZoomChat")
+    .arg("webview.context.menu")
+    .arg("true")
+    .status()
+    .expect("Failed to execute first command");
+}
+fn start_zoom_client() {
+  let mut child = Command::new("open")
+    .arg("/Applications/zoom.us.app")
+    .spawn()
+    .expect("Failed to execute command");
+
+  let status = child.wait().expect("Failed to wait on child process");
+  if !status.success() {
+    println!("Failed to start zoom client");
+  }
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
