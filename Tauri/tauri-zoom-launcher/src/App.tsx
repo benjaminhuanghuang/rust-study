@@ -62,7 +62,7 @@ function App() {
             checked={selectedOption === "LOCAL_SOURCE"}
             onChange={handleRadioChange}
           />
-          <label htmlFor="option1">Run Zoom Client with local code</label>
+          <label htmlFor="option1">Run Zoom Client with local source</label>
         </div>
         <div>
           <input
@@ -74,7 +74,7 @@ function App() {
             onChange={handleRadioChange}
           />
           <label htmlFor="option2">
-            Run Zoom Client with local code + Zoom Bridge
+            Run Zoom Client with local source + Zoom Bridge
           </label>
         </div>
         <div>
