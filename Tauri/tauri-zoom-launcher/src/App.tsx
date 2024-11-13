@@ -49,6 +49,7 @@ function App() {
   const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log(event.target.value);
     setSelectedCommand(event.target.value);
+    setCommandOutput(null);
   };
   useEffect(() => {
     async function fetchData() {
