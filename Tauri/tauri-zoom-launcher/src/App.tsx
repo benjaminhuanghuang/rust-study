@@ -3,7 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 import "./App.css";
 
 interface CommandOutput {
-  isSuccess: boolean;
+  is_success: boolean;
   information: string[];
 }
 interface Option {
@@ -101,7 +101,7 @@ function App() {
       <div
         className="information"
         style={{
-          color: commandOutput?.isSuccess ? "green" : "red",
+          color: commandOutput?.is_success ? "green" : "red",
         }}
       >
         {commandOutput?.information.map((info, index) => (

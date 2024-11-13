@@ -86,33 +86,42 @@ fn close_zoom_client() -> CommandOutput {
     is_success: false,
     information: vec![],
   };
-  result
-    .information
-    .push(format!("Run command: {}", "close_zoom_client"));
 
+  if kill_application("zoomdev.us") {
+    result.is_success = true;
+    result.information.push("Zoom client is closed".to_string());
+  } else {
+    result.is_success = false;
+    result
+      .information
+      .push("Failed to close Zoom Client.".to_string());
+  }
+  result
+}
+
+fn kill_application(app_name: &str) -> bool {
   let mut system = System::new_all();
   system.refresh_all();
 
-  // Define the name of the process you want to kill
-  let target_process_name = "zoomdev.us"; // Replace with your process name
-
   for (pid, process) in system.processes() {
-    if process.name() == target_process_name {
+    if process.name() == app_name {
       println!(
         "Found process '{}' with PID {}",
         process.name().to_string_lossy().to_string(),
         pid
       );
-
       // Kill the process
-      if process.kill() {
-        println!("Process with PID {} killed successfully.", pid);
-      } else {
-        eprintln!("Failed to kill process with PID {}.", pid);
+      if !process.kill() {
+        println!(
+          "Failed to kill the process'{}' with PID {}",
+          process.name().to_string_lossy().to_string(),
+          pid
+        );
+        return false;
       }
     }
   }
-  result
+  true
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
