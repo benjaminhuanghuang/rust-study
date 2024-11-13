@@ -1,7 +1,7 @@
 ## Create app
 
 ```sh
-npx create tauri-app@latest
+npm create tauri-app@latest
 
 npm i
 npm run tauri dev
