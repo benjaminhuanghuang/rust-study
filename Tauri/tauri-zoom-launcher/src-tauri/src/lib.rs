@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::fs;
+use std::process::{Child, Command};
 
 #[cfg(target_os = "macos")]
 const APPLICATION_DIRS: &[&str] = &["/Applications", "/Users/*/Applications"];
@@ -77,6 +78,25 @@ fn run_with_local_source_bridge() -> CommandOutput {
     .push(format!("Run command: {}", "run_with_local_source_bridge"));
 
   result
+}
+
+fn start_application() -> std::io::Result<Child> {
+  Command::new("your_application")
+    .arg("your_argument") // Add any required arguments
+    .spawn() // Start the application as a child process
+}
+
+fn kill_application(child: &mut Child) -> std::io::Result<()> {
+  child.kill() // Sends a kill signal to the child process
+}
+
+fn restart_application(child: &mut Child) -> std::io::Result<Child> {
+  // Kill the application if it's still running
+  child.kill()?;
+  // Wait for the process to exit completely
+  child.wait()?;
+  // Start the application again
+  start_application()
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
