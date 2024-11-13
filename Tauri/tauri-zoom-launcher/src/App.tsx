@@ -2,20 +2,53 @@ import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import "./App.css";
 
-type Option = "LOCAL_SOURCE" | "LOCAL_SOURCE_BRIDGE" | "INSTALLED_BIN";
 interface CommandOutput {
   isSuccess: boolean;
   information: string[];
 }
-
+interface Option {
+  label: string;
+  command: string;
+  isUIOption?: boolean;
+}
+const commands: Option[] = [
+  {
+    label: "Load Configuration",
+    command: "load_configuration",
+    isUIOption: false,
+  },
+  {
+    label: "Run Zoom Client with local source",
+    command: "run_with_local_source",
+    isUIOption: true,
+  },
+  {
+    label: "Run Zoom Client with local source and Zoom Bridge",
+    command: "run_with_local_source_bridge",
+    isUIOption: true,
+  },
+  {
+    label: "Run Zoom Client with installed bin",
+    command: "run_from_installed",
+    isUIOption: true,
+  },
+  {
+    label: "Close Zoom Client",
+    command: "close_zoom_client",
+    isUIOption: true,
+  },
+];
 function App() {
-  const [selectedOption, setSelectedOption] = useState<Option>("LOCAL_SOURCE");
+  const [selectedCommand, setSelectedCommand] = useState<string>(
+    "run_with_local_source"
+  );
   const [commandOutput, setCommandOutput] = useState<CommandOutput | null>(
     null
   );
 
   const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedOption(event.target.value as Option);
+    console.log(event.target.value);
+    setSelectedCommand(event.target.value);
   };
   useEffect(() => {
     async function fetchData() {
@@ -35,60 +68,36 @@ function App() {
   };
 
   const handleButtonClick = () => {
-    console.log(`Selected Option: ${selectedOption}`);
-    switch (selectedOption) {
-      case "LOCAL_SOURCE":
-        runCommand("run_with_local_source");
-        break;
-      case "LOCAL_SOURCE_BRIDGE":
-        runCommand("run_with_local_source_bridge");
-        break;
-      case "INSTALLED_BIN":
-        runCommand("run_from_installed");
-        break;
+    if (selectedCommand) {
+      console.log("Run command", selectedCommand);
+      runCommand(selectedCommand);
     }
   };
 
   return (
     <main className="container">
       <h1>Choose an Option</h1>
+      {/* commands */}
       <div className="options">
-        <div>
-          <input
-            type="radio"
-            id="option1"
-            name="options"
-            value="LOCAL_SOURCE"
-            checked={selectedOption === "LOCAL_SOURCE"}
-            onChange={handleRadioChange}
-          />
-          <label htmlFor="option1">Run Zoom Client with local source</label>
-        </div>
-        <div>
-          <input
-            type="radio"
-            id="option2"
-            name="options"
-            value="LOCAL_SOURCE_BRIDGE"
-            checked={selectedOption === "LOCAL_SOURCE_BRIDGE"}
-            onChange={handleRadioChange}
-          />
-          <label htmlFor="option2">
-            Run Zoom Client with local source + Zoom Bridge
-          </label>
-        </div>
-        <div>
-          <input
-            type="radio"
-            id="option3"
-            name="options"
-            value="INSTALLED_BIN"
-            checked={selectedOption === "INSTALLED_BIN"}
-            onChange={handleRadioChange}
-          />
-          <label htmlFor="option3">Run Zoom Client with installed bin</label>
-        </div>
+        {commands
+          .filter((command) => command.isUIOption)
+          .map((command, index) => {
+            return (
+              <div key={index}>
+                <input
+                  type="radio"
+                  id={command.command}
+                  name={command.command}
+                  value={command.command}
+                  checked={selectedCommand === command.command}
+                  onChange={handleRadioChange}
+                />
+                <label htmlFor={command.command}>{command.label}</label>
+              </div>
+            );
+          })}
       </div>
+      {/* information and commands output */}
       <div
         className="information"
         style={{
@@ -99,7 +108,7 @@ function App() {
           <p key={index}>{info}</p>
         ))}
       </div>
-      <button onClick={handleButtonClick}>Restart Zoom Client</button>
+      <button onClick={handleButtonClick}>Run Command</button>
     </main>
   );
 }

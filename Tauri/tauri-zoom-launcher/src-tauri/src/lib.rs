@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::process::{Child, Command};
+use sysinfo::{Process, Signal, System};
 
 #[cfg(target_os = "macos")]
 const APPLICATION_DIRS: &[&str] = &["/Applications", "/Users/*/Applications"];
@@ -79,24 +80,39 @@ fn run_with_local_source_bridge() -> CommandOutput {
 
   result
 }
+#[tauri::command]
+fn close_zoom_client() -> CommandOutput {
+  let mut result = CommandOutput {
+    is_success: false,
+    information: vec![],
+  };
+  result
+    .information
+    .push(format!("Run command: {}", "close_zoom_client"));
 
-fn start_application() -> std::io::Result<Child> {
-  Command::new("your_application")
-    .arg("your_argument") // Add any required arguments
-    .spawn() // Start the application as a child process
-}
+  let mut system = System::new_all();
+  system.refresh_all();
 
-fn kill_application(child: &mut Child) -> std::io::Result<()> {
-  child.kill() // Sends a kill signal to the child process
-}
+  // Define the name of the process you want to kill
+  let target_process_name = "zoomdev.us"; // Replace with your process name
 
-fn restart_application(child: &mut Child) -> std::io::Result<Child> {
-  // Kill the application if it's still running
-  child.kill()?;
-  // Wait for the process to exit completely
-  child.wait()?;
-  // Start the application again
-  start_application()
+  for (pid, process) in system.processes() {
+    if process.name() == target_process_name {
+      println!(
+        "Found process '{}' with PID {}",
+        process.name().to_string_lossy().to_string(),
+        pid
+      );
+
+      // Kill the process
+      if process.kill() {
+        println!("Process with PID {} killed successfully.", pid);
+      } else {
+        eprintln!("Failed to kill process with PID {}.", pid);
+      }
+    }
+  }
+  result
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -105,6 +121,7 @@ pub fn run() {
     .plugin(tauri_plugin_shell::init())
     .invoke_handler(tauri::generate_handler![
       load_configuration,
+      close_zoom_client,
       run_from_installed,
       run_with_local_source,
       run_with_local_source_bridge
