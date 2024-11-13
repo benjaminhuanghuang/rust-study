@@ -11,7 +11,7 @@ const APPLICATION_DIRS: &[&str] = &["C:\\Program Files", "C:\\Program Files (x86
 const APPLICATION_DIRS: &[&str] = &["/usr/bin", "/usr/local/bin", "/opt"];
 
 #[derive(Serialize, Deserialize)]
-struct RunCommandResult {
+struct CommandOutput {
   is_success: bool,
   information: Vec<String>,
 }
@@ -20,8 +20,8 @@ struct RunCommandResult {
   Load the configuration file from the given path
 */
 #[tauri::command]
-fn load_configuration() -> RunCommandResult {
-  let mut result = RunCommandResult {
+fn load_configuration() -> CommandOutput {
+  let mut result = CommandOutput {
     is_success: false,
     information: vec![],
   };
@@ -35,8 +35,8 @@ fn load_configuration() -> RunCommandResult {
   Run the zoom client from installed package
 */
 #[tauri::command]
-fn run_from_installed() -> RunCommandResult {
-  let mut result = RunCommandResult {
+fn run_from_installed() -> CommandOutput {
+  let mut result = CommandOutput {
     is_success: false,
     information: vec![],
   };
@@ -51,8 +51,8 @@ fn run_from_installed() -> RunCommandResult {
   Run the zoom client with local source code
 */
 #[tauri::command]
-fn run_with_local_source() -> RunCommandResult {
-  let mut result = RunCommandResult {
+fn run_with_local_source() -> CommandOutput {
+  let mut result = CommandOutput {
     is_success: false,
     information: vec![],
   };
@@ -67,8 +67,8 @@ fn run_with_local_source() -> RunCommandResult {
   Run the zoom client with local source and zoom bridge
 */
 #[tauri::command]
-fn run_with_local_source_bridge() -> RunCommandResult {
-  let mut result = RunCommandResult {
+fn run_with_local_source_bridge() -> CommandOutput {
+  let mut result = CommandOutput {
     is_success: false,
     information: vec![],
   };
