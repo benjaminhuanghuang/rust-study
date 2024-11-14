@@ -104,6 +104,14 @@ button {
   margin-bottom: 1em;
   margin-left: 20px;
 }
+
+.information{
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  margin-left: 40px;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     color: #f6f6f6;

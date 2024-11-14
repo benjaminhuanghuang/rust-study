@@ -1,21 +1,25 @@
 use serde::{Deserialize, Serialize};
-use std::fs;
-use std::process::{Child, Command};
-use sysinfo::{Process, Signal, System};
+use std::process::Command;
+use sysinfo::System;
 
 /*
   Configuration:
   path of zoombridge
   path of zoom client
+  path of mail client
+
+  process API:
+  .spawn() starts the command asynchronously and immediately returns a Child process handle.
+  .status() or .output() wait for the command to complete,
 */
-#[cfg(target_os = "macos")]
-const APPLICATION_DIRS: &[&str] = &["/Applications", "/Users/*/Applications"];
+// #[cfg(target_os = "macos")]
+// const APPLICATION_DIRS: &[&str] = &["/Applications", "/Users/*/Applications"];
 
-#[cfg(target_os = "windows")]
-const APPLICATION_DIRS: &[&str] = &["C:\\Program Files", "C:\\Program Files (x86)"];
+// #[cfg(target_os = "windows")]
+// const APPLICATION_DIRS: &[&str] = &["C:\\Program Files", "C:\\Program Files (x86)"];
 
-#[cfg(target_os = "linux")]
-const APPLICATION_DIRS: &[&str] = &["/usr/bin", "/usr/local/bin", "/opt"];
+// #[cfg(target_os = "linux")]
+// const APPLICATION_DIRS: &[&str] = &["/usr/bin", "/usr/local/bin", "/opt"];
 
 #[derive(Serialize, Deserialize)]
 struct CommandOutput {
@@ -53,7 +57,7 @@ fn run_from_installed() -> CommandOutput {
 
   kill_application("zoomdev.us");
   kill_npm_processes();
-  start_mail_client();
+  //start_mail_client();
   /*
    Tell Zoom client to load js code from the installed package
   */
@@ -112,6 +116,38 @@ fn run_with_local_source_bridge() -> CommandOutput {
   start_mail_client_with_bridge();
 
   start_zoom_client();
+  result
+}
+
+#[tauri::command]
+fn read_user_preferences() -> CommandOutput {
+  let mut result = CommandOutput {
+    is_success: false,
+    information: vec![],
+  };
+  result
+    .information
+    .push(format!("Run command: {}", "read_user_preferences"));
+  //defaults read ZoomChat mail.localHtmlPath
+  let output = Command::new("defaults")
+    .arg("read")
+    .arg("ZoomChat")
+    .arg("mail.localHtmlPath")
+    .output() // Executes the command, capturing output
+    .expect("Failed to execute command");
+  if output.status.success() {
+    // Convert stdout (standard output) from bytes to a String
+    let output = String::from_utf8_lossy(&output.stdout);
+    result.is_success = true;
+    result
+      .information
+      .push(format!("User preferences: {}", output));
+  } else {
+    result.is_success = false;
+    // If there was an error, capture the stderr output
+    let error = String::from_utf8_lossy(&output.stderr);
+    println!("User preferences Error: {}", error);
+  }
   result
 }
 
@@ -178,6 +214,8 @@ fn start_mail_client() {
   let status = child.wait().expect("Failed to wait on child process");
   if !status.success() {
     println!("Failed to start mail client");
+  } else {
+    println!("Mail client is started");
   }
 }
 
@@ -228,16 +266,13 @@ fn set_webview() {
     .status()
     .expect("Failed to execute first command");
 }
+
 fn start_zoom_client() {
-  let mut child = Command::new("open")
-    .arg("/Applications/zoom.us.app")
+  Command::new("open")
+    .arg("-a") //-a flag specifies the name of the application to open
+    .arg("/Applications/zoomdev.us.app")
     .spawn()
     .expect("Failed to execute command");
-
-  let status = child.wait().expect("Failed to wait on child process");
-  if !status.success() {
-    println!("Failed to start zoom client");
-  }
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -249,7 +284,8 @@ pub fn run() {
       close_zoom_client,
       run_from_installed,
       run_with_local_source,
-      run_with_local_source_bridge
+      run_with_local_source_bridge,
+      read_user_preferences
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");

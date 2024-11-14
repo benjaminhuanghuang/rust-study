@@ -37,6 +37,11 @@ const commands: Option[] = [
     command: "close_zoom_client",
     isUIOption: true,
   },
+  {
+    label: "Read user preferences",
+    command: "read_user_preferences",
+    isUIOption: true,
+  },
 ];
 
 function App() {
