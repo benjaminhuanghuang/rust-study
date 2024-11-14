@@ -33,7 +33,7 @@ struct CommandOutput {
 #[tauri::command]
 fn load_configuration() -> CommandOutput {
   let mut result = CommandOutput {
-    is_success: false,
+    is_success: true,
     information: vec![],
   };
   result
@@ -48,7 +48,7 @@ fn load_configuration() -> CommandOutput {
 #[tauri::command]
 fn run_from_installed() -> CommandOutput {
   let mut result = CommandOutput {
-    is_success: false,
+    is_success: true,
     information: vec![],
   };
   result
@@ -56,7 +56,7 @@ fn run_from_installed() -> CommandOutput {
     .push(format!("Run command: {}", "run_from_installed"));
 
   kill_application("zoomdev.us");
-  kill_npm_processes();
+  kill_node_processes();
   //start_mail_client();
   /*
    Tell Zoom client to load js code from the installed package
@@ -73,7 +73,7 @@ fn run_from_installed() -> CommandOutput {
 #[tauri::command]
 fn run_with_local_source() -> CommandOutput {
   let mut result = CommandOutput {
-    is_success: false,
+    is_success: true,
     information: vec![],
   };
   result
@@ -81,7 +81,7 @@ fn run_with_local_source() -> CommandOutput {
     .push(format!("Run command: {}", "run_with_local_source"));
 
   kill_application("zoomdev.us");
-  kill_npm_processes();
+  kill_node_processes();
 
   start_mail_client();
   /*
@@ -100,7 +100,7 @@ fn run_with_local_source() -> CommandOutput {
 #[tauri::command]
 fn run_with_local_source_bridge() -> CommandOutput {
   let mut result = CommandOutput {
-    is_success: false,
+    is_success: true,
     information: vec![],
   };
   result
@@ -108,7 +108,7 @@ fn run_with_local_source_bridge() -> CommandOutput {
     .push(format!("Run command: {}", "run_with_local_source_bridge"));
 
   kill_application("zoomdev.us");
-  kill_npm_processes();
+  kill_node_processes();
 
   start_zoom_bridge();
   /*
@@ -126,7 +126,7 @@ fn run_with_local_source_bridge() -> CommandOutput {
 #[tauri::command]
 fn get_user_preferences() -> CommandOutput {
   let mut result = CommandOutput {
-    is_success: false,
+    is_success: true,
     information: vec![],
   };
   result
@@ -153,7 +153,7 @@ fn get_user_preferences() -> CommandOutput {
 #[tauri::command]
 fn close_zoom_client() -> CommandOutput {
   let mut result = CommandOutput {
-    is_success: false,
+    is_success: true,
     information: vec![],
   };
 
@@ -194,10 +194,10 @@ fn kill_application(app_name: &str) -> bool {
   true
 }
 
-fn kill_npm_processes() {
+fn kill_node_processes() {
   Command::new("pkill")
     .arg("-f") // Match the full command line
-    .arg("npm") // Target the npm processes
+    .arg("node") // Target the npm processes
     .status()
     .expect("Failed to execute pkill");
 }
