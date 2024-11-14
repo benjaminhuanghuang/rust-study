@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::process::Command;
+use std::thread;
 use sysinfo::System;
-
 /*
   Configuration:
   path of zoombridge
@@ -61,7 +61,7 @@ fn run_from_installed() -> CommandOutput {
   /*
    Tell Zoom client to load js code from the installed package
   */
-  set_user_preferences("");
+  set_user_preferences("ZoomChat", "mail.localHtmlPath", "");
 
   start_zoom_client();
   result
@@ -82,12 +82,14 @@ fn run_with_local_source() -> CommandOutput {
 
   kill_application("zoomdev.us");
   kill_npm_processes();
+
   start_mail_client();
   /*
    modify user preferences to tell Zoom client to load local js code
   */
-  set_user_preferences("http://127.0.0.1:8080");
-  set_webview();
+  set_user_preferences("ZoomChat", "mail.localHtmlPath", "http://127.0.0.1:8080");
+  set_user_preferences("ZoomChat", "webview.context.menu", "true");
+
   start_zoom_client();
   result
 }
@@ -112,15 +114,17 @@ fn run_with_local_source_bridge() -> CommandOutput {
   /*
    modify user preferences to tell Zoom client to load local js code from the bridge
   */
-  set_user_preferences("http://localhost:3000");
+  set_user_preferences("ZoomChat", "mail.localHtmlPath", "http://localhost:3000");
   start_mail_client_with_bridge();
 
   start_zoom_client();
+
+  open_chrome("http://localhost:8080");
   result
 }
 
 #[tauri::command]
-fn read_user_preferences() -> CommandOutput {
+fn get_user_preferences() -> CommandOutput {
   let mut result = CommandOutput {
     is_success: false,
     information: vec![],
@@ -128,25 +132,20 @@ fn read_user_preferences() -> CommandOutput {
   result
     .information
     .push(format!("Run command: {}", "read_user_preferences"));
-  //defaults read ZoomChat mail.localHtmlPath
-  let output = Command::new("defaults")
-    .arg("read")
-    .arg("ZoomChat")
-    .arg("mail.localHtmlPath")
-    .output() // Executes the command, capturing output
-    .expect("Failed to execute command");
-  if output.status.success() {
-    // Convert stdout (standard output) from bytes to a String
-    let output = String::from_utf8_lossy(&output.stdout);
-    result.is_success = true;
-    result
-      .information
-      .push(format!("User preferences: {}", output));
-  } else {
-    result.is_success = false;
-    // If there was an error, capture the stderr output
-    let error = String::from_utf8_lossy(&output.stderr);
-    println!("User preferences Error: {}", error);
+
+  match read_user_preferences("ZoomChat", "mail.localHtmlPath") {
+    Some(value) => {
+      result.is_success = true;
+      result
+        .information
+        .push(format!("ZoomChat mail.localHtmlPath: {}", value));
+    }
+    None => {
+      result.is_success = false;
+      result
+        .information
+        .push("Failed to read user preferences".to_string());
+    }
   }
   result
 }
@@ -204,67 +203,89 @@ fn kill_npm_processes() {
 }
 
 fn start_mail_client() {
-  let mut child = Command::new("npm")
-    .arg("run")
-    .arg("serve:enable-proxy")
-    .current_dir("/Users/BenjaminHuang/workspace/client-email")
-    .spawn()
-    .expect("Failed to execute command");
+  thread::spawn(|| {
+    let result = Command::new("npm")
+      .arg("run")
+      .arg("serve")
+      .current_dir("/Users/BenjaminHuang/workspace/client-email")
+      .spawn();
 
-  let status = child.wait().expect("Failed to wait on child process");
-  if !status.success() {
-    println!("Failed to start mail client");
-  } else {
-    println!("Mail client is started");
-  }
+    match result {
+      Ok(mut child) => {
+        println!("Successfully started `npm run` in a new thread.");
+        let _ = child.wait(); // Wait for the child process to complete if needed
+      }
+      Err(e) => eprintln!("Failed to start `npm run`: {}", e),
+    }
+  });
 }
 
 fn start_mail_client_with_bridge() {
-  let mut child = Command::new("npm")
-    .arg("run")
-    .arg("serve:enable-proxy")
-    .current_dir("/Users/BenjaminHuang/workspace/client-email")
-    .spawn()
-    .expect("Failed to execute command");
+  thread::spawn(|| {
+    let result = Command::new("npm")
+      .arg("run")
+      .arg("serve:enable-proxy")
+      .current_dir("/Users/BenjaminHuang/workspace/client-email")
+      .spawn();
 
-  let status = child.wait().expect("Failed to wait on child process");
-  if !status.success() {
-    println!("Failed to start mail client");
-  }
+    match result {
+      Ok(mut child) => {
+        println!("Successfully started `npm run` in a new thread.");
+        let _ = child.wait(); // Wait for the child process to complete if needed
+      }
+      Err(e) => eprintln!("Failed to start `npm run`: {}", e),
+    }
+  });
 }
 /*
   Start zoom bridge
   node apps/commandline/bin/zoom-bridge.js start --port 3000
 */
 fn start_zoom_bridge() {
-  Command::new("node")
-    .arg("apps/commandline/bin/zoom-bridge.js")
-    .arg("start")
-    .arg("--port")
-    .arg("3000")
-    .current_dir("/Users/BenjaminHuang/workspace/zoombridge")
-    .spawn()
+  thread::spawn(|| {
+    let result = Command::new("node")
+      .arg("apps/commandline/bin/zoom-bridge.js")
+      .arg("start")
+      .arg("--port")
+      .arg("3000")
+      .current_dir("/Users/BenjaminHuang/workspace/zoombridge")
+      .spawn();
+
+    match result {
+      Ok(mut child) => {
+        println!("Successfully started `npm run` in a new thread.");
+        let _ = child.wait(); // Wait for the child process to complete if needed
+      }
+      Err(e) => eprintln!("Failed to start `npm run`: {}", e),
+    }
+  });
+}
+
+fn set_user_preferences(domain: &str, key: &str, value: &str) {
+  Command::new("defaults")
+    .arg("write")
+    .arg(domain)
+    .arg(key)
+    .arg(value)
+    .status()
+    .expect("Failed to execute first command");
+}
+
+fn read_user_preferences(domain: &str, key: &str) -> Option<String> {
+  //defaults read ZoomChat mail.localHtmlPath
+  let output = Command::new("defaults")
+    .arg("read")
+    .arg(domain)
+    .arg(key)
+    .output() // Executes the command, capturing output
     .expect("Failed to execute command");
-}
 
-fn set_user_preferences(url: &str) {
-  Command::new("defaults")
-    .arg("write")
-    .arg("ZoomChat")
-    .arg("mail.localHtmlPath")
-    .arg(url)
-    .status()
-    .expect("Failed to execute first command");
-}
-
-fn set_webview() {
-  Command::new("defaults")
-    .arg("write")
-    .arg("ZoomChat")
-    .arg("webview.context.menu")
-    .arg("true")
-    .status()
-    .expect("Failed to execute first command");
+  if output.status.success() {
+    // Convert stdout (standard output) from bytes to a String
+    Some(String::from_utf8_lossy(&output.stdout).to_string())
+  } else {
+    None
+  }
 }
 
 fn start_zoom_client() {
@@ -273,6 +294,32 @@ fn start_zoom_client() {
     .arg("/Applications/zoomdev.us.app")
     .spawn()
     .expect("Failed to execute command");
+}
+
+fn open_chrome(url: &str) {
+  let result = if cfg!(target_os = "macos") {
+    Command::new("open")
+      .arg("-a")
+      .arg("Google Chrome")
+      .arg(url)
+      .spawn()
+  } else if cfg!(target_os = "windows") {
+    Command::new("cmd")
+      .args(&["/C", "start", "chrome", url])
+      .spawn()
+  } else if cfg!(target_os = "linux") {
+    Command::new("google-chrome").arg(url).spawn()
+  } else {
+    Err(std::io::Error::new(
+      std::io::ErrorKind::Other,
+      "Unsupported platform",
+    ))
+  };
+
+  match result {
+    Ok(_) => println!("Opened Chrome with URL: {}", url),
+    Err(e) => eprintln!("Failed to open Chrome: {}", e),
+  }
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -285,7 +332,7 @@ pub fn run() {
       run_from_installed,
       run_with_local_source,
       run_with_local_source_bridge,
-      read_user_preferences
+      get_user_preferences
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");

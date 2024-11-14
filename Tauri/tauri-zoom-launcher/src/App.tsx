@@ -39,7 +39,7 @@ const commands: Option[] = [
   },
   {
     label: "Read user preferences",
-    command: "read_user_preferences",
+    command: "get_user_preferences",
     isUIOption: true,
   },
 ];
