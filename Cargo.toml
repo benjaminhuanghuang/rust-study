@@ -15,7 +15,7 @@ members = [
   "_Courses/Hands-On Data Structures and Algorithms in Rust-2020/02-Sorting/v1-sorting",
   "_Courses/Hands-On Data Structures and Algorithms in Rust-2020/03-LinkdedList/v1-ll",
   # "Tauri/tauri-zoom-launcher/src-tauri",
-  "Tauri/time-tracker/src-tauri",
+  "Tauri/time-tracker/src-tauri", "Projects/rust-vm",
 ]
 exclude = ["Tauri/tauri-zoom-launcher/src-tauri"]
 
