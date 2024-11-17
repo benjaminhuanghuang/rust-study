@@ -1,9 +1,10 @@
 # Boxes, Heaps, and Stacks - Tim McNamara - Rust Linz, September 2022
+
 Author of Rust in Action
 
 https://www.youtube.com/watch?v=DEE1GKMbtgw
 
-```
+```rs
   let n: Box<i32> = Box::new(123);
 ```
 Box is a `pointer` type for heap allocation for a owned value of type T. 
