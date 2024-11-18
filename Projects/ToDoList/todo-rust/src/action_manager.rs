@@ -1,4 +1,4 @@
-use crate::{display::DisplayManager, task_manager::TaskManager};
+use crate::{display::DisplayManager, task::Task, task_manager::TaskManager};
 use std::collections::HashMap;
 
 // automatically implement Debug trait, which allows using the {:?} format specifier
@@ -13,12 +13,12 @@ pub struct ActionArgs {
 type ActionHandler = fn(am: &mut ActionManager, args: ActionArgs, display: &dyn DisplayManager);
 
 pub struct ActionManager {
-  pub display_manager: Box<dyn DisplayManager>,
-  pub storage_manager: Box<dyn StorageManager>,
+  actions: HashMap<&'static str, ActionHandler>,
+  manager: TaskManager,
 }
 
 impl ActionManager {
-  pub fn new() -> ActionManager {
+  pub fn new() -> ActionManager { 
     ActionManager {
       actions: Self::actions_map(),
       manager: Self::load(),
@@ -44,7 +44,7 @@ impl ActionManager {
     let mut actions = HashMap::new();
 
     actions.insert("add", ActionManager::add);
-    actions.insert("display", ActionManager::display);
+    actions.insert("display", ActionManager::dis p  la y);
     actions.insert("remove", ActionManager::remove);
     actions.insert("update", ActionManager::update);
     actions.insert("complete", ActionManager::complete);
@@ -54,22 +54,18 @@ impl ActionManager {
   }
   fn load() -> TaskManager {
     let mut task_manager = TaskManager::new();
-    let mut tasks = Vec::new();
-
-    let file = std::fs::OpenOptions::new()
-      .write(false)
-      .read(true)
-      .create(true)
-      .open("tasks.json")
-      .unwrap();
-
-    match serde_json::from_reader(file) {
-      Ok(t) => tasks,
-      Err(e) => panic!("Error: {}", e),
+    match std::fs::OpenOptions::new().write(false).create(true).read(true).open("tasks.json") {
+      Ok(file) => {
+        let tasks: Vec<Task> = match serde_json::from_reader(file){
+          Ok(t) => t,
+          Err(e) => panic!("Error reading tasks: {}", e),
+        };
+        task_manager.set_tasks(tasks);
+        task_manager
+    
+      }
+      Err(_) => TaskManager::new(),
     }
-
-    task_manager.set_tasks(tasks);
-    task_manager
   }
 
   fn add(&mut self, args: ActionArgs, display: &dyn DisplayManager) -> bool {

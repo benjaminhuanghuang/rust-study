@@ -1,10 +1,11 @@
-use std::{collections::HashMap, process::Command};
+use std::collections::HashMap;
 
 use colored::Colorize;
 
 use crate::{
   action_manager::{ActionArgs, ActionManager},
   display::DisplayManager,
+  menu::{menu_logo, menu_show},
   reader::Reader,
 };
 
@@ -16,6 +17,8 @@ pub struct Prompt {
   action_manager: ActionManager,
   run: bool,
   modifications: bool,
+  logo: String,
+  menu: String,
 }
 
 enum Style {
@@ -34,6 +37,8 @@ impl Prompt {
       action_manager: ActionManager::new(),
       run: false,
       modifications: false,
+      logo: menu_logo(),
+      menu: menu_show(),
     }
   }
 
@@ -51,9 +56,15 @@ impl Prompt {
   }
 
   pub fn run(&mut self) {
-    self.run = true;
+    let logo = menu_logo();
+    let menu = menu_show();
+
     while self.run {
+      self.print(logo.as_str(), Style::Fancy);
+      self.print(menu.as_str(), Style::Default);
+
       self.show();
+
       let command = self.read_command();
       match self.process_command(command.as_str()) {
         Ok(_) => {}
@@ -96,10 +107,19 @@ impl Prompt {
     }
   }
 
-  fn wanna_process(&mut self, message: &str) -> bool {
-    self.print(message, Style::Fancy);
-    let command = self.read_command();
-    command == "y"
+  fn wanna_process(&mut self, message: &'static str) -> bool {
+    loop {
+      self.print(message, Style::Default);
+      let input = self.read();
+      match input.as_str() {
+        "yes" => return true,
+        "no" => {
+          self.print("Operation canceled", Style::Error);
+          return false;
+        }
+        _ => self.print("Invalid option", Style::Error),
+      }
+    }
   }
 
   fn get_args(&mut self) -> ActionArgs {
@@ -118,35 +138,110 @@ impl Prompt {
   }
 
   fn command_display(&mut self) {
-    self.action_manager.process("display");
+    let args = ActionArgs {
+      command: Some("display".to_owned()),
+      first: None,
+      second: None,
+      third: None,
+    };
+    self.action_manager.process(args, &*self.display);
   }
 
   fn command_remove(&mut self) {
-    self.action_manager.process("remove");
-    self.modifications = true;
+    match self.ask_id("Type the task id to remove or type 'exit' to cancel: ") {
+      Some(id) => {
+        let args = ActionArgs {
+          command: Some("remove".to_owned()),
+          first: Some(id),
+          second: None,
+          third: None,
+        };
+        if self.wanna_process("You are about to remove a task. Do you want to continue? (y/n)") {
+          if self.action_manager.process(args, &*self.display) {
+            self.modifications = true;
+            self.print("Task removed successfully", Style::Success);
+          } else {
+            self.print("Couldn't remove the task.", Style::Error);
+          }
+        }
+      }
+      None => (),
+    }
+  }
+
+  fn ask_id(&mut self, message: &'static str) -> Option<String> {
+    loop {
+      self.print(message, Style::Default);
+      let input = self.read();
+      match input.as_str() {
+        "exit" => {
+          self.print("Operation canceled", Style::Error);
+          return None;
+        }
+        _ => match input.parse::<u32>().is_ok() {
+          true => return Some(input),
+          false => self.print("Invalid id", Style::Error),
+        },
+      }
+      self.print("Invalid id", Style::Error);
+    }
   }
   fn command_update(&mut self) {
-    self.action_manager.process("update");
-    self.modifications = true;
+    match self.ask_id("Type the task id to update or type 'exit' to cancel: ") {
+      Some(id) => {
+        let args = self.get_args();
+        args.command = Some("update".to_owned());
+        args.third = Some(id);
+        if self.wanna_process("You are about to update a task. Do you want to continue? (y/n)") {
+          if self.action_manager.process(args, &*self.display) {
+            self.modifications = true;
+            self.print("Task updated successfully", Style::Success);
+          } else {
+            self.print("Couldn't update the task.", Style::Error);
+          }
+        }
+      }
+      None => (),
+    }
   }
   fn command_complete(&mut self) {
-    self.action_manager.process("complete");
-    self.modifications = true;
+    match self.ask_id("Type the task id to complete or type 'exit' to cancel: ") {
+      Some(id) => {
+        let args = self.get_args();
+        args.command = Some("complete".to_owned());
+        args.third = Some(id);
+        if self.wanna_process("You are about to complete a task. Do you want to continue? (y/n)") {
+          if self.action_manager.process(args, &*self.display) {
+            self.modifications = true;
+            self.print("Task complete successfully", Style::Success);
+          } else {
+            self.print("Couldn't complete the task.", Style::Error);
+          }
+        }
+      }
+      None => (),
+    }
   }
   fn command_save(&mut self) {
-    self.action_manager.process("save");
-    self.modifications = false;
+    if self.modifications
+      && self.wanna_process("You are about to save the tasks. Do you want to continue? (y/n)")
+    {
+      let args = ActionArgs {
+        command: Some("save".to_owned()),
+        first: None,
+        second: None,
+        third: None,
+      };
+      self.action_manager.process(args, &*self.display);
+      self.modifications = false;
+    }
   }
   fn command_exit(&mut self) {
-    if self.modifications {
-      self
-        .display
-        .show("You have unsaved modifications. Do you want to exit? (y/n)".to_string());
-      let command = self.read_command();
-      if command == "y" {
-        self.run = false;
-      }
-    } else {
+    if !self.modifications {
+      self.run = false;
+    } else if self
+      .wanna_process("You have unsaved modifications. Do you want to exit anyway? (y/n)")
+    {
       self.run = false;
     }
   }
