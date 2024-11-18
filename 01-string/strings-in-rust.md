@@ -10,11 +10,14 @@ In Rust, there are two primary string types:
   A &str is a borrowed string slice that points to a sequence of characters in memory. It is typically used when you want to reference part of a String or a string literal. It cannot be mutated because it's a reference to immutable data.
 
 ```rs
+// String::from("Hello") takes the string slice (&'static str), copies the data from the string literal
+// into a new heap-allocated memory block, and returns a String object that owns this data.
 let mut s = String::from("Hello");
 s.push_str(", world!"); // You can mutate the String by adding more data
 println!("{}", s); // Output: Hello, world!
 
-// string literal stored in the binary.
+// "Hello, world!" is a string literal of type &'static str
+// string literal stored in the binary as the program’s static data.
 let s: &str = "Hello, world!";
 println!("{}", s); // Output: Hello, world!
 ```
