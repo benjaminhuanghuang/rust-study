@@ -7,7 +7,7 @@ members = [
   "#Unsafe/unsafe-demo",
   "#Regex/regex_demo",
   "Projects/minesweeper",
-  "#Test/testlib",
+  "05-Test/testlib",
   "Projects/minesweeper_exercism",
   "Projects/minesweeper_gui",
   "System/dotenv_demo",
@@ -17,6 +17,9 @@ members = [
   # "Tauri/tauri-zoom-launcher/src-tauri",
   "Tauri/time-tracker/src-tauri", "Projects/rust-vm", "Projects/pwd_cracker", "Projects/ToDoList/todo-rust",
 ]
-exclude = ["Tauri/tauri-zoom-launcher/src-tauri"]
+exclude = [
+  "Tauri/tauri-zoom-launcher/src-tauri",
+  "Projects/ToDoList/todo-rust"
+]
 
 resolver = "2"

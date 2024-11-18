@@ -1,3 +1,7 @@
+use serde::{Deserialize, Serialize};
+use std::sync::Mutex;
+
+#[derive(Serialize, Deserialize)]
 pub struct Task {
   pub id: i32,
   pub name: String,
@@ -18,12 +22,12 @@ impl Task {
     &'static str represents a string slice with a 'static lifetime, meaning the string data exists for the entire duration of the program.
     Commonly used for error messages hardcoded in the source code.
   */
-  pub fn new(name: &str, description: &str) -> Result<Task, &'static str> {
+  pub fn new(name: &str, description: &str) -> Result<Self, &'static str> {
     let mut dynamic_id = ID_DYNAMIC.lock().unwrap();
     *dynamic_id += 1;
 
     if check_string(name) && check_string(description) {
-      OK(Task {
+      Ok(Self {
         id: *dynamic_id,
         name: name.to_owned(),
         description: description.to_owned(),
@@ -39,7 +43,7 @@ impl Task {
       self.name = name.to_owned();
       self.description = description.to_owned();
       self.done = false;
-      OK(())
+      Ok(())
     } else {
       Err("Cannot update a task with empty name or description")
     }
@@ -48,8 +52,18 @@ impl Task {
   pub fn set_done(&mut self, done: bool) {
     self.done = done;
   }
+
+  fn set_counter(max_id: i32) {
+    let mut dynamic_id = ID_DYNAMIC.lock().unwrap();
+    *dynamic_id += max_id;
+  }
 }
 
-fn check_string(field: &str) -> Result<bool, &'static str> {
+fn check_string(field: &str) -> bool {
   !field.trim().is_empty()
+}
+
+pub fn set_counter(value: u32) {
+  let mut dynamic_id = ID_DYNAMIC.lock().unwrap();
+  *dynamic_id = value as i32;
 }

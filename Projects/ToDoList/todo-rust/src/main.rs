@@ -1,3 +1,7 @@
+mod action_manager;
+mod display;
+mod prompt;
+mod reader;
 mod task;
 mod task_manager;
 
