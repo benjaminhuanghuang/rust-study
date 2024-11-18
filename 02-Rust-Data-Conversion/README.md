@@ -24,7 +24,12 @@ Limitations: Lossy conversions (e.g., casting f64 to u8 that results in truncati
   for lossless conversion
 
 ```rs
+use std::convert::From;
+
 let num: i32 = i32::from(42u8);
+
+let my_str = "hello";
+let my_string = String::from(my_str);
 ```
 
 - Into Trait

@@ -1,4 +1,4 @@
-```
+```rs
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Difficulty {
   level: u32,
