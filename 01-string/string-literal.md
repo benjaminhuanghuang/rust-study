@@ -12,9 +12,8 @@ String literals have a 'static lifetime, meaning they exist for the entire durat
 ```rs
 // The string "abc" is stored in the binary's read-only memory.
 // The variable s is a reference to this memory.
-let s = "abc"; // s is a &str
+let s1 = "abc"; // The full type signature is &'static str.
 
-let s1 = "abc";              // &str, stored in read-only memory
 // To make a string mutable or store it on the heap, convert it into a String.
 let s2 = String::from("abc");
 ```
