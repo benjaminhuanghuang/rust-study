@@ -1,6 +1,6 @@
 ## String to int
 
-```
+```rs
   fn parse_positive_int(val: &str) -> MyResult<usize> {
     match val.parse() {
       // If the parse succeeds and the parsed value n is greater than 0, return it as an Ok variant.
@@ -12,7 +12,7 @@
 
 ## convert &str to error
 
-```
+```rs
   Err(From::from(val))
 
   Err(val.into)

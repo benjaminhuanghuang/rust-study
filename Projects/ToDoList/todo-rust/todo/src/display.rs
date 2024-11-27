@@ -5,6 +5,6 @@
 
 This is often used for traits in scenarios where the implementing type must not contain borrowed references with shorter lifetimes, such as in multithreaded contexts or for global variables.
 */
-pub trait DisplayManager: 'static {
+pub trait DisplayMessage: 'static {
   fn show(&self, message: String);
 }
