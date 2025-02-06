@@ -6,8 +6,20 @@
       "request": "launch",
       "name": "(Windows)debug",
       "program": "${workspaceRoot}/xdiff-live-coding/xdiff/target/debug/xdiff.exe",
-      "args": ["run", "-p", "rust", "-c", "fixtures/test.yml", "-e", "a=100", "-e", "%c=3", "-e", "@m=3"],
-      "cwd": "${workspaceRoot}/xdiff-live-coding/xdiff/",
+      "args": [
+        "run",
+        "-p",
+        "rust",
+        "-c",
+        "fixtures/test.yml",
+        "-e",
+        "a=100",
+        "-e",
+        "%c=3",
+        "-e",
+        "@m=3"
+      ],
+      "cwd": "${workspaceRoot}/xdiff-live-coding/xdiff/"
     },
     {
       "type": "lldb",

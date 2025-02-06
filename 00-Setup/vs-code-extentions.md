@@ -6,8 +6,8 @@
 
 - Crates
 
-- Rust Test Lens 
+- Rust Test Lens
 - Rust Test Explorer
 
 - Rust-in-peace Extension Pack
-- 
+-
