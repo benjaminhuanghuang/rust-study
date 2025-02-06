@@ -6,6 +6,6 @@ https://github.com/pymongo/linux_commands_rewritten_in_rust
 
 Run
 
-```
+```sh
   cargo r -- filename
 ```
