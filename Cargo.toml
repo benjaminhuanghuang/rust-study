@@ -19,7 +19,8 @@ members = [
 ]
 exclude = [
   "Tauri/tauri-zoom-launcher/src-tauri",
-  "Projects/ToDoList/todo-rust"
+  "Projects/ToDoList/todo-rust",
+  "Projects/not-so-sql", 
 ]
 
 resolver = "2"
