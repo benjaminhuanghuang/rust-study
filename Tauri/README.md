@@ -1,3 +1,5 @@
+# Tauri
+
 ## Create app
 
 ```sh

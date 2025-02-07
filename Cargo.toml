@@ -18,7 +18,7 @@ members = [
   "Tauri/time-tracker/src-tauri", "Projects/rust-vm", "Projects/pwd_cracker", "Projects/ToDoList/todo-rust", "Statistics with Rust/my_statistics_project", "Projects/rust-lib-design/rat-rs",
 ]
 exclude = [
-  "Tauri/tauri-zoom-launcher/src-tauri",
+  "Tauri",
   "Projects/ToDoList/todo-rust",
   "Projects/not-so-sql", 
   "Projects",
