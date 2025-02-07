@@ -21,7 +21,8 @@ exclude = [
   "Tauri/tauri-zoom-launcher/src-tauri",
   "Projects/ToDoList/todo-rust",
   "Projects/not-so-sql", 
-  "Projects/tictactoe-cli"
+  "Projects/*",
+  "Bevy"
 ]
 
 resolver = "2"
