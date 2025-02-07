@@ -1,8 +1,10 @@
-# Learn to Code with Rust
+# Learn to Code with Rust (2025)
 
 Master the Rust programming language from A-Z. Includes projects, quizzes, and more. Beginners welcome!
 
 https://www.udemy.com/course/learn-to-code-with-rust
+
+https://www.bilibili.com/video/BV16DwPeGEZa/
 
 - Getting Started
 - Variables and Mutability
