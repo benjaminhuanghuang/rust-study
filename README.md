@@ -1,9 +1,11 @@
 # Rust Study
 
 ## Key features
+
 ### Cargo
 
 ### Variables and Data types
+
 - String
 - Collections
 - Traits
@@ -16,10 +18,10 @@
 
 ### Async
 
-
 ## Memory Safety
+
 - Use after free
 - Dangling pointers
-- Null pointer expections
+- Null pointer exceptions
 - Data races
 - Iterator invalidation

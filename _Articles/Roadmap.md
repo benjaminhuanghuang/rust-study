@@ -1,5 +1,6 @@
+# Rust Learning roadmap
 
-## Learning Rust becomes more practical when you work on real-world projects:
+## Learning Rust becomes more practical when you work on real-world projects
 
 Beginner Projects:
 CLI tools: Build a to-do app or calculator.
@@ -13,6 +14,7 @@ Build a game using Bevy.
 Develop a blockchain prototype.
 
 ## Contribute to Open Source
+
 Find beginner-friendly issues labeled "good first issue."
 
 Examples of projects:
