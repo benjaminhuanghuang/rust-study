@@ -4,8 +4,6 @@ By Barron Stone, 2022.3
 
 https://www.linkedin.com/learning/advanced-rust-managing-projects/manage-and-test-rust-projects
 
-
-
 - Modules
 - Path
 - Crate
@@ -38,11 +36,11 @@ Type of crates:
 - Binary crates
 - Library crates
 
-- Binary crates 
-Binary crates compile to produce an executable program
+- Binary crates
+  Binary crates compile to produce an executable program
 
-- Library crates 
-Library crates contain code for other programs to use
+- Library crates
+  Library crates contain code for other programs to use
 
 The code in libs can be accesse in whole crate
 
@@ -57,7 +55,7 @@ By default, all the variables and functions in a module are private, which means
 Used to build, test and share crates with Cargo.
 
 Contains one or more target crate.
-  
+
 - Up to one library crate
 - Zero or more binary crates
 
@@ -97,14 +95,12 @@ mod module_name {
 
 - Separate file
 
-
 - Privacy
-All items in a module (sub module and funcitons) are private by default
+  All items in a module (sub module and funcitons) are private by default
 
 Parent modules `can not` use private items in a child module
 
 Child modules `can` use item from parent modules
-
 
 When made public all enum variants are all public.
 
@@ -126,9 +122,10 @@ supper::hello::english::greet();
 
 Relatvie Path, starts from the current module. Can start from `self` or `super` or module name
 
-尽量使用 relative path，以免rename module影响很多代码
+尽量使用 relative path，以免 rename module 影响很多代码
 
-- Bring path into scope: `use` statment  
+- Bring path into scope: `use` statment
+
 ```
   use <a>::<b>
 ```

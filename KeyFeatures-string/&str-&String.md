@@ -2,7 +2,7 @@
 
 ## &str
 
-### What it is
+### What it is &str
 
 - A reference to a string slice, which is a view into a part of a string.
 - Typically used for static strings (e.g., "Hello") or substrings of a larger string.
@@ -25,7 +25,7 @@ print_str(greeting);
 
 ## &String
 
-### What it is
+### What it is &String
 
 - A reference to a String, which is an owned, growable string stored on the heap.
 - &String is simply a borrowed reference to a String type.
