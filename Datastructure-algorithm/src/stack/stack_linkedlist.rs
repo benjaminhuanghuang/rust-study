@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub struct StackNode<T> {
   elem: T,
   next: Option<Box<StackNode<T>>>,
@@ -14,7 +15,7 @@ impl<T> Stack<T> {
   }
 
   pub fn push(&mut self, elem: T) {
-    let new_node = Some(Box::new(Node {
+    let new_node = Some(Box::new(StackNode {
       elem,
       next: self.top.take(),
     }));
@@ -22,14 +23,14 @@ impl<T> Stack<T> {
   }
 
   pub fn pop(&mut self) -> Option<T> {
-    self.head.take().map(|node| {
-      self.head = node.next;
+    self.top.take().map(|node| {
+      self.top = node.next;
       node.elem
     })
   }
 
   pub fn peek(&mut self) -> Option<&T> {
-    self.head.as_ref().map(|node| &node.elem)
+    self.top.as_ref().map(|node| &node.elem)
   }
 }
 
