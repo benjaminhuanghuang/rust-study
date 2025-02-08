@@ -1,0 +1,8 @@
+[package]
+name = "rust-mongodb-basic"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+mongodb = "3.2.1"
+tokio = { version = "1.27.0", features = ["full"] }

@@ -1,5 +1,7 @@
 # Rust React Axum Mongodb
 
+A full stack rust + react application
+
 https://github.com/AkhilSharma90/Rust-React-Axum-Mongodb
 
 Backend
@@ -17,3 +19,4 @@ Frontend
 - tailwind
 - axios
 - react-query
+- react-hook-form + zod
