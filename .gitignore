@@ -4,3 +4,7 @@ target
 *.exe
 temp
 temp/
+yarn.lock
+package-lock.json
+dist
+node_modules

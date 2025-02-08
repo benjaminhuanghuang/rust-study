@@ -1,18 +1,20 @@
-
-
 ## Add dependencies
+
 ```
-cargo add clap@2 
+cargo add clap@2
 ```
-Cargo.toml 
+
+Cargo.toml
+
 ```
 [dependencies]
 clap = "2"
 ```
 
-Run 
-```
-cargo run -- picture 
+Run
 
-cargo run -- --help  
+```
+cargo run -- picture
+
+cargo run -- --help
 ```
