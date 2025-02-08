@@ -15,8 +15,6 @@ cargo test {test_function_name}
 cargo test {test_function_name_matcher}
 ```
 
-
-
 ## Expected panics
 
 ```rust

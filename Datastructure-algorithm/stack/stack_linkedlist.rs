@@ -1,23 +1,24 @@
-pub struct Node<T> {
+pub struct StackNode<T> {
   elem: T,
-  next: Option<Box<Node<T>>>,
+  next: Option<Box<StackNode<T>>>,
 }
 
+#[derive(Debug)]
 pub struct Stack<T> {
-  head: Option<Box<Node<T>>>,
+  top: Option<Box<StackNode<T>>>,
 }
 
 impl<T> Stack<T> {
   pub fn new() -> Stack<T> {
-    Stack { head: None }
+    Stack { top: None }
   }
 
   pub fn push(&mut self, elem: T) {
     let new_node = Some(Box::new(Node {
       elem,
-      next: self.head.take(),
+      next: self.top.take(),
     }));
-    self.head = new_node;
+    self.top = new_node;
   }
 
   pub fn pop(&mut self) -> Option<T> {

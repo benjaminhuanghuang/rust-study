@@ -1,10 +1,11 @@
 # Test the bin in the target/debug directory
-```
+
+```toml
 [dev-dependencies]
 assert_cmd = "1"
 ```
 
-```
+```rs
 use assert_cmd::Command;
 
 #[test]
