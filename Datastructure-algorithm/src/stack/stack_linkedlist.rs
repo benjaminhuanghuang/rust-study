@@ -32,6 +32,10 @@ impl<T> Stack<T> {
   pub fn peek(&mut self) -> Option<&T> {
     self.top.as_ref().map(|node| &node.elem)
   }
+
+  pub fn is_empty(&self) -> bool {
+    self.top.is_none()
+  }
 }
 
 #[cfg(test)]

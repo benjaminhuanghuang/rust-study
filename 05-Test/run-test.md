@@ -1,3 +1,17 @@
+# Run rust tests
+
+## Run test in specific file
+
+```sh
+cargo test my_test_file
+```
+
+run a specific test function within a file
+
+```sh
+cargo test my_test_file::test_stack_push
+```
+
 ## Run test in multi threads
 
 ```sh

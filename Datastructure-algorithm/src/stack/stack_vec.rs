@@ -1,36 +1,36 @@
 // Stack structure
-struct Stack<T> {
+pub struct Stack<T> {
   data: Vec<T>,
 }
 
 impl<T> Stack<T> {
   // Create a new stack
-  fn new() -> Self {
+  pub fn new() -> Self {
     Stack { data: Vec::new() }
   }
 
   // Function to add a value to the stack
-  fn push(&mut self, item: T) {
+  pub fn push(&mut self, item: T) {
     self.data.push(item);
   }
 
   // Function to remove a value from the stack
-  fn pop(&mut self) -> Option<T> {
+  pub fn pop(&mut self) -> Option<T> {
     self.data.pop()
   }
 
   // Check if the stack is empty
-  fn is_empty(&self) -> bool {
+  pub fn is_empty(&self) -> bool {
     self.data.is_empty()
   }
 
   // Return the size of the stack
-  fn size(&self) -> usize {
+  pub fn size(&self) -> usize {
     self.data.len()
   }
 
   // Function to get the value at the top
-  fn peek(&self) -> Option<&T> {
+  pub fn peek(&self) -> Option<&T> {
     self.data.last()
   }
 }
