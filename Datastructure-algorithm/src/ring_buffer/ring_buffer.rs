@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub struct RingBuffer<T> {
   storage: Vec<T>,
   head: usize,
