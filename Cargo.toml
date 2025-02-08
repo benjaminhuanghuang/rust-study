@@ -13,7 +13,7 @@ members = [
   "_Courses/Hands-On Data Structures and Algorithms in Rust-2020/02-Sorting/v1-sorting",
   "_Courses/Hands-On Data Structures and Algorithms in Rust-2020/03-LinkdedList/v1-ll",
   # "Tauri/tauri-zoom-launcher/src-tauri",
-  "Tauri/time-tracker/src-tauri", "Projects/rust-vm", "Projects/pwd_cracker", "Statistics with Rust/my_statistics_project", "Projects/rust-lib-design/rat-rs", "Rust-MongoDB/rust-mongodb-basic", "Rust-Firebase/rust-firebase-basic",
+  "Tauri/time-tracker/src-tauri", "Projects/rust-vm", "Projects/pwd_cracker", "Statistics with Rust/my_statistics_project", "Projects/rust-lib-design/rat-rs"
 ]
 exclude = [
   "Tauri",
@@ -22,7 +22,8 @@ exclude = [
   "Projects",
   "Bevy",
   "03-BestPractice-Project-structure",
-  "Datastructure-algorithm"
+  "Datastructure-algorithm",
+  "Rust-DB-Firebase/rust-firebase-basic"
 ]
 
 resolver = "2"
