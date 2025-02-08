@@ -1,5 +1,7 @@
 ## Generate alphabetic
+
 In order to be iterable, the range-type has to implement Step. char doesn't, so you wouldn't be able to use 'A'..'D' as an iterator.
+
 ```
    let alphabet: Vec<_> = (b'A' .. b'z' + 1) // Start as u8
         .map(|c| c as char)            // Convert all to chars
@@ -9,6 +11,7 @@ In order to be iterable, the range-type has to implement Step. char doesn't, so 
 ```
 
 ## Concatenating strings
+
 ```
 fn main() {
   by_moving();
@@ -20,7 +23,7 @@ fn main() {
   let hello = "hello ";
   let world = "world!";
   let hello_world = format!("{}{}", hello, world);
-  
+
   println!("{}", hello_world); // Prints "hello world!”
 
   // name your parameters!

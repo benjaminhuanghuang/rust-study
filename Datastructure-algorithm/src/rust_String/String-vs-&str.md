@@ -1,4 +1,3 @@
-
 # String vs str
 
 Sting owned the memory. Store string in a struct.
@@ -13,7 +12,7 @@ struct Employee {
 }
 ```
 
-&str borrowed the  string slice. Use &str when passing string to function
+&str borrowed the string slice. Use &str when passing string to function
 
 ```rust
 print_it("a string slice"); // borrowed
@@ -37,7 +36,6 @@ String is `UTF-8` coded, `可变长`的字符串. String 对字符串的内容�
 
 We can always create new, dynamic strings with them and mutate them. But we need to always allocate new memory to create them.
 
-
 String 实现了
 
 ```
@@ -54,6 +52,7 @@ The capacity tells us how long it can get before we need to reallocate.
 The pointer points to a contiguous char array on the heap of capacity length and size entries in it.
 
 ## What is &String
+
 The &String type is a reference to a String. It `isn’t` an owned type and its size is known at compile time because it’s only a pointer to an actual String.
 
 &String is that it can be Deref coerced to &str by the Rust compiler.
@@ -77,6 +76,7 @@ fn coerce_fail(data: &String) { // error - expected &String, but found &str
 ```
 
 ## &str
+
 &str consists of just a pointer into memory (as well as a size), its size is known at compile time.
 The memory can be on the heap, stack, or static directly from the program executable. It’s not an owned type, but rather a read-only reference to a string slice. Rust guarantees that while the &str is in scope, the underlying memory does not change, even across threads.
 &String can be coerced to &str, which makes &str a great candidate for function arguments, `if mutability and ownership are not required`.
