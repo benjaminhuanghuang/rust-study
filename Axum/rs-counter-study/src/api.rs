@@ -1,5 +1,9 @@
+/*
+module entry point for api/ submodules
+*/
 use axum::{http::StatusCode, response::IntoResponse, Body};
 
+pub mod counter;
 pub mod jwt;
 pub mod user;
 
