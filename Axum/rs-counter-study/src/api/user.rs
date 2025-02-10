@@ -49,7 +49,16 @@ pub async fn login(
     Err(e) => return Err(ApiError::from(e)),
   };
 
-  todo!()
+  let claims = Claims::new(user.id.to_string());
+  let token = encode(
+    &Header::default(),
+    &claims,
+    //The b prefix converts the "secret" string into a byte array (&[u8])., "secret".as_bytes()
+    &EncodingKey::from_secret(b"secret"),
+  )
+  .map_err(|_| ApiError::Auth(AuthError::TokenCreation))?;
+
+  Ok(Json(response = AuthBody::new(token)))
 }
 
 //

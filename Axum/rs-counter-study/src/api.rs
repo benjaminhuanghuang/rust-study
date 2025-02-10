@@ -4,6 +4,7 @@ pub mod jwt;
 pub mod user;
 
 pub enum ApiError {
+  Auth(AuthError),
   Internal(anyhow::Error),
 }
 /*
@@ -15,6 +16,12 @@ where
 {
   fn from(err: E) -> Self {
     ApiError::Internal(err.into()) //// Convert `E` into `anyhow::Error` and wrap it in `ApiError::Internal`
+  }
+}
+
+impl From<AuthError> for ApiError {
+  fn from(err: AuthError) -> Self {
+    ApiError::Auth(err)
   }
 }
 

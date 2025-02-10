@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use std::time::{Duration, SystemTime};
 
 pub struct Claims {
@@ -5,6 +6,7 @@ pub struct Claims {
   pub exp: usize,
 }
 
+#[derive(Serialize, Deserialize)]
 impl Claims {
   pub fn new(sub: String) -> Self {
     //let exp = System::now().add(Duration::days(1)).integer();
@@ -16,4 +18,11 @@ impl Claims {
 
     Claims { sub, exp }
   }
+}
+
+pub enum AuthError {
+  WrongCredentials,
+  MissingCredentials,
+  TokenCreation,
+  InvalidToken,
 }
