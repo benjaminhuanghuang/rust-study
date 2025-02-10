@@ -22,3 +22,11 @@ write migration script
 sqlx migrate run
 sqlx migrate revert
 ```
+
+## Counter
+
+```sh
+sqlx migrate add -r create_counters
+
+sqlx migrate run
+```
