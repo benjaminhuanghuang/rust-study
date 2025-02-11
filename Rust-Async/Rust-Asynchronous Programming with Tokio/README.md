@@ -16,3 +16,7 @@ CPU-bound tasks:
 I/O-Bound Tasks
 
 - The CPU spends time waiting for input and output operations to complete
+
+## Tokio Task
+
+A lightweight, non-blocking unit of execution
