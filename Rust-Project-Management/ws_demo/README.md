@@ -1,4 +1,5 @@
 # Rust: Starting a Workspace
+
 https://www.youtube.com/watch?v=QZKWEEO-Uoo
 
 1. Create workspace
@@ -15,8 +16,8 @@ touch Cargo.toml
 cargo new core-1 --lib
 ```
 
-
 Run the main package
+
 ```sh
 cargo run -p core_3
 ```
