@@ -1,5 +1,9 @@
 # Ch 1
 
+## What is asynchronous programming
+
+## When to use asynchronous programming
+
 CPU-bound tasks:
 
 - The computer must constantly work at them to make progress.
@@ -11,6 +15,8 @@ I/O-Bound Tasks
 - The CPU spends time waiting for input and output operations to complete
 
 Asynchronous can speed up I/O-Bound Tasks.
+
+## How do the sync and await methods work in Rust
 
 async: Denotes that the code following is asynchronous
 await Method Call: Used on asynchronous functions; waits for the function state to change from pending to done

@@ -1,4 +1,6 @@
-# Ch 2
+# Ch 2 The Basics
+
+## Tokio's asynchronous runtime
 
 ```rs
 #[tokio: :main]
@@ -16,6 +18,7 @@ async fn main() {
   println! ("{}", value);
 }
 
+//-----Equals to
 
 fn main() {
   tokio::runtime::Builder: :new_multi_thread()  // create the runtime
@@ -29,7 +32,16 @@ fn main() {
 The code from your main function is copied, pasted, and run somewhere.
 Therefore, the original main function is never called.
 
-Unit Test
+## How to spawn a task
+
+```rs
+  let blocking_code_handle = tokio::task::spawn_blocking(blocking_call);
+
+```
+
+## How to spawn a asynchronous task
+
+## Unit Test
 
 ```rs
 #[tokio::test]

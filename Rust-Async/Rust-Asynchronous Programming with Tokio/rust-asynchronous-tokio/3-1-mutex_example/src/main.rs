@@ -19,6 +19,7 @@ async fn person(remote_arc: Arc<Mutex<i32>>, name: String, new_channel: i32) {
 async fn main() {
     let tv_channel = 10;
     let remote = Mutex::new(tv_channel);
+    // Arc (Atomic Reference Counting) is used to allow multiple tasks to share access to the same Mutex<tv_channel>.
     let remote_arc = Arc::new(remote);
 
     let mut task_handles = Vec::new();

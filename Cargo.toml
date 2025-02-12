@@ -23,7 +23,7 @@ exclude = [
   "Bevy",
   "03-BestPractice-Project-structure",
   "Datastructure-algorithm",
-  "Rust-DB-Firebase/rust-firebase-basic"
+  "Rust-DB-Firebase/rust-firebase-basic","Rust-Async"
 ]
 
 resolver = "2"
