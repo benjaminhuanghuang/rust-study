@@ -2,7 +2,7 @@
 
 https://medium.com/codex/rust-modules-and-project-structure-832404a33e2e#:~:text=Modules%20%E2%80%94%20Folders,modules)%20with%20one%20key%20difference.&text=When%20trying%20to%20import%20a,Our%20application%20is%20building%20again.&text=If%20this%20looks%20a%20little,is%20however%2C%20a%20better%20way.
 
-hen you import a module with the mod statement, Rust automatically creates a module namespace for it (to avoid conflicts) and thus we cannot access our struct type directly.
+When you import a module with the mod statement, Rust automatically creates a module namespace for it (to avoid conflicts) and thus we cannot access our struct type directly.
 
 In order to access the root of that module tree, you can always use the crate:: prefix.
 
