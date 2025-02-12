@@ -17,10 +17,19 @@ To manipulate an item protected by a Mutex, you must request access
 
 ## What is a semaphore?
 
+An asynchronous primitive that limits access to a resource
+
 ## What is notify?
+
+Acts as both a transmitter and a receiver
+Create thread-safe clones of your notify instance
+Pass the clone to all functions that need them
 
 ## What is a barrier?
 
 Waits for all wanted threads to arrive before allowing any single thread to make progress
+
+An asynchronous primitive that ensures a certain number of tasks reach a rendezvous point before
+they can proceed with their execution
 
 ## What is RwLock?

@@ -23,6 +23,8 @@ async fn main() {
     let remote_arc = Arc::new(remote);
 
     let mut task_handles = Vec::new();
+
+    // All three people try to change the TV channel simultaneously!
     for (name, new_channel) in [("Marcus", 11), ("Jovanna", 32), ("Carmen", 43)] {
         task_handles.push(tokio::spawn(person(
             remote_arc.clone(),
