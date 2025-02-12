@@ -1,12 +1,11 @@
-
-
-
 ```
 async fun foo() -> usize {
 
 }
 ```
-turns to 
+
+turns to
+
 ```
 fu foo() ->impl Future<Output=usize> {
   async {
