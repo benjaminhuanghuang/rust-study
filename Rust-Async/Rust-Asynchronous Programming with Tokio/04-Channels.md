@@ -2,6 +2,8 @@
 
 ## What is Channel
 
+Pass data from one thread to another
+
 ## Oneshot Channel
 
 ## Mpsc Channel
