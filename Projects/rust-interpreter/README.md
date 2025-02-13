@@ -4,6 +4,10 @@ by Lorich Wrichnon
 
 Writing an interpreter in go - by Thorsten Ball
 
+https://www.udemy.com/course/develop-an-interpreter-using-rust-programming/
+
+https://www.bilibili.com/video/BV1Bp421Q7JN
+
 ## Table of contents
 
 - Interpreter 101
