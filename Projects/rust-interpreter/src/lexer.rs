@@ -68,7 +68,7 @@ mod tests {
 
   #[test]
   fn test_next_token() {
-    let input = "=+(){}.;";
+    let input = "=+(){},;";
 
     let expected = vec![
       Token {
@@ -96,6 +96,10 @@ mod tests {
         literal: "}".to_string(),
       },
       Token {
+        kind: TokenKind::Comma,
+        literal: ",".to_string(),
+      },
+      Token {
         kind: TokenKind::Semicolon,
         literal: ";".to_string(),
       },
@@ -112,12 +116,12 @@ mod tests {
 
       assert_eq!(
         tok.kind, exp_token.kind,
-        "tests[{idx}] - token type wrong. expected={}, got={}",
+        "tests[{idx}] - token type wrong. expected {}, got {}",
         exp_token.kind, tok.kind
       );
       assert_eq!(
         tok.literal, exp_token.literal,
-        "tests[{idx}] - token literal wrong. expected={}, got={}",
+        "tests[{idx}] - token literal wrong. expected {}, got {}",
         exp_token.literal, tok.literal
       );
     }

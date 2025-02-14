@@ -2,19 +2,17 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Debug unit tests'",
       "type": "lldb",
       "request": "launch",
-      "name": "Debug unit tests'",
-      "program": "${workspaceRoot}/Projects/rust-interpreter",
-      "cargo": {
-        "args": ["test", "--no-run", "--lib", "--package=rust-interpreter"],
-        "filter": {
-          "name": "rust-interpreter",
-          "kind": "lib"
-        }
-      },
+      "program": "${workspaceFolder}/Projects/rust-interpreter/target/debug/rust-interpreter",
       "args": [],
-      "cwd": "${workspaceFolder}"
+      "cwd": "${workspaceFolder}/Projects/rust-interpreter",
+      "console": "integratedTerminal",
+      "sourceLanguages": ["rust"],
+      "env": {
+        "RUST_BACKTRACE": "1"
+      }
     },
     {
       "type": "cppvsdbg",

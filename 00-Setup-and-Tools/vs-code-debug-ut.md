@@ -1,5 +1,18 @@
 # Debugging Rust UT with VS Code
 
+## Add project to workspace
+
+```toml
+[workspace]
+members = [
+  "Projects/rust-interpreter"
+]
+```
+
+Then you can set "Run Test | Debug" in on the top of the test function
+
+## Setup launch.json
+
 https://dev.to/rogertorres/debugging-rust-with-vs-code-11dj
 
 ```json
