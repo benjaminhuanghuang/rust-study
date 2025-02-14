@@ -25,5 +25,13 @@ read_identifier
 ## Support identity
 
 ```rs
+is_letter
+skip_whitespace
+read_identifier
+```
+
+## Support number
+
+```rs
 read_number
 ```

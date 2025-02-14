@@ -43,6 +43,12 @@ impl Lexer {
       '}' => Lexer::new_token(TokenKind::Rbrace, self.ch),
       ',' => Lexer::new_token(TokenKind::Comma, self.ch),
       '+' => Lexer::new_token(TokenKind::Plus, self.ch),
+      '-' => Lexer::new_token(TokenKind::Minus, self.ch),
+      '!' => Lexer::new_token(TokenKind::Bang, self.ch),
+      '*' => Lexer::new_token(TokenKind::Asterisk, self.ch),
+      '/' => Lexer::new_token(TokenKind::Slash, self.ch),
+      '<' => Lexer::new_token(TokenKind::Lt, self.ch),
+      '>' => Lexer::new_token(TokenKind::Gt, self.ch),
       '\0' => Token {
         kind: TokenKind::Eof,
         literal: "".to_string(),
@@ -186,6 +192,8 @@ mod tests {
         x + y;
       };  
       let result = add(five, ten);  
+      !-/*5;
+      5 < 10 > 5;
     "#;
 
     let expected = vec![
@@ -336,6 +344,56 @@ mod tests {
       Token {
         kind: TokenKind::Rparen,
         literal: ")".to_string(),
+      },
+      Token {
+        kind: TokenKind::Semicolon,
+        literal: ";".to_string(),
+      },
+      // !-/*5;
+      Token {
+        kind: TokenKind::Bang,
+        literal: "!".to_string(),
+      },
+      Token {
+        kind: TokenKind::Minus,
+        literal: "-".to_string(),
+      },
+      Token {
+        kind: TokenKind::Slash,
+        literal: "/".to_string(),
+      },
+      Token {
+        kind: TokenKind::Asterisk,
+        literal: "*".to_string(),
+      },
+      Token {
+        kind: TokenKind::Int,
+        literal: "5".to_string(),
+      },
+      Token {
+        kind: TokenKind::Semicolon,
+        literal: ";".to_string(),
+      },
+      // 5 < 10 > 5;
+      Token {
+        kind: TokenKind::Int,
+        literal: "5".to_string(),
+      },
+      Token {
+        kind: TokenKind::Lt,
+        literal: "<".to_string(),
+      },
+      Token {
+        kind: TokenKind::Int,
+        literal: "10".to_string(),
+      },
+      Token {
+        kind: TokenKind::Gt,
+        literal: ">".to_string(),
+      },
+      Token {
+        kind: TokenKind::Int,
+        literal: "5".to_string(),
       },
       Token {
         kind: TokenKind::Semicolon,
