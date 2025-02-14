@@ -45,3 +45,5 @@ read_number
 ```rs
 peek_char
 ```
+
+## Support REPL
