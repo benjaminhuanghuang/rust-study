@@ -39,3 +39,9 @@ read_number
 ## Support special / ! < > \*
 
 ## Support if else true false return
+
+## Support != ==
+
+```rs
+peek_char
+```
