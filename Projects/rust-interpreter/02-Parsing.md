@@ -2,11 +2,14 @@
 
 ## Parsing Strategies
 
-- top-down
-  - Recursive Descent
-    - Early parsing
-    - Predictive Parsing
-  - Pratt Parser
+- Top-down: Create the root node first, then create the child
 
-https://www.bilibili.com/video/BV1uz421S7rv?spm_id_from=333.788.player.switch&vd_source=b7025abbc1efd8b7631e43fa506ade3a&p=24
-24
+  - Recursive Descent / Pratt Parser
+  - Early parsing
+  - Predictive Parsing
+
+- Bottom-up
+
+## Parse let statement
+
+create ast.rs

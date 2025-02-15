@@ -1,4 +1,5 @@
 use core::str;
+use std::os::macos::raw::stat;
 
 use crate::token;
 
@@ -8,36 +9,37 @@ trait Node {
 }
 
 enum StatementNode {
-  Let,
+  Let(LetStatement),
 }
 impl Node for StatementNode {
   fn token_literal(&self) -> String {
-    match self {
-      StatementNode::Let => "let".to_string(),
-    }
+    return match self {
+      Self::Let(let_statement) => let_statement.token_literal(),
+    };
   }
 
   fn print_string(&self) -> String {
-    match self {
-      StatementNode::Let => "let".to_string(),
-    }
+    return match self {
+      Self::Let(let_statement) => let_statement.print_string(),
+    };
   }
 }
+
 enum ExpressionNode {
-  Identifier,
+  IdentifierNode(Identifier),
 }
 
 impl Node for ExpressionNode {
   fn token_literal(&self) -> String {
-    match self {
-      ExpressionNode::Identifier => "identifier".to_string(),
-    }
+    return match self {
+      Self::IdentifierNode(identifier) => identifier.token_literal(),
+    };
   }
 
   fn print_string(&self) -> String {
-    match self {
-      ExpressionNode::Identifier => "identifier".to_string(),
-    }
+    return match self {
+      Self::IdentifierNode(identifier) => identifier.print_string(),
+    };
   }
 }
 
@@ -47,17 +49,19 @@ struct Program {
 
 impl Node for Program {
   fn token_literal(&self) -> String {
-    if self.statements.len() > 0 {
-      self.statements[0].token_literal()
+    return if self.statements.len() > 0 {
+      match &self.statements[0] {
+        StatementNode::Let(let_statement) => let_statement.token_literal(),
+      }
     } else {
-      "".to_string()
-    }
+      String::from("")
+    };
   }
 
   fn print_string(&self) -> String {
     let mut out = String::new();
 
-    for statement in self.statements.iter() {
+    for statement in self.statements.as_slice() {
       out.push_str(statement.print_string().as_str());
     }
 
@@ -68,7 +72,7 @@ impl Node for Program {
 struct LetStatement {
   token: token::Token,
   name: Identifier,
-  value: Option<Expression>,
+  value: Option<ExpressionNode>,
 }
 
 impl Node for LetStatement {
@@ -81,7 +85,7 @@ impl Node for LetStatement {
 
     out.push_str(self.token_literal().as_str());
     out.push_str(" ");
-    out.push_str(self.name.value.as_str());
+    out.push_str(self.name.print_string().as_str());
     out.push_str(" = ");
 
     if let Some(value) = &self.value {
@@ -93,9 +97,20 @@ impl Node for LetStatement {
     out
   }
 }
+
 struct Identifier {
   token: token::Token,
   value: String,
+}
+
+impl Node for Identifier {
+  fn token_literal(&self) -> String {
+    self.token.literal.clone()
+  }
+
+  fn print_string(&self) -> String {
+    self.value.clone()
+  }
 }
 
 struct Expression {
