@@ -21,3 +21,11 @@ parse_statement
 
 parse_return_statement
 ```
+
+## Parsing an expression
+
+```rust
+ExpressionStatement
+
+parse_return_statement
+```
