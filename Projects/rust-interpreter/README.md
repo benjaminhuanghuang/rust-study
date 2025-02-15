@@ -7,6 +7,7 @@ Writing an interpreter in go - by Thorsten Ball
 https://www.udemy.com/course/develop-an-interpreter-using-rust-programming/
 
 https://www.bilibili.com/video/BV1uz421S7rv
+https://www.bilibili.com/video/BV13i421k7HS
 
 ## Table of contents
 

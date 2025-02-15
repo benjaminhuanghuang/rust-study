@@ -1,13 +1,26 @@
 use std::collections::HashMap;
 
 use crate::{
-  ast::{ExpressionNode, Identifier, LetStatement, Program, ReturnStatement, StatementNode},
+  ast::{
+    ExpressionNode, ExpressionStatement, Identifier, IntegerLiteral, LetStatement, Program,
+    ReturnStatement, StatementNode,
+  },
   lexer::Lexer,
   token::{Token, TokenKind},
 };
 
 type PrefixParseFn = fn(&mut Parser) -> Option<ExpressionNode>;
 type InfixParseFn = fn(&mut Parser, ExpressionNode) -> Option<ExpressionNode>;
+
+enum PrecedenceLevel {
+  Lowest = 0,
+  Equals = 1,      // ==
+  LessGreater = 2, // > or <
+  Sum = 3,         // +
+  Product = 4,     // *
+  Prefix = 5,      // -X or !X
+  Call = 6,
+}
 
 pub struct Parser {
   lexer: Lexer,
@@ -29,10 +42,39 @@ impl Parser {
       infix_parse_fns: HashMap::new(),
     };
 
+    parser.register_prefix(TokenKind::Ident, Self::parse_identifier);
+    parser.register_prefix(TokenKind::Int, Self::parse_integer_literal);
+
     parser.next_token();
     parser.next_token();
 
     parser
+  }
+
+  fn parse_identifier(&mut self) -> Option<ExpressionNode> {
+    Some(ExpressionNode::IdentifierNode(Identifier {
+      token: self.cur_token.clone(),
+      value: self.cur_token.literal.clone(),
+    }))
+  }
+
+  fn parse_integer_literal(&mut self) -> Option<ExpressionNode> {
+    let mut literal = IntegerLiteral {
+      token: self.cur_token.clone(),
+      value: Default::default(),
+    };
+
+    return match self.cur_token.literal.parse::<i64>() {
+      Ok(value) => {
+        literal.value = value;
+        Some(ExpressionNode::Integer(literal))
+      }
+      Err(_) => {
+        let msg = format!("could not parse {} as integer", self.cur_token.literal);
+        self.errors.push(msg);
+        None
+      }
+    };
   }
 
   fn next_token(&mut self) {
@@ -55,7 +97,7 @@ impl Parser {
     match self.cur_token.kind {
       TokenKind::Let => self.parse_let_statement(),
       TokenKind::Return => self.parse_return_statement(),
-      _ => None,
+      _ => self.parse_expression_statement(),
     }
   }
 
@@ -94,6 +136,30 @@ impl Parser {
       self.next_token();
     }
     Some(StatementNode::Return(statement))
+  }
+
+  fn parse_expression_statement(&mut self) -> Option<StatementNode> {
+    let statement = ExpressionStatement {
+      token: self.cur_token.clone(),
+      expression: self.parse_expression(PrecedenceLevel::Lowest),
+    };
+
+    // 5 + 5, 5 * 5;
+    if self.peek_token_is(TokenKind::Semicolon) {
+      self.next_token();
+    }
+    Some(StatementNode::Expression(statement))
+  }
+
+  fn parse_expression(&mut self, precedence_level: PrecedenceLevel) -> Option<ExpressionNode> {
+    let prefix = self.prefix_parse_fns.get(&self.cur_token.kind);
+
+    if let Some(prefix_fn) = prefix {
+      let left_exp = prefix_fn(self);
+      return left_exp;
+    }
+
+    None
   }
 
   fn expect_peek(&mut self, kind: TokenKind) -> bool {
@@ -241,12 +307,53 @@ mod tests {
             assert_eq!(
               identifier.token_literal(),
               "foobar",
-              "identifier.token_literal not {}. got {}",
+              "identifier.token_literal not `{}`. got {}",
               "foobar",
               identifier.token_literal()
             );
           }
           other => panic!("expression not Identifier. got {:?}", other),
+        }
+      }
+      other => panic!("statement not ExpressionStatement. got {:?}", other),
+    }
+  }
+
+  #[test]
+  fn test_integer_expression() {
+    let input = "5;";
+
+    let lexer = Lexer::new(input);
+    let mut parser = Parser::new(lexer);
+    let program = parser.parse_program().unwrap();
+    check_parser_errors(&parser);
+
+    assert_eq!(
+      program.statements.len(),
+      1,
+      "program has not enough statements. got {}",
+      program.statements.len()
+    );
+
+    match &program.statements[0] {
+      StatementNode::Expression(expression_statement) => {
+        assert!(expression_statement.expression.is_some());
+        match expression_statement.expression.as_ref().unwrap() {
+          ExpressionNode::Integer(integer) => {
+            assert_eq!(
+              integer.value, 5,
+              "integer.value not {}. got {}",
+              5, integer.value
+            );
+            assert_eq!(
+              integer.token_literal(),
+              "5",
+              "integer.token_literal not `{}`. got {}",
+              "5",
+              integer.token_literal()
+            );
+          }
+          other => panic!("expression not Integer. got {:?}", other),
         }
       }
       other => panic!("statement not ExpressionStatement. got {:?}", other),

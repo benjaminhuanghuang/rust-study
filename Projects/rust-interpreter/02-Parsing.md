@@ -26,6 +26,7 @@ parse_return_statement
 
 ```rust
 ExpressionStatement
+parse_expression_statement
 ```
 
 ## Prefix and infix function
@@ -36,4 +37,14 @@ type InfixParseFn = fn(&mut Parser, ExpressionNode) -> Option<ExpressionNode>;
 
 fn register_prefix()
 fn register_infix()
+```
+
+## Parse int
+
+```rust
+IntegerLiteral
+
+test_integer_expression
+
+parse_integer_literal
 ```
