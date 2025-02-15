@@ -360,6 +360,25 @@ mod tests {
     }
   }
 
+  #[test]
+  fn test_parsing_prefix_expression() {
+    let prefix_tests = vec![("!5;", "!", 5), ("-15;", "-", 15)];
+
+    for test in prefix_tests {
+      let lexer = Lexer::new(test.0);
+      let mut parser = Parser::new(lexer);
+      let program = parser.parse_program().unwrap();
+      check_parser_errors(&parser);
+
+      assert_eq!(
+        program.statements.len(),
+        1,
+        "program has not enough statements. got {}",
+        program.statements.len()
+      );
+    }
+  }
+
   fn test_let_statement(statement: &StatementNode, expected: &str) {
     assert_eq!(
       statement.token_literal(),

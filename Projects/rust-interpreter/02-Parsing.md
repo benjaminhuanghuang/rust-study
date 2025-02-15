@@ -48,3 +48,9 @@ test_integer_expression
 
 parse_integer_literal
 ```
+
+## Parse prefix expression
+
+```rust
+
+```
