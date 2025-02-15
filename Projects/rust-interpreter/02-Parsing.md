@@ -15,3 +15,9 @@
 create ast.rs
 
 ## Return statement
+
+```rust
+parse_statement
+
+parse_return_statement
+```

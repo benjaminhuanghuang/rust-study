@@ -1,4 +1,4 @@
-use crate::token;
+use crate::token::Token;
 
 pub trait Node {
   fn token_literal(&self) -> String;
@@ -8,17 +8,21 @@ pub trait Node {
 #[derive(Debug)]
 pub enum StatementNode {
   Let(LetStatement),
+  Return(ReturnStatement),
 }
+
 impl Node for StatementNode {
   fn token_literal(&self) -> String {
     return match self {
       Self::Let(let_statement) => let_statement.token_literal(),
+      Self::Return(return_statement) => return_statement.token_literal(),
     };
   }
 
   fn print_string(&self) -> String {
     return match self {
       Self::Let(let_statement) => let_statement.print_string(),
+      Self::Return(return_statement) => return_statement.print_string(),
     };
   }
 }
@@ -51,6 +55,7 @@ impl Node for Program {
     return if self.statements.len() > 0 {
       match &self.statements[0] {
         StatementNode::Let(let_statement) => let_statement.token_literal(),
+        StatementNode::Return(return_statement) => return_statement.token_literal(),
       }
     } else {
       String::from("")
@@ -70,7 +75,7 @@ impl Node for Program {
 
 #[derive(Debug)]
 pub struct LetStatement {
-  pub token: token::Token,
+  pub token: Token,
   pub name: Identifier,
   pub value: Option<ExpressionNode>,
 }
@@ -100,7 +105,7 @@ impl Node for LetStatement {
 
 #[derive(Debug, Default)]
 pub struct Identifier {
-  pub token: token::Token,
+  pub token: Token,
   pub value: String,
 }
 
@@ -114,7 +119,29 @@ impl Node for Identifier {
   }
 }
 
-pub struct Expression {
-  token: token::Token,
-  value: ExpressionNode,
+#[derive(Debug)]
+pub struct ReturnStatement {
+  pub token: Token,
+  pub return_value: Option<ExpressionNode>,
+}
+
+impl Node for ReturnStatement {
+  fn token_literal(&self) -> String {
+    self.token.literal.clone()
+  }
+
+  fn print_string(&self) -> String {
+    let mut out = String::new();
+
+    out.push_str(self.token_literal().as_str());
+    out.push_str(" ");
+
+    if let Some(return_value) = &self.return_value {
+      out.push_str(return_value.print_string().as_str());
+    }
+
+    out.push_str(";");
+
+    out
+  }
 }
