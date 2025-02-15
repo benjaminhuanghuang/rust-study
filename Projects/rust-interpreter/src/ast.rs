@@ -9,7 +9,7 @@ pub trait Node {
 pub enum StatementNode {
   Let(LetStatement),
   Return(ReturnStatement),
-  ExpressionNode(ExpressionStatement),
+  Expression(ExpressionStatement),
 }
 
 impl Node for StatementNode {
@@ -17,7 +17,7 @@ impl Node for StatementNode {
     return match self {
       Self::Let(let_statement) => let_statement.token_literal(),
       Self::Return(return_statement) => return_statement.token_literal(),
-      Self::ExpressionNode(expression_statement) => expression_statement.token_literal(),
+      Self::Expression(expression_statement) => expression_statement.token_literal(),
     };
   }
 
@@ -25,7 +25,7 @@ impl Node for StatementNode {
     return match self {
       Self::Let(let_statement) => let_statement.print_string(),
       Self::Return(return_statement) => return_statement.print_string(),
-      Self::ExpressionNode(expression_statement) => expression_statement.print_string(),
+      Self::Expression(expression_statement) => expression_statement.print_string(),
     };
   }
 }
@@ -59,7 +59,7 @@ impl Node for Program {
       match &self.statements[0] {
         StatementNode::Let(let_statement) => let_statement.token_literal(),
         StatementNode::Return(return_statement) => return_statement.token_literal(),
-        StatementNode::ExpressionNode(expression_statement) => expression_statement.token_literal(),
+        StatementNode::Expression(expression_statement) => expression_statement.token_literal(),
       }
     } else {
       String::from("")

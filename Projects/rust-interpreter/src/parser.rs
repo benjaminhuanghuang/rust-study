@@ -1,14 +1,21 @@
+use std::collections::HashMap;
+
 use crate::{
-  ast::{Identifier, LetStatement, Program, ReturnStatement, StatementNode},
+  ast::{ExpressionNode, Identifier, LetStatement, Program, ReturnStatement, StatementNode},
   lexer::Lexer,
   token::{Token, TokenKind},
 };
+
+type PrefixParseFn = fn(&mut Parser) -> Option<ExpressionNode>;
+type InfixParseFn = fn(&mut Parser, ExpressionNode) -> Option<ExpressionNode>;
 
 pub struct Parser {
   lexer: Lexer,
   cur_token: Token,
   peek_token: Token,
   errors: Vec<String>,
+  prefix_parse_fns: HashMap<TokenKind, PrefixParseFn>,
+  infix_parse_fns: HashMap<TokenKind, InfixParseFn>,
 }
 
 impl Parser {
@@ -18,6 +25,8 @@ impl Parser {
       cur_token: Default::default(),
       peek_token: Default::default(),
       errors: vec![],
+      prefix_parse_fns: HashMap::new(),
+      infix_parse_fns: HashMap::new(),
     };
 
     parser.next_token();
@@ -114,6 +123,14 @@ impl Parser {
     );
     self.errors.push(msg);
   }
+
+  fn register_prefix(&mut self, kind: TokenKind, func: PrefixParseFn) {
+    self.prefix_parse_fns.insert(kind, func);
+  }
+
+  fn register_infix(&mut self, kind: TokenKind, func: InfixParseFn) {
+    self.infix_parse_fns.insert(kind, func);
+  }
 }
 
 #[cfg(test)]
@@ -121,7 +138,7 @@ mod tests {
 
   use super::Parser;
   use crate::{
-    ast::{Node, StatementNode},
+    ast::{ExpressionNode, Node, StatementNode},
     lexer::Lexer,
   };
 
@@ -154,6 +171,7 @@ mod tests {
       None => panic!("ParseProgram() returned None"),
     }
   }
+
   #[test]
   fn test_return_statements() {
     let input = r#"
@@ -191,6 +209,47 @@ mod tests {
         }
       }
       None => panic!("ParseProgram() returned None"),
+    }
+  }
+
+  #[test]
+  fn test_identifier_expression() {
+    let input = "foobar;";
+
+    let lexer = Lexer::new(input);
+    let mut parser = Parser::new(lexer);
+    let program = parser.parse_program().unwrap();
+    check_parser_errors(&parser);
+
+    assert_eq!(
+      program.statements.len(),
+      1,
+      "program has not enough statements. got {}",
+      program.statements.len()
+    );
+
+    match &program.statements[0] {
+      StatementNode::Expression(expression_statement) => {
+        assert!(expression_statement.expression.is_some());
+        match expression_statement.expression.as_ref().unwrap() {
+          ExpressionNode::IdentifierNode(identifier) => {
+            assert_eq!(
+              identifier.value, "foobar",
+              "identifier.value not {}. got {}",
+              "foobar", identifier.value
+            );
+            assert_eq!(
+              identifier.token_literal(),
+              "foobar",
+              "identifier.token_literal not {}. got {}",
+              "foobar",
+              identifier.token_literal()
+            );
+          }
+          other => panic!("expression not Identifier. got {:?}", other),
+        }
+      }
+      other => panic!("statement not ExpressionStatement. got {:?}", other),
     }
   }
 

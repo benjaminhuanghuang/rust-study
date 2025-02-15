@@ -26,6 +26,14 @@ parse_return_statement
 
 ```rust
 ExpressionStatement
+```
 
-parse_return_statement
+## Prefix and infix function
+
+```rust
+type PrefixParseFn = fn(&mut Parser) -> Option<ExpressionNode>;
+type InfixParseFn = fn(&mut Parser, ExpressionNode) -> Option<ExpressionNode>;
+
+fn register_prefix()
+fn register_infix()
 ```
