@@ -30,8 +30,10 @@ impl Node for StatementNode {
   }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub enum ExpressionNode {
+  #[default]
+  None,
   IdentifierNode(Identifier),
   Integer(IntegerLiteral),
   Prefix(PrefixExpression),
@@ -43,6 +45,7 @@ impl Node for ExpressionNode {
       Self::IdentifierNode(identifier) => identifier.token_literal(),
       Self::Integer(integer_literal) => integer_literal.token_literal(),
       Self::Prefix(prefix_expression) => prefix_expression.token_literal(),
+      Self::None => String::from(""),
     };
   }
 
@@ -51,6 +54,7 @@ impl Node for ExpressionNode {
       Self::IdentifierNode(identifier) => identifier.print_string(),
       Self::Integer(integer_literal) => integer_literal.print_string(),
       Self::Prefix(prefix_expression) => prefix_expression.print_string(),
+      Self::None => String::from(""),
     };
   }
 }
@@ -194,7 +198,7 @@ impl Node for IntegerLiteral {
     self.token_literal()
   }
 }
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct PrefixExpression {
   pub token: Token,
   pub operator: String,

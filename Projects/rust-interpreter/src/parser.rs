@@ -2,8 +2,8 @@ use std::collections::HashMap;
 
 use crate::{
   ast::{
-    ExpressionNode, ExpressionStatement, Identifier, IntegerLiteral, LetStatement, Program,
-    ReturnStatement, StatementNode,
+    ExpressionNode, ExpressionStatement, Identifier, IntegerLiteral, LetStatement,
+    PrefixExpression, Program, ReturnStatement, StatementNode,
   },
   lexer::Lexer,
   token::{Token, TokenKind},
@@ -44,6 +44,8 @@ impl Parser {
 
     parser.register_prefix(TokenKind::Ident, Self::parse_identifier);
     parser.register_prefix(TokenKind::Int, Self::parse_integer_literal);
+    parser.register_prefix(TokenKind::Bang, Self::parse_prefix_expression); // !x
+    parser.register_prefix(TokenKind::Minus, Self::parse_prefix_expression); // -x
 
     parser.next_token();
     parser.next_token();
@@ -75,6 +77,21 @@ impl Parser {
         None
       }
     };
+  }
+
+  fn parse_prefix_expression(&mut self) -> Option<ExpressionNode> {
+    let mut expression = PrefixExpression {
+      token: self.cur_token.clone(),
+      operator: self.cur_token.literal.clone(),
+      right: Default::default(),
+    };
+    self.next_token();
+
+    match self.parse_expression(PrecedenceLevel::Prefix) {
+      Some(expr) => expression.right = Box::new(expr),
+      None => return None,
+    }
+    Some(ExpressionNode::Prefix(expression))
   }
 
   fn next_token(&mut self) {
@@ -158,8 +175,13 @@ impl Parser {
       let left_exp = prefix_fn(self);
       return left_exp;
     }
-
+    self.no_prefix_parse_fn_error(self.cur_token.kind.clone());
     None
+  }
+
+  fn no_prefix_parse_fn_error(&mut self, kind: TokenKind) {
+    let msg = format!("no prefix parse function for {:?} found", kind);
+    self.errors.push(msg);
   }
 
   fn expect_peek(&mut self, kind: TokenKind) -> bool {
@@ -376,6 +398,24 @@ mod tests {
         "program has not enough statements. got {}",
         program.statements.len()
       );
+
+      match &program.statements[0] {
+        StatementNode::Expression(expression_statement) => {
+          assert!(expression_statement.expression.is_some());
+          match expression_statement.expression.as_ref().unwrap() {
+            ExpressionNode::Prefix(prefix) => {
+              assert_eq!(
+                prefix.operator, test.1,
+                "prefix.operator is not {}. got {}",
+                test.1, prefix.operator
+              );
+              test_integer_literal(&prefix.right, test.2);
+            }
+            other => panic!("expression not PrefixExpression. got {:?}", other),
+          }
+        }
+        other => panic!("statement not ExpressionStatement. got {:?}", other),
+      }
     }
   }
 
@@ -419,5 +459,25 @@ mod tests {
       eprintln!("parser error: {}", error);
     }
     panic!("parser error present");
+  }
+
+  fn test_integer_literal(exp: &ExpressionNode, value: i64) {
+    match exp {
+      ExpressionNode::Integer(integer) => {
+        assert_eq!(
+          integer.value, value,
+          "integer.value not {}. got {}",
+          value, integer.value
+        );
+        assert_eq!(
+          integer.token_literal(),
+          format!("{}", value),
+          "int_exp.token_literal() not{}, got={}",
+          value,
+          integer.token_literal()
+        );
+      }
+      other => panic!("exp not IntegerLiteral. got {:?}", other),
+    }
   }
 }
