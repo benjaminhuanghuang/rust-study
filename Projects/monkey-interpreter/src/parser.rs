@@ -983,6 +983,58 @@ mod tests {
       ),
     }
   }
+
+  #[test]
+  fn test_function_parameter_parsing() {
+    let tests = vec![
+      ("fn() {};", vec![]),
+      ("fn(x) {};", vec!["x"]),
+      ("fn(x, y, z) {};", vec!["x", "y", "z"]),
+    ];
+
+    for test in tests {
+      let lexer = Lexer::new(test.0);
+      let mut parser = Parser::new(lexer);
+      let program = parser.parse_program().unwrap();
+      check_parser_errors(&parser);
+
+      match &program.statements[0] {
+        StatementNode::Expression(exp_stmt) => match exp_stmt.expression.as_ref().unwrap() {
+          ExpressionNode::Function(fn_literal) => {
+            assert_eq!(
+              fn_literal.parameters.len(),
+              test.1.len(),
+              "function literal parameters wrong. want {}, got {}",
+              test.1.len(),
+              fn_literal.parameters.len()
+            );
+
+            for (idx, ident) in test.1.into_iter().enumerate() {
+              assert_eq!(
+                fn_literal.parameters[idx].value, ident,
+                "expected parameter {}. got {}",
+                ident, fn_literal.parameters[idx].value
+              );
+
+              assert_eq!(
+                fn_literal.parameters[idx].token_literal(),
+                ident,
+                "expected parameter {}. got {}",
+                ident,
+                fn_literal.parameters[idx].token_literal()
+              );
+            }
+          }
+          other => panic!("exp not FunctionLiteral. got {:?}", other),
+        },
+        other => panic!(
+          "program.statement[0] not ExpressionStatement. got {:?}",
+          other
+        ),
+      }
+    }
+  }
+
   /* ---------------------------------HELPERS---------------------------------*/
   fn test_let_statement(statement: &StatementNode, expected: &str) {
     assert_eq!(
