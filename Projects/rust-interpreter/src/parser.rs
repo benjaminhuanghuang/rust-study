@@ -2,8 +2,9 @@ use std::collections::HashMap;
 
 use crate::{
   ast::{
-    Boolean, ExpressionNode, ExpressionStatement, Identifier, InfixExpression, IntegerLiteral,
-    LetStatement, PrefixExpression, Program, ReturnStatement, StatementNode,
+    BlockStatement, Boolean, ExpressionNode, ExpressionStatement, Identifier, IfExpression,
+    InfixExpression, IntegerLiteral, LetStatement, PrefixExpression, Program, ReturnStatement,
+    StatementNode,
   },
   lexer::Lexer,
   token::{Token, TokenKind},
@@ -66,6 +67,8 @@ impl Parser {
     parser.register_prefix(TokenKind::False, Self::parse_boolean);
 
     parser.register_prefix(TokenKind::Lparen, Self::parse_grouped_expression); // (1 + 1)
+
+    parser.register_prefix(TokenKind::If, Self::parse_if_expression); // (1 + 1)
 
     parser.register_infix(TokenKind::Plus, Self::parse_infix_expression); // 1 + 1
     parser.register_infix(TokenKind::Minus, Self::parse_infix_expression); // 1 - 1
@@ -139,6 +142,58 @@ impl Parser {
 
     exp
   }
+
+  fn parse_if_expression(&mut self) -> Option<ExpressionNode> {
+    let mut expression = IfExpression {
+      token: self.cur_token.clone(),
+      condition: Default::default(),
+      consequence: Default::default(),
+      alternative: None,
+    };
+
+    if !self.expect_peek(TokenKind::Lparen) {
+      return None;
+    }
+
+    self.next_token();
+
+    expression.condition = Box::new(
+      self
+        .parse_expression(PrecedenceLevel::Lowest)
+        .expect("error parsing condition"),
+    );
+
+    if !self.expect_peek(TokenKind::Rparen) {
+      return None;
+    }
+
+    if !self.expect_peek(TokenKind::Lbrace) {
+      return None;
+    }
+
+    expression.consequence = self.parse_block_statement();
+
+    Some(ExpressionNode::IfExpressionNode(expression))
+  }
+
+  fn parse_block_statement(&mut self) -> BlockStatement {
+    let mut block = BlockStatement {
+      token: self.cur_token.clone(),
+      statements: vec![],
+    };
+
+    self.next_token();
+
+    while !self.curr_token_is(TokenKind::Rbrace) && !self.curr_token_is(TokenKind::Eof) {
+      if let Some(statement) = self.parse_statement() {
+        block.statements.push(statement);
+      }
+      self.next_token();
+    }
+
+    block
+  }
+
   fn parse_infix_expression(&mut self, left: ExpressionNode) -> Option<ExpressionNode> {
     self.next_token();
     let mut expression = InfixExpression {
@@ -634,6 +689,147 @@ mod tests {
     }
   }
 
+  #[test]
+  fn text_if_else_expression() {
+    let input = r#"
+      if(x < y) { x } else { y }
+    "#;
+
+    let lexer = Lexer::new(input);
+    let mut parser = Parser::new(lexer);
+    let program = parser.parse_program().unwrap();
+    check_parser_errors(&parser);
+
+    assert_eq!(
+      program.statements.len(),
+      1,
+      "program has not enough statements. got {}",
+      program.statements.len()
+    );
+
+    match &program.statements[0] {
+      StatementNode::Expression(exp_stmt) => {
+        assert!(exp_stmt.expression.is_some());
+        let exp = exp_stmt.expression.as_ref().unwrap();
+
+        match exp {
+          ExpressionNode::IfExpressionNode(if_expr) => {
+            test_infix_expression(
+              &if_expr.condition,
+              Box::new("x"),
+              String::from("<"),
+              Box::new("y"),
+            );
+            assert_eq!(
+              if_expr.consequence.statements.len(),
+              1,
+              "consequence is not 1 statement. got {}",
+              if_expr.consequence.statements.len()
+            );
+
+            assert_eq!(
+              if_expr.alternative.as_ref().unwrap().statements.len(),
+              1,
+              "consequence is not 1 statement. got {}",
+              if_expr.alternative.as_ref().unwrap().statements.len(),
+            );
+
+            match &if_expr.consequence.statements[0] {
+              StatementNode::Expression(consequence) => {
+                test_identifier(
+                  consequence
+                    .expression
+                    .as_ref()
+                    .expect("error parsing consequence"),
+                  String::from("x"),
+                );
+              }
+              other => panic!("consequence[0] not ExpressionStatement. got {:?}", other),
+            }
+            match &if_expr.alternative.as_ref().unwrap().statements[0] {
+              StatementNode::Expression(consequence) => {
+                test_identifier(
+                  consequence
+                    .expression
+                    .as_ref()
+                    .expect("error parsing alternative"),
+                  String::from("y"),
+                );
+              }
+              other => panic!("statement not ExpressionStatement. got {:?}", other),
+            }
+          }
+          other => panic!("exp not IfExpression. got {:?}", other),
+        }
+      }
+      other => panic!(
+        "program.statement[0] not ExpressionStatement. got {:?}",
+        other
+      ),
+    }
+  }
+
+  #[test]
+  fn text_if_expression() {
+    let input = r#"
+      if(x < y) { x }
+    "#;
+
+    let lexer = Lexer::new(input);
+    let mut parser = Parser::new(lexer);
+    let program = parser.parse_program().unwrap();
+    check_parser_errors(&parser);
+
+    assert_eq!(
+      program.statements.len(),
+      1,
+      "program has not enough statements. got {}",
+      program.statements.len()
+    );
+
+    match &program.statements[0] {
+      StatementNode::Expression(exp_stmt) => {
+        assert!(exp_stmt.expression.is_some());
+        let exp = exp_stmt.expression.as_ref().unwrap();
+
+        match exp {
+          ExpressionNode::IfExpressionNode(if_expr) => {
+            test_infix_expression(
+              &if_expr.condition,
+              Box::new("x"),
+              String::from("<"),
+              Box::new("y"),
+            );
+            assert_eq!(
+              if_expr.consequence.statements.len(),
+              1,
+              "consequence is not 1 statement. got {}",
+              if_expr.consequence.statements.len()
+            );
+
+            match &if_expr.consequence.statements[0] {
+              StatementNode::Expression(consequence) => {
+                test_identifier(
+                  consequence
+                    .expression
+                    .as_ref()
+                    .expect("error parsing consequence"),
+                  String::from("x"),
+                );
+              }
+              other => panic!("consequence[0] not ExpressionStatement. got {:?}", other),
+            }
+            assert!(if_expr.alternative.is_none());
+          }
+          other => panic!("exp not IfExpression. got {:?}", other),
+        }
+      }
+      other => panic!(
+        "program.statement[0] not ExpressionStatement. got {:?}",
+        other
+      ),
+    }
+  }
   /* ---------------------------------HELPERS---------------------------------*/
   fn test_let_statement(statement: &StatementNode, expected: &str) {
     assert_eq!(
