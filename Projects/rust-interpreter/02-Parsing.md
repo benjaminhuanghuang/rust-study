@@ -52,5 +52,16 @@ parse_integer_literal
 ## Parse prefix expression
 
 ```rust
+PrefixExpression
+parse_prefix_expression
+```
 
+## Parse infix expression
+
+```rust
+InfixExpression
+test_parsing_infix_expression
+parse_infix_expression
+
+parse_expression   // Update
 ```
