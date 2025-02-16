@@ -98,4 +98,17 @@ parse_function_parameters
 
 
 test_function_literal_parsing
+test_function_parameter_parsing
+```
+
+## Call
+
+```rs
+parser.register_infix(TokenKind::Lparen, Self::parse_call_expression);
+
+parse_call_expression
+
+TokenKind::Lparen => PrecedenceLevel::Call,
+
+test_call_expression_parsing
 ```

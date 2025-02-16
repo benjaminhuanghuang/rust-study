@@ -2,9 +2,9 @@ use std::collections::HashMap;
 
 use crate::{
   ast::{
-    BlockStatement, Boolean, ExpressionNode, ExpressionStatement, FunctionLiteral, Identifier,
-    IfExpression, InfixExpression, IntegerLiteral, LetStatement, PrefixExpression, Program,
-    ReturnStatement, StatementNode,
+    BlockStatement, Boolean, CallExpression, ExpressionNode, ExpressionStatement, FunctionLiteral,
+    Identifier, IfExpression, InfixExpression, IntegerLiteral, LetStatement, PrefixExpression,
+    Program, ReturnStatement, StatementNode,
   },
   lexer::Lexer,
   token::{Token, TokenKind},
@@ -79,6 +79,7 @@ impl Parser {
     parser.register_infix(TokenKind::NotEq, Self::parse_infix_expression); // 1 != 1
     parser.register_infix(TokenKind::Lt, Self::parse_infix_expression); // 1 > 1
     parser.register_infix(TokenKind::Gt, Self::parse_infix_expression); // 1 < 1
+    parser.register_infix(TokenKind::Lparen, Self::parse_call_expression); // add(1, 2)
 
     parser.next_token();
     parser.next_token();
@@ -275,6 +276,48 @@ impl Parser {
     Some(ExpressionNode::Infix(expression))
   }
 
+  fn parse_call_expression(&mut self, function: ExpressionNode) -> Option<ExpressionNode> {
+    self.next_token();
+    let mut expression = CallExpression {
+      token: self.cur_token.clone(),
+      function: Box::new(function),
+      arguments: vec![],
+    };
+
+    expression.arguments = self
+      .parse_call_arguments()
+      .expect("error parsing call arguments");
+    Some(ExpressionNode::Call(expression))
+  }
+
+  fn parse_call_arguments(&mut self) -> Option<Vec<ExpressionNode>> {
+    let mut args = vec![];
+
+    if self.peek_token_is(TokenKind::Rparen) {
+      self.next_token();
+      return Some(args);
+    }
+
+    self.next_token();
+    if let Some(arg) = self.parse_expression(PrecedenceLevel::Lowest) {
+      args.push(arg);
+    }
+
+    while self.peek_token_is(TokenKind::Comma) {
+      self.next_token();
+      self.next_token();
+      if let Some(arg) = self.parse_expression(PrecedenceLevel::Lowest) {
+        args.push(arg);
+      }
+    }
+
+    if !self.expect_peek(TokenKind::Rparen) {
+      return None;
+    }
+
+    Some(args)
+  }
+
   fn next_token(&mut self) {
     self.cur_token = self.peek_token.clone();
     self.peek_token = self.lexer.next_token();
@@ -316,7 +359,8 @@ impl Parser {
         None
       } else {
         self.next_token();
-        while !self.curr_token_is(TokenKind::Semicolon) {
+        statement.value = self.parse_expression(PrecedenceLevel::Lowest);
+        if self.curr_token_is(TokenKind::Semicolon) {
           self.next_token();
         }
         Some(StatementNode::Let(statement))
@@ -325,12 +369,13 @@ impl Parser {
   }
 
   fn parse_return_statement(&mut self) -> Option<StatementNode> {
-    let statement = ReturnStatement {
+    let mut statement = ReturnStatement {
       token: self.cur_token.clone(),
       return_value: Default::default(),
     };
     self.next_token();
-    while !self.curr_token_is(TokenKind::Semicolon) {
+    statement.return_value = self.parse_expression(PrecedenceLevel::Lowest);
+    if self.peek_token_is(TokenKind::Semicolon) {
       self.next_token();
     }
     Some(StatementNode::Return(statement))
@@ -433,71 +478,80 @@ mod tests {
 
   #[test]
   fn test_let_statements() {
-    let input = r#"
-      let x = 5;
-      let y = 10;
-      let foobar = 838383;
-    "#;
-    let lexer = Lexer::new(input);
-    let mut parser = Parser::new(lexer);
-    let program = parser.parse_program();
-    check_parser_errors(&parser);
-    match program {
-      Some(program) => {
-        assert_eq!(
-          program.statements.len(),
-          3,
-          "statements length is not 3. got {}",
-          program.statements.len()
-        );
-
-        let expected = vec!["x", "y", "foobar"];
-        for (idx, exp) in expected.into_iter().enumerate() {
-          let statement = &program.statements[idx];
-          test_let_statement(statement, exp);
+    let tests: Vec<(&str, &str, Box<dyn any::Any>)> = vec![
+      ("let x = 5", "x", Box::new(5)),
+      ("let y = true", "y", Box::new(true)),
+      ("let foo = y", "foo", Box::new("y")),
+    ];
+    for test in tests {
+      let lexer = Lexer::new(test.0);
+      let mut parser = Parser::new(lexer);
+      let program = parser.parse_program();
+      check_parser_errors(&parser);
+      let program = program.unwrap();
+      assert_eq!(
+        program.statements.len(),
+        1,
+        "program has not enough statements. got {}",
+        program.statements.len()
+      );
+      let stmt = &program.statements[0];
+      test_let_statement(stmt, test.1);
+      match stmt {
+        StatementNode::Let(let_stmt) => {
+          test_literal_expression(
+            let_stmt
+              .value
+              .as_ref()
+              .expect("error paring value of let statment"),
+            test.2,
+          );
         }
+        other => panic!("stmt not LetStatement. got {:?}", other),
       }
-      None => panic!("ParseProgram() returned None"),
     }
   }
 
   #[test]
   fn test_return_statements() {
-    let input = r#"
-    return 5;
-    return 10;
-    return 999999;
-  "#;
+    let tests: Vec<(&str, Box<dyn any::Any>)> = vec![
+      ("return 5;", Box::new(5)),
+      ("return 10;", Box::new(10)),
+      ("return 999;", Box::new(999)),
+    ];
+    for test in tests {
+      let lexer = Lexer::new(test.0);
+      let mut parser = Parser::new(lexer);
+      let program = parser.parse_program();
+      check_parser_errors(&parser);
+      let program = program.unwrap();
+      assert_eq!(
+        program.statements.len(),
+        1,
+        "statements doest not contain 1 statements, got {}",
+        program.statements.len()
+      );
 
-    let lexer = Lexer::new(input);
-    let mut parser = Parser::new(lexer);
-    let program = parser.parse_program();
-    check_parser_errors(&parser);
+      let stmt = &program.statements[0];
 
-    match program {
-      Some(program) => {
-        assert_eq!(
-          program.statements.len(),
-          3,
-          "statements length is not 3. got {}",
-          program.statements.len()
-        );
-
-        for statement in program.statements {
-          match statement {
-            StatementNode::Return(return_statement) => {
-              assert_eq!(
-                return_statement.token_literal(),
-                "return",
-                "return_statement.token_literal not 'return'. got {}",
-                return_statement.token_literal()
-              );
-            }
-            other => panic!("statement not ReturnStatement. got {:?}", other),
-          }
+      match stmt {
+        StatementNode::Return(return_statement) => {
+          assert_eq!(
+            return_statement.token_literal(),
+            "return",
+            "return_statement.token_literal not 'return'. got {}",
+            return_statement.token_literal()
+          );
+          test_literal_expression(
+            return_statement
+              .return_value
+              .as_ref()
+              .expect("error parsing return value"),
+            test.1,
+          );
         }
+        other => panic!("statement not ReturnStatement. got {:?}", other),
       }
-      None => panic!("ParseProgram() returned None"),
     }
   }
 
@@ -1032,6 +1086,55 @@ mod tests {
           other
         ),
       }
+    }
+  }
+
+  #[test]
+  fn test_call_expression_parsing() {
+    let input = "add(1, 2 * 3, 4 + 5);";
+    let lexer = Lexer::new(input);
+    let mut parser = Parser::new(lexer);
+    let program = parser.parse_program().unwrap();
+    check_parser_errors(&parser);
+
+    assert_eq!(
+      program.statements.len(),
+      1,
+      "program has not enough statements. got {}",
+      program.statements.len()
+    );
+
+    match &program.statements[0] {
+      StatementNode::Expression(exp_stmt) => match exp_stmt.expression.as_ref().unwrap() {
+        ExpressionNode::Call(call_expr) => {
+          test_identifier(&call_expr.function, String::from("add"));
+          assert_eq!(
+            call_expr.arguments.len(),
+            3,
+            "wrong length of arguments. got {}",
+            call_expr.arguments.len()
+          );
+
+          test_literal_expression(&call_expr.arguments[0], Box::new(1));
+          test_infix_expression(
+            &call_expr.arguments[1],
+            Box::new(2),
+            String::from("*"),
+            Box::new(3),
+          );
+          test_infix_expression(
+            &call_expr.arguments[2],
+            Box::new(4),
+            String::from("+"),
+            Box::new(5),
+          );
+        }
+        other => panic!("exp not CallExpression. got {:?}", other),
+      },
+      other => panic!(
+        "program.statement[0] not ExpressionStatement. got {:?}",
+        other
+      ),
     }
   }
 
