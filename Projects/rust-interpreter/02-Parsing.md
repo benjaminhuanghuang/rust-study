@@ -65,3 +65,5 @@ parse_infix_expression
 
 parse_expression   // Update
 ```
+
+## Boolean
