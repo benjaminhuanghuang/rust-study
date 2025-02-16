@@ -434,7 +434,7 @@ impl Parser {
     self.cur_token.kind == kind
   }
 
-  fn errors(&self) -> &Vec<String> {
+  pub fn errors(&self) -> &Vec<String> {
     &self.errors
   }
 
