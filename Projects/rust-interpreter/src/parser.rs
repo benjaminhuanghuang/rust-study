@@ -65,6 +65,8 @@ impl Parser {
     parser.register_prefix(TokenKind::True, Self::parse_boolean);
     parser.register_prefix(TokenKind::False, Self::parse_boolean);
 
+    parser.register_prefix(TokenKind::Lparen, Self::parse_grouped_expression); // (1 + 1)
+
     parser.register_infix(TokenKind::Plus, Self::parse_infix_expression); // 1 + 1
     parser.register_infix(TokenKind::Minus, Self::parse_infix_expression); // 1 - 1
     parser.register_infix(TokenKind::Slash, Self::parse_infix_expression); // 1 / 1
@@ -128,6 +130,15 @@ impl Parser {
     }))
   }
 
+  fn parse_grouped_expression(&mut self) -> Option<ExpressionNode> {
+    self.next_token();
+    let exp = self.parse_expression(PrecedenceLevel::Lowest);
+    if !self.expect_peek(TokenKind::Rparen) {
+      return None;
+    }
+
+    exp
+  }
   fn parse_infix_expression(&mut self, left: ExpressionNode) -> Option<ExpressionNode> {
     self.next_token();
     let mut expression = InfixExpression {
@@ -454,7 +465,12 @@ mod tests {
 
   #[test]
   fn test_parsing_prefix_expression() {
-    let prefix_tests = vec![("!5;", "!", 5), ("-15;", "-", 15)];
+    let prefix_tests: Vec<(&str, &str, Box<dyn any::Any>)> = vec![
+      ("!5;", "!", Box::new(5)),
+      ("-15;", "-", Box::new(15)),
+      ("!true", "!", Box::new(true)),
+      ("!false", "!", Box::new(false)),
+    ];
 
     for test in prefix_tests {
       let lexer = Lexer::new(test.0);
@@ -479,7 +495,7 @@ mod tests {
                 "prefix.operator is not {}. got {}",
                 test.1, prefix.operator
               );
-              test_integer_literal(&prefix.right, test.2);
+              test_literal_expression(&prefix.right, test.2);
             }
             other => panic!("expression not PrefixExpression. got {:?}", other),
           }
@@ -548,6 +564,11 @@ mod tests {
       ),
       ("3>5 == false", "((3 > 5) == false)"),
       ("3<5 == true", "((3 < 5) == true)"),
+      ("1+(2+3)+4", "((1 + (2 + 3)) + 4)"),
+      ("(5+5)*2", "((5 + 5) * 2)"),
+      ("2/(5+5)", "(2 / (5 + 5))"),
+      ("-(5+5)", "(-(5 + 5))"),
+      ("!(true == true)", "(!(true == true))"),
     ];
     for test in tests {
       let lexer = Lexer::new(test.0);

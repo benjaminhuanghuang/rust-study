@@ -67,3 +67,9 @@ parse_expression   // Update
 ```
 
 ## Boolean
+
+## Grouped Expression
+
+```rust
+parse_grouped_expression
+```
