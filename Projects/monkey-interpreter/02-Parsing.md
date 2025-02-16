@@ -86,4 +86,16 @@ parse_if_expression
 
 ```rust
 FunctionLiteral
+
+pub enum ExpressionNode {
+  Function(FunctionLiteral),
+}
+
+parser.register_prefix(TokenKind::Function, Self::parse_function_literal);
+
+parse_function_literal
+parse_function_parameters
+
+
+test_function_literal_parsing
 ```

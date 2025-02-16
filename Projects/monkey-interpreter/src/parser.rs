@@ -2,9 +2,9 @@ use std::collections::HashMap;
 
 use crate::{
   ast::{
-    BlockStatement, Boolean, ExpressionNode, ExpressionStatement, Identifier, IfExpression,
-    InfixExpression, IntegerLiteral, LetStatement, PrefixExpression, Program, ReturnStatement,
-    StatementNode,
+    BlockStatement, Boolean, ExpressionNode, ExpressionStatement, FunctionLiteral, Identifier,
+    IfExpression, InfixExpression, IntegerLiteral, LetStatement, PrefixExpression, Program,
+    ReturnStatement, StatementNode,
   },
   lexer::Lexer,
   token::{Token, TokenKind},
@@ -69,6 +69,7 @@ impl Parser {
     parser.register_prefix(TokenKind::Lparen, Self::parse_grouped_expression); // (1 + 1)
 
     parser.register_prefix(TokenKind::If, Self::parse_if_expression); // (1 + 1)
+    parser.register_prefix(TokenKind::Function, Self::parse_function_literal); // fn(x, y) { x + y; }
 
     parser.register_infix(TokenKind::Plus, Self::parse_infix_expression); // 1 + 1
     parser.register_infix(TokenKind::Minus, Self::parse_infix_expression); // 1 - 1
@@ -181,6 +182,62 @@ impl Parser {
     }
 
     Some(ExpressionNode::IfExpressionNode(expression))
+  }
+
+  fn parse_function_literal(&mut self) -> Option<ExpressionNode> {
+    let mut literal = FunctionLiteral {
+      token: self.cur_token.clone(),
+      parameters: vec![],
+      body: Default::default(),
+    };
+
+    if !self.expect_peek(TokenKind::Lparen) {
+      return None;
+    }
+
+    literal.parameters = self
+      .parse_function_parameters()
+      .expect("error paring function params");
+
+    if !self.expect_peek(TokenKind::Lbrace) {
+      return None;
+    }
+    literal.body = self.parse_block_statement();
+
+    Some(ExpressionNode::Function(literal))
+  }
+
+  fn parse_function_parameters(&mut self) -> Option<Vec<Identifier>> {
+    let mut identifiers = vec![];
+
+    if self.peek_token_is(TokenKind::Rparen) {
+      self.next_token();
+      return Some(identifiers);
+    }
+
+    self.next_token();
+
+    let ident = Identifier {
+      token: self.cur_token.clone(),
+      value: self.cur_token.literal.clone(),
+    };
+    identifiers.push(ident);
+
+    while self.peek_token_is(TokenKind::Comma) {
+      self.next_token(); // skip comma
+      self.next_token();
+      let ident = Identifier {
+        token: self.cur_token.clone(),
+        value: self.cur_token.literal.clone(),
+      };
+      identifiers.push(ident);
+    }
+
+    if !self.expect_peek(TokenKind::Rparen) {
+      return None;
+    }
+
+    Some(identifiers)
   }
 
   fn parse_block_statement(&mut self) -> BlockStatement {
@@ -361,6 +418,7 @@ impl Parser {
   }
 }
 
+/*---------------------------------TESTS---------------------------------*/
 #[cfg(test)]
 mod tests {
 
@@ -368,7 +426,7 @@ mod tests {
 
   use super::Parser;
   use crate::{
-    ast::{ExpressionNode, Node, StatementNode},
+    ast::{ExpressionNode, Identifier, Node, StatementNode},
     lexer::Lexer,
     token::TokenKind,
   };
@@ -829,6 +887,94 @@ mod tests {
             assert!(if_expr.alternative.is_none());
           }
           other => panic!("exp not IfExpression. got {:?}", other),
+        }
+      }
+      other => panic!(
+        "program.statement[0] not ExpressionStatement. got {:?}",
+        other
+      ),
+    }
+  }
+
+  #[test]
+  fn test_function_literal_parsing() {
+    let input = r#"
+        fn(x, y) { x + y; }
+      "#;
+    let lexer = Lexer::new(input);
+    let mut parser = Parser::new(lexer);
+    let program = parser.parse_program().unwrap();
+    check_parser_errors(&parser);
+
+    assert_eq!(
+      program.statements.len(),
+      1,
+      "program has not enough statements. got {}",
+      program.statements.len()
+    );
+
+    match &program.statements[0] {
+      StatementNode::Expression(exp_stmt) => {
+        assert!(exp_stmt.expression.is_some());
+        let exp = exp_stmt.expression.as_ref().unwrap();
+
+        match exp {
+          ExpressionNode::Function(fn_literal) => {
+            assert_eq!(
+              fn_literal.parameters.len(),
+              2,
+              "function literal parameters wrong. want 2, got {}",
+              fn_literal.parameters.len()
+            );
+
+            match &fn_literal.parameters[0] {
+              Identifier { token, value, .. } => {
+                assert_eq!(value, "x", "parameter[0] is not 'x'. got {}", value);
+                assert_eq!(
+                  token.literal, "x",
+                  "parameter[0] is not 'x'. got {}",
+                  token.literal
+                );
+              }
+            }
+
+            match &fn_literal.parameters[1] {
+              Identifier { token, value, .. } => {
+                assert_eq!(value, "y", "parameter[0] is not 'y'. got {}", value);
+                assert_eq!(
+                  token.literal, "y",
+                  "parameter[0] is not 'y'. got {}",
+                  token.literal
+                );
+              }
+            }
+
+            assert_eq!(
+              fn_literal.body.statements.len(),
+              1,
+              "function body statements wrong. want 2, got {}",
+              fn_literal.body.statements.len(),
+            );
+
+            match &fn_literal.body.statements[0] {
+              StatementNode::Expression(expression) => {
+                test_infix_expression(
+                  expression
+                    .expression
+                    .as_ref()
+                    .expect("error parsing expression"),
+                  Box::new("x"),
+                  String::from("+"),
+                  Box::new("y"),
+                );
+              }
+              other => panic!(
+                "function body statement is not ExpressionStatement. got {:?}",
+                other
+              ),
+            }
+          }
+          other => panic!("exp not FunctionLiteral. got {:?}", other),
         }
       }
       other => panic!(

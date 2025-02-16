@@ -15,7 +15,7 @@ members = [
   # "Tauri/tauri-zoom-launcher/src-tauri",
   "Tauri/time-tracker/src-tauri", "Projects/rust-vm", "Projects/pwd_cracker", "Statistics with Rust/my_statistics_project", "Projects/rust-lib-design/rat-rs"
 , "Rust-DB-SurrealDB/rust-surrealdb-basic", "Axum/rs-counter-study", "Rust-Debug/Debugging Rust 2021 Applications/debugging-rust",
-  "Projects/rust-interpreter"
+  "Projects/monkey-interpreter"
 ]
 exclude = [
   "Tauri",
