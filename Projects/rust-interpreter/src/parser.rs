@@ -172,6 +172,13 @@ impl Parser {
     }
 
     expression.consequence = self.parse_block_statement();
+    if self.peek_token_is(TokenKind::Else) {
+      self.next_token();
+      if !self.expect_peek(TokenKind::Lbrace) {
+        return None;
+      }
+      expression.alternative = Some(self.parse_block_statement());
+    }
 
     Some(ExpressionNode::IfExpressionNode(expression))
   }

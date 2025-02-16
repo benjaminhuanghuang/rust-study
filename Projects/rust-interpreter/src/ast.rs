@@ -82,6 +82,7 @@ impl Node for Program {
         StatementNode::Let(let_statement) => let_statement.token_literal(),
         StatementNode::Return(return_statement) => return_statement.token_literal(),
         StatementNode::Expression(expression_statement) => expression_statement.token_literal(),
+        StatementNode::Block(block_statement) => block_statement.token_literal(),
       }
     } else {
       String::from("")
