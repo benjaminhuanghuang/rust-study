@@ -181,8 +181,6 @@ impl Node for ExpressionStatement {
       out.push_str(expression.print_string().as_str());
     }
 
-    out.push_str(";");
-
     out
   }
 }

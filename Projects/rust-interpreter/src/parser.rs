@@ -523,6 +523,35 @@ mod tests {
     }
   }
 
+  #[test]
+  fn test_operator_precedence_parsing() {
+    let tests = vec![
+      ("-a * b", "((-a) * b)"),
+      ("!-a", "(!(-a))"),
+      ("a + b + c", "((a + b) + c)"),
+      ("a + b - c", "((a + b) - c)"),
+      ("a * b * c", "((a * b) * c)"),
+      ("a * b / c", "((a * b) / c)"),
+      ("a + b / c", "(a + (b / c))"),
+      ("a + b * c + d / e - f", "(((a + (b * c)) + (d / e)) - f)"),
+      ("3 + 4; -5 * 5", "(3 + 4)((-5) * 5)"),
+      ("5 > 4 == 3 < 4", "((5 > 4) == (3 < 4))"),
+      ("5 < 4 != 3 > 4", "((5 < 4) != (3 > 4))"),
+      (
+        "3 + 4 * 5 == 3 * 1 + 4 * 5",
+        "((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))",
+      ),
+    ];
+    for test in tests {
+      let lexer = Lexer::new(test.0);
+      let mut parser = Parser::new(lexer);
+      let program = parser.parse_program().unwrap();
+      check_parser_errors(&parser);
+
+      let actual = program.print_string();
+      assert_eq!(actual, test.1, "expected={}, got={}", test.1, actual);
+    }
+  }
   fn test_let_statement(statement: &StatementNode, expected: &str) {
     assert_eq!(
       statement.token_literal(),
