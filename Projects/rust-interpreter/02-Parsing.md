@@ -81,3 +81,9 @@ IfExpression
 
 parse_if_expression
 ```
+
+## Function
+
+```rust
+FunctionLiteral
+```

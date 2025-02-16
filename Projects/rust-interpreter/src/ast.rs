@@ -325,6 +325,10 @@ impl Node for BlockStatement {
     out
   }
 }
+
+pub struct FunctionLiteral {
+  pub token: Token,
+}
 /*---------------------------------TESTS---------------------------------*/
 #[cfg(test)]
 mod tests {
