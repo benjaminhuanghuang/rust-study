@@ -1,4 +1,4 @@
-use std::{collections::HashMap, f64::consts::E};
+use std::collections::HashMap;
 
 use crate::{
   ast::{
@@ -491,15 +491,17 @@ mod tests {
 
   #[test]
   fn test_parsing_infix_expression() {
-    let infix_tests: Vec<(&str, i64, &str, i64)> = vec![
-      ("5+5;", 5, "+", 5),
-      ("5-5;", 5, "-", 5),
-      ("5*5;", 5, "*", 5),
-      ("5/5;", 5, "/", 5),
-      ("5>5;", 5, ">", 5),
-      ("5<5;", 5, "<", 5),
-      ("5==5;", 5, "==", 5),
-      ("5!=5;", 5, "!=", 5),
+    let infix_tests: Vec<(&str, Box<dyn any::Any>, &str, Box<dyn any::Any>)> = vec![
+      ("5+5;", Box::new(5), "+", Box::new(5)),
+      ("5-5;", Box::new(5), "-", Box::new(5)),
+      ("5*5;", Box::new(5), "*", Box::new(5)),
+      ("5/5;", Box::new(5), "/", Box::new(5)),
+      ("5>5;", Box::new(5), ">", Box::new(5)),
+      ("5<5;", Box::new(5), "<", Box::new(5)),
+      ("5==5;", Box::new(5), "==", Box::new(5)),
+      ("5!=5;", Box::new(5), "!=", Box::new(5)),
+      ("true == true", Box::new(true), "==", Box::new(true)),
+      ("true != false", Box::new(true), "!=", Box::new(false)),
     ];
 
     for test in infix_tests {
@@ -544,6 +546,8 @@ mod tests {
         "3 + 4 * 5 == 3 * 1 + 4 * 5",
         "((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))",
       ),
+      ("3>5 == false", "((3 > 5) == false)"),
+      ("3<5 == true", "((3 < 5) == true)"),
     ];
     for test in tests {
       let lexer = Lexer::new(test.0);
@@ -696,8 +700,30 @@ mod tests {
       Some(exp_string) => test_identifier(exp, exp_string.to_string()),
       None => match expected.downcast_ref::<i64>() {
         Some(int_exp) => test_integer_literal(exp, int_exp.to_owned()),
-        None => panic!("type of exp not handled. got {:?}", expected),
+        None => match expected.downcast_ref::<bool>() {
+          Some(bool) => test_boolean_literal(exp, bool.to_owned()),
+          None => (),
+        },
       },
+    }
+  }
+  fn test_boolean_literal(exp: &ExpressionNode, value: bool) {
+    match exp {
+      ExpressionNode::BooleanNode(bool_expr) => {
+        assert_eq!(
+          bool_expr.value, value,
+          "boolean.value not {}. got {}",
+          value, bool_expr.value
+        );
+        assert_eq!(
+          bool_expr.token_literal(),
+          format!("{}", value),
+          "boolean.token_literal not {}. got {}",
+          value,
+          bool_expr.token_literal()
+        );
+      }
+      other => panic!("exp not Boolean. got {:?}", other),
     }
   }
   fn test_infix_expression(
