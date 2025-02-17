@@ -1,10 +1,11 @@
 use std::io::{Stdin, Stdout, Write};
 
-use crate::ast::Node;
+use crate::evaluator::Evaluator;
 use crate::lexer;
 use crate::parser::Parser;
 
 pub fn start(stdin: Stdin, mut stdout: Stdout) {
+  let evaluator = Evaluator::new();
   loop {
     write!(stdout, ">> ").expect("should have written prompt string >>");
     stdout.flush().expect("should have flushed stdout");
@@ -22,10 +23,13 @@ pub fn start(stdin: Stdin, mut stdout: Stdout) {
       print_parse_errors(&stdout, parser.errors());
       continue;
     }
-    let parsed_program_string = program.print_string();
 
-    writeln!(stdout, "{parsed_program_string}")
-      .expect("parsed program should have been written to stdout");
+    // let parsed_program_string = program.print_string();
+    // writeln!(stdout, "{parsed_program_string}")
+    //   .expect("parsed program should have been written to stdout");
+
+    let evaluated = evaluator.eval_program(program);
+    writeln!(stdout, "{evaluated}").expect("evaluated program should have been written to stdout");
   }
 }
 
