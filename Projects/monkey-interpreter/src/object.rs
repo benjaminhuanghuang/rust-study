@@ -3,7 +3,10 @@ use std::{
   fmt::{Display, Formatter, Result},
 };
 
-use crate::ast::{BlockStatement, Identifier, Node};
+use crate::{
+  ast::{BlockStatement, Identifier, Node},
+  builtins::{self, Builtins},
+};
 
 pub type BuiltinFunction = fn(Vec<Object>) -> Object;
 
@@ -15,7 +18,7 @@ pub enum Object {
   Error(String),
   Func(Function),
   StringObj(String),
-  BuildIn(BuiltinFunction),
+  Builtin(BuiltinFunction),
   Null,
 }
 
@@ -28,7 +31,7 @@ impl Object {
       Object::Error(_) => String::from("ERROR"),
       Object::Func(_) => String::from("FUNCTION"),
       Object::StringObj(_) => String::from("STRING"),
-      Object::BuildIn(_) => String::from("BUILTIN"),
+      Object::Builtin(_) => String::from("BUILTIN"),
       Object::Null => String::from("NULL"),
     }
   }
@@ -56,7 +59,7 @@ impl Display for Object {
         write!(f, "{}", out)
       }
       Object::StringObj(value) => write!(f, "{}", value),
-      Object::BuildIn(_) => write!(f, "builtin function"),
+      Object::Builtin(_) => write!(f, "builtin function"),
       Object::Null => write!(f, "null"),
     }
   }
@@ -70,17 +73,28 @@ pub struct Environment {
 
 impl Environment {
   pub fn new_environment() -> Environment {
+    let mut env_map = HashMap::new();
+    Self::init_builtins(&mut env_map);
     Environment {
-      store: HashMap::new(),
+      store: env_map,
       outer: None,
     }
   }
 
   pub fn new_enclosed_environment(outer: Box<Environment>) -> Environment {
-    let env_map = HashMap::new();
+    let mut env_map = HashMap::new();
+    Self::init_builtins(&mut env_map);
     Environment {
       store: env_map,
       outer: Some(outer),
+    }
+  }
+
+  fn init_builtins(env: &mut HashMap<String, Object>) {
+    let builtins_functions = Builtins;
+    let builtins = builtins_functions.all_builtins();
+    for (name, function) in builtins {
+      env.insert(name, function);
     }
   }
 

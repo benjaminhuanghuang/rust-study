@@ -31,5 +31,3 @@ Monkey Programming Language
 • String Data Structure
 • Array Data Structure
 • Hash Data Structure
-
-99
