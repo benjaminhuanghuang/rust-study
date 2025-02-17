@@ -21,6 +21,10 @@ impl Evaluator {
       if let Object::ReturnValue(val) = result {
         return *val;
       }
+
+      if let Object::Error(_) = result {
+        return result;
+      }
     }
 
     result
@@ -65,19 +69,45 @@ impl Evaluator {
     match operator.as_str() {
       "!" => Self::eval_bang_operator_expression(right),
       "-" => Self::eval_minus_prefix_operator_expression(right),
-      _ => NULL,
+      _ => Object::Error(format!(
+        "unknown operator: {}{}",
+        operator,
+        right.object_type()
+      )),
     }
   }
 
   fn eval_infix_expression(operator: String, left: &Object, right: &Object) -> Object {
+    if left.object_type() != right.object_type() {
+      return Object::Error(format!(
+        "type mismatch: {} {} {}",
+        left.object_type(),
+        operator,
+        right.object_type()
+      ));
+    }
     match (left, right, operator) {
       (Object::Integer(left), Object::Integer(right), operator) => {
         return Self::eval_integer_infix_expression(operator, *left, *right);
       }
-      (Object::Boolean(left), Object::Boolean(right), operator) => {
-        return Self::eval_boolean_infix_expression(operator, *left, *right);
+      (Object::Boolean(l), Object::Boolean(r), operator) => {
+        return match operator.as_str() {
+          "==" => Self::native_bool_to_boolean_object(l == r),
+          "!=" => Self::native_bool_to_boolean_object(l != r),
+          _ => Object::Error(format!(
+            "unknown operator: {} {} {}",
+            left.object_type(),
+            operator,
+            right.object_type()
+          )),
+        };
       }
-      _ => NULL,
+      (left, right, operator) => Object::Error(format!(
+        "unknown operator: {} {} {}",
+        left.object_type(),
+        operator,
+        right.object_type()
+      )),
     }
   }
 
@@ -89,13 +119,6 @@ impl Evaluator {
       "/" => Object::Integer(left / right),
       "<" => Self::native_bool_to_boolean_object(left < right),
       ">" => Self::native_bool_to_boolean_object(left > right),
-      "==" => Self::native_bool_to_boolean_object(left == right),
-      "!=" => Self::native_bool_to_boolean_object(left != right),
-      _ => NULL,
-    }
-  }
-  fn eval_boolean_infix_expression(operator: String, left: bool, right: bool) -> Object {
-    match operator.as_str() {
       "==" => Self::native_bool_to_boolean_object(left == right),
       "!=" => Self::native_bool_to_boolean_object(left != right),
       _ => NULL,
@@ -127,7 +150,7 @@ impl Evaluator {
     for statement in block.statements {
       result = self.eval_statement(statement);
 
-      if result.object_type() == "RETURN_VALUE" {
+      if result.object_type() == "RETURN_VALUE" || result.object_type() == "ERROR" {
         return result;
       }
     }
@@ -145,7 +168,7 @@ impl Evaluator {
   fn eval_minus_prefix_operator_expression(right: Object) -> Object {
     match right {
       Object::Integer(value) => Object::Integer(-value),
-      _ => NULL,
+      _ => Object::Error(format!("unknown operator: -{}", right.object_type())),
     }
   }
   fn native_bool_to_boolean_object(bool: bool) -> Object {
@@ -276,6 +299,42 @@ mod test {
       test_integer_object(evaluated, test.1);
     }
   }
+
+  #[test]
+  fn test_error_handling() {
+    let tests = vec![
+      ("5 + true;", "type mismatch: INTEGER + BOOLEAN"),
+      ("5 + true; 5;", "type mismatch: INTEGER + BOOLEAN"),
+      ("-true", "unknown operator: -BOOLEAN"),
+      ("true + false;", "unknown operator: BOOLEAN + BOOLEAN"),
+      ("5; true + false; 5", "unknown operator: BOOLEAN + BOOLEAN"),
+      (
+        "if (10 > 1) { true + false; }",
+        "unknown operator: BOOLEAN + BOOLEAN",
+      ),
+      (
+        "
+        if (10 > 1) {
+          if (10 > 1) {
+            return true + false;
+          }
+          return 1;
+        }
+        ",
+        "unknown operator: BOOLEAN + BOOLEAN",
+      ),
+      // ("foobar", "identifier not found: foobar"),
+    ];
+
+    for tests in tests {
+      let evaluated = test_eval(tests.0);
+      match evaluated {
+        Object::Error(err) => assert_eq!(err, tests.1),
+        _ => panic!("no error object returned"),
+      }
+    }
+  }
+
   /*----------------HELPER----------------- */
   fn test_eval(input: &str) -> Object {
     let lexer = Lexer::new(input);

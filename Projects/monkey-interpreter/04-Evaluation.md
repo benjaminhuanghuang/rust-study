@@ -39,3 +39,14 @@ test_if_else_expression
 ```rs
 StatementNode::Return(statement) => {}
 ```
+
+## error
+
+```rs
+
+pub enum Object {
+  Error(String),
+}
+
+eval_prefix_expression
+```
