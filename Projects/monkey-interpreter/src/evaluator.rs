@@ -1,4 +1,6 @@
-use crate::ast::{BlockStatement, ExpressionNode, IfExpression, Program, StatementNode};
+use crate::ast::{
+  BlockStatement, ExpressionNode, Identifier, IfExpression, Program, StatementNode,
+};
 use crate::object::{Environment, Object};
 
 const TRUE: Object = Object::Boolean(true);
@@ -78,6 +80,7 @@ impl Evaluator {
         ExpressionNode::IfExpressionNode(if_exp) => {
           return self.eval_if_expression(if_exp);
         }
+        ExpressionNode::IdentifierNode(ident) => self.eval_identifier(ident),
         _ => Object::Null,
       };
     }
@@ -164,6 +167,14 @@ impl Evaluator {
       _ => true,
     }
   }
+  fn eval_identifier(&self, ident: Identifier) -> Object {
+    let value = self.env.get(ident.value.clone());
+    match value {
+      Some(val) => val,
+      None => Object::Error(format!("identifier not found: {}", ident.value)),
+    }
+  }
+
   fn eval_block_expression(&mut self, block: BlockStatement) -> Object {
     let mut result = Object::Null;
 
@@ -350,7 +361,7 @@ mod test {
         ",
         "unknown operator: BOOLEAN + BOOLEAN",
       ),
-      // ("foobar", "identifier not found: foobar"),
+      ("foobar", "identifier not found: foobar"),
     ];
 
     for tests in tests {
