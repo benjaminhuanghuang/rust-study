@@ -2,9 +2,9 @@ use std::collections::HashMap;
 
 use crate::{
   ast::{
-    BlockStatement, Boolean, CallExpression, ExpressionNode, ExpressionStatement, FunctionLiteral,
-    Identifier, IfExpression, InfixExpression, IntegerLiteral, LetStatement, PrefixExpression,
-    Program, ReturnStatement, StatementNode, StringLiteral,
+    ArrayLiteral, BlockStatement, Boolean, CallExpression, ExpressionNode, ExpressionStatement,
+    FunctionLiteral, Identifier, IfExpression, InfixExpression, IntegerLiteral, LetStatement,
+    PrefixExpression, Program, ReturnStatement, StatementNode, StringLiteral,
   },
   lexer::Lexer,
   token::{Token, TokenKind},
@@ -71,6 +71,7 @@ impl Parser {
     parser.register_prefix(TokenKind::If, Self::parse_if_expression); // (1 + 1)
     parser.register_prefix(TokenKind::Function, Self::parse_function_literal); // fn(x, y) { x + y; }
     parser.register_prefix(TokenKind::String, Self::parse_string_literal); // "hello world"
+    parser.register_prefix(TokenKind::Lbracket, Self::parse_array_literal); // [1, 2, 3]
 
     parser.register_infix(TokenKind::Plus, Self::parse_infix_expression); // 1 + 1
     parser.register_infix(TokenKind::Minus, Self::parse_infix_expression); // 1 - 1
@@ -216,6 +217,15 @@ impl Parser {
     }))
   }
 
+  fn parse_array_literal(&mut self) -> Option<ExpressionNode> {
+    let array = ArrayLiteral {
+      token: self.cur_token.clone(),
+      elements: self.parse_expression_list(TokenKind::Rbracket),
+    };
+
+    Some(ExpressionNode::Array(array))
+  }
+
   fn parse_function_parameters(&mut self) -> Option<Vec<Identifier>> {
     let mut identifiers = vec![];
 
@@ -292,18 +302,17 @@ impl Parser {
       arguments: vec![],
     };
 
-    expression.arguments = self
-      .parse_call_arguments()
-      .expect("error parsing call arguments");
+    expression.arguments = self.parse_expression_list(TokenKind::Rparen);
+
     Some(ExpressionNode::Call(expression))
   }
 
-  fn parse_call_arguments(&mut self) -> Option<Vec<ExpressionNode>> {
+  fn parse_expression_list(&mut self, end: TokenKind) -> Vec<ExpressionNode> {
     let mut args = vec![];
 
-    if self.peek_token_is(TokenKind::Rparen) {
+    if self.peek_token_is(end.clone()) {
       self.next_token();
-      return Some(args);
+      return args;
     }
 
     self.next_token();
@@ -319,11 +328,11 @@ impl Parser {
       }
     }
 
-    if !self.expect_peek(TokenKind::Rparen) {
-      return None;
+    if !self.expect_peek(end.clone()) {
+      return vec![];
     }
 
-    Some(args)
+    args
   }
 
   fn next_token(&mut self) {
@@ -1175,6 +1184,51 @@ mod tests {
           );
         }
         other => panic!("exp not StringLiteral. got {:?}", other),
+      },
+      other => panic!(
+        "program.statement[0] not ExpressionStatement. got {:?}",
+        other
+      ),
+    }
+  }
+
+  #[test]
+  fn test_array_literal_parsing() {
+    let input = "[1, 2 * 2, 3 + 3]";
+    let lexer = Lexer::new(input);
+    let mut parser = Parser::new(lexer);
+    let program = parser.parse_program().unwrap();
+    check_parser_errors(&parser);
+
+    match &program.statements[0] {
+      StatementNode::Expression(exp_stmt) => match &exp_stmt
+        .expression
+        .as_ref()
+        .expect("error parsing expression")
+      {
+        ExpressionNode::Array(array) => {
+          assert_eq!(
+            array.elements.len(),
+            3,
+            "array.elements has wrong length. got {}",
+            array.elements.len()
+          );
+
+          test_integer_literal(&array.elements[0], 1);
+          test_infix_expression(
+            &array.elements[1],
+            Box::new(2),
+            String::from("*"),
+            Box::new(2),
+          );
+          test_infix_expression(
+            &array.elements[2],
+            Box::new(3),
+            String::from("+"),
+            Box::new(3),
+          );
+        }
+        other => panic!("exp not ArrayLiteral. got {:?}", other),
       },
       other => panic!(
         "program.statement[0] not ExpressionStatement. got {:?}",
