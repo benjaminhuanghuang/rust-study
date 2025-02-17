@@ -12,6 +12,7 @@ pub enum Object {
   ReturnValue(Box<Object>),
   Error(String),
   Func(Function),
+  StringObj(String),
   Null,
 }
 
@@ -23,6 +24,7 @@ impl Object {
       Object::ReturnValue(_) => String::from("RETURN_VALUE"),
       Object::Error(_) => String::from("ERROR"),
       Object::Func(_) => String::from("FUNCTION"),
+      Object::StringObj(_) => String::from("STRING"),
       Object::Null => String::from("NULL"),
     }
   }
@@ -49,6 +51,7 @@ impl Display for Object {
         out.push_str("\n}");
         write!(f, "{}", out)
       }
+      Object::StringObj(value) => write!(f, "{}", value),
       Object::Null => write!(f, "null"),
     }
   }

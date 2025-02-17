@@ -99,6 +99,7 @@ impl Evaluator {
           }
           self.apply_function(function, arg)
         }
+        ExpressionNode::StringExp(string_literal) => Object::StringObj(string_literal.value),
         _ => Object::Null,
       };
     }
@@ -171,6 +172,17 @@ impl Evaluator {
     match (left, right, operator) {
       (Object::Integer(left), Object::Integer(right), operator) => {
         return Self::eval_integer_infix_expression(operator, *left, *right);
+      }
+      (Object::StringObj(left_str), Object::StringObj(right_str), operator) => {
+        return match operator.as_str() {
+          "+" => Object::StringObj(format!("{}{}", left_str, right_str)),
+          _ => Object::Error(format!(
+            "unknown operator: {} {} {}",
+            left.object_type(),
+            operator,
+            right.object_type()
+          )),
+        };
       }
       (Object::Boolean(l), Object::Boolean(r), operator) => {
         return match operator.as_str() {
@@ -421,6 +433,7 @@ mod test {
         "unknown operator: BOOLEAN + BOOLEAN",
       ),
       ("foobar", "identifier not found: foobar"),
+      (r#""Hello" - "World""#, "unknown operator: STRING - STRING"),
     ];
 
     for tests in tests {
@@ -505,6 +518,35 @@ mod test {
     test_integer_object(evaluated, 4);
   }
 
+  #[test]
+  fn test_string_literal() {
+    let input = "\"Hello World!\"";
+    let evaluated = test_eval(input);
+    match evaluated {
+      Object::StringObj(value) => assert_eq!(
+        value, "Hello World!",
+        "object has wrong value. got {}, want {}",
+        value, "Hello World!"
+      ),
+      other => panic!("object is not string, got {:?}", other),
+    }
+  }
+
+  #[test]
+  fn test_string_concatenation() {
+    let input = r#"
+        "Hello" + " " + "World!"
+      "#;
+    let evaluated = test_eval(input);
+    match evaluated {
+      Object::StringObj(value) => assert_eq!(
+        value, "Hello World!",
+        "object has wrong value. got {}, want {}",
+        value, "Hello World!"
+      ),
+      other => panic!("object is not string, got {:?}", other),
+    }
+  }
   /*----------------HELPER----------------- */
   fn test_eval(input: &str) -> Object {
     let lexer = Lexer::new(input);
