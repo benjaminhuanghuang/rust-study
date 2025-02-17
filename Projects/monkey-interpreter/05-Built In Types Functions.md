@@ -115,4 +115,8 @@ pub struct HashLiteral {
 ExpressionNode {
   Hash(HashLiteral),
 }
+
+parser.register_infix(TokenKind::Lbrace, Self::parse_hash_literal); // { "key": "value" }
+
+test_parsing_hash_literal_string_keys
 ```

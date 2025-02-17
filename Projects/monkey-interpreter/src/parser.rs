@@ -3,8 +3,9 @@ use std::collections::HashMap;
 use crate::{
   ast::{
     ArrayLiteral, BlockStatement, Boolean, CallExpression, ExpressionNode, ExpressionStatement,
-    FunctionLiteral, Identifier, IfExpression, IndexExpression, InfixExpression, IntegerLiteral,
-    LetStatement, PrefixExpression, Program, ReturnStatement, StatementNode, StringLiteral,
+    FunctionLiteral, HashLiteral, Identifier, IfExpression, IndexExpression, InfixExpression,
+    IntegerLiteral, LetStatement, PrefixExpression, Program, ReturnStatement, StatementNode,
+    StringLiteral,
   },
   lexer::Lexer,
   token::{Token, TokenKind},
@@ -74,6 +75,7 @@ impl Parser {
     parser.register_prefix(TokenKind::Function, Self::parse_function_literal); // fn(x, y) { x + y; }
     parser.register_prefix(TokenKind::String, Self::parse_string_literal); // "hello world"
     parser.register_prefix(TokenKind::Lbracket, Self::parse_array_literal); // [1, 2, 3]
+    parser.register_prefix(TokenKind::Lbrace, Self::parse_hash_literal); // { "key": "value" }
 
     parser.register_infix(TokenKind::Plus, Self::parse_infix_expression); // 1 + 1
     parser.register_infix(TokenKind::Minus, Self::parse_infix_expression); // 1 - 1
@@ -227,6 +229,37 @@ impl Parser {
     };
 
     Some(ExpressionNode::Array(array))
+  }
+
+  fn parse_hash_literal(&mut self) -> Option<ExpressionNode> {
+    let mut hash = HashLiteral {
+      token: self.cur_token.clone(),
+      pairs: Default::default(),
+    };
+
+    while !self.peek_token_is(TokenKind::Rbrace) {
+      self.next_token();
+      let key = self
+        .parse_expression(PrecedenceLevel::Lowest)
+        .expect("error parsing key");
+      if !self.expect_peek(TokenKind::Colon) {
+        return None;
+      }
+      self.next_token();
+      let value = self
+        .parse_expression(PrecedenceLevel::Lowest)
+        .expect("error parsing value");
+      hash.pairs.push((key, value));
+      if !self.peek_token_is(TokenKind::Rbrace) && !self.expect_peek(TokenKind::Comma) {
+        return None;
+      }
+    }
+
+    if !self.expect_peek(TokenKind::Rbrace) {
+      return None;
+    }
+
+    Some(ExpressionNode::Hash(hash))
   }
 
   fn parse_index_expression(&mut self, left: ExpressionNode) -> Option<ExpressionNode> {
@@ -1312,6 +1345,122 @@ mod tests {
     }
   }
 
+  #[test]
+  fn test_parsing_hash_literal_string_keys() {
+    let input = r#"{"one": 1, "two": 2, "three": 3}"#;
+    let lexer = Lexer::new(input);
+    let mut parser = Parser::new(lexer);
+    let program = parser.parse_program().unwrap();
+    check_parser_errors(&parser);
+
+    match &program.statements[0] {
+      StatementNode::Expression(exp_stmt) => match &exp_stmt
+        .expression
+        .as_ref()
+        .expect("error parsing expression")
+      {
+        ExpressionNode::Hash(hash) => {
+          assert_eq!(
+            hash.pairs.len(),
+            3,
+            "hash.pairs has wrong length. got {}",
+            hash.pairs.len()
+          );
+
+          let expected = vec![("one", 1), ("two", 2), ("three", 3)];
+          let mut curr_idx = 0;
+          for (_, value) in &hash.pairs {
+            let expected_value = expected[curr_idx].1;
+            test_integer_literal(value, expected_value);
+            curr_idx += 1;
+          }
+        }
+        other => panic!("exp not HashLiteral. got {:?}", other),
+      },
+      other => panic!(
+        "program.statement[0] not ExpressionStatement. got {:?}",
+        other
+      ),
+    }
+  }
+
+  #[test]
+  fn test_parsing_empty_hash_literal() {
+    let input = r#"{}"#;
+    let lexer = Lexer::new(input);
+    let mut parser = Parser::new(lexer);
+    let program = parser.parse_program().unwrap();
+    check_parser_errors(&parser);
+
+    match &program.statements[0] {
+      StatementNode::Expression(exp_stmt) => match &exp_stmt
+        .expression
+        .as_ref()
+        .expect("error parsing expression")
+      {
+        ExpressionNode::Hash(hash) => {
+          assert_eq!(
+            hash.pairs.len(),
+            0,
+            "hash.pairs has wrong length. got {}",
+            hash.pairs.len()
+          );
+        }
+        other => panic!("exp not HashLiteral. got {:?}", other),
+      },
+      other => panic!(
+        "program.statement[0] not ExpressionStatement. got {:?}",
+        other
+      ),
+    }
+  }
+
+  #[test]
+  fn test_parsing_hash_literal_with_expressions() {
+    let input = r#"{"one": 0+1, "two": 10-8, "three": 15/5}"#;
+    let lexer = Lexer::new(input);
+    let mut parser = Parser::new(lexer);
+    let program = parser.parse_program().unwrap();
+    check_parser_errors(&parser);
+
+    match &program.statements[0] {
+      StatementNode::Expression(exp_stmt) => match &exp_stmt
+        .expression
+        .as_ref()
+        .expect("error parsing expression")
+      {
+        ExpressionNode::Hash(hash) => {
+          assert_eq!(
+            hash.pairs.len(),
+            3,
+            "hash.pairs has wrong length. got {}",
+            hash.pairs.len()
+          );
+          let expected = vec![
+            ("one", (0, "+", 1)),
+            ("two", (10, "-", 8)),
+            ("three", (15, "/", 5)),
+          ];
+          let mut curr_idx = 0;
+          for (_, value) in &hash.pairs {
+            let expected_value = &expected[curr_idx];
+            test_func_for_key(
+              value,
+              expected_value.1 .0,
+              expected_value.1 .1,
+              expected_value.1 .2,
+            );
+            curr_idx += 1;
+          }
+        }
+        other => panic!("exp not HashLiteral. got {:?}", other),
+      },
+      other => panic!(
+        "program.statement[0] not ExpressionStatement. got {:?}",
+        other
+      ),
+    }
+  }
   /* ---------------------------------HELPERS---------------------------------*/
   fn test_let_statement(statement: &StatementNode, expected: &str) {
     assert_eq!(
@@ -1443,5 +1592,9 @@ mod tests {
       }
       other => panic!("exp not InfixExpression. got {:?}", other),
     }
+  }
+
+  fn test_func_for_key(exp: &ExpressionNode, left: i64, operator: &str, right: i64) {
+    test_infix_expression(exp, Box::new(left), operator.to_string(), Box::new(right));
   }
 }
