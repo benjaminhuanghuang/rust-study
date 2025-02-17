@@ -5,7 +5,7 @@ use std::{
 
 use crate::{
   ast::{BlockStatement, Identifier, Node},
-  builtins::{self, Builtins},
+  builtins::Builtins,
 };
 
 pub type BuiltinFunction = fn(Vec<Object>) -> Object;

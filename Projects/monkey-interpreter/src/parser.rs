@@ -480,7 +480,7 @@ mod tests {
   use super::Parser;
   use crate::{
     ast::{ExpressionNode, Identifier, Node, StatementNode},
-    lexer::{self, Lexer},
+    lexer::Lexer,
     token::TokenKind,
   };
 

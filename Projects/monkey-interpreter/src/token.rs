@@ -33,6 +33,8 @@ pub enum TokenKind {
   Rparen,
   Lbrace,
   Rbrace,
+  Lbracket,
+  Rbracket,
 
   Function,
   Let,
@@ -76,6 +78,8 @@ impl Display for TokenKind {
       TokenKind::Eq => write!(f, "=="),
       TokenKind::NotEq => write!(f, "!="),
       TokenKind::String => write!(f, "String"),
+      TokenKind::Lbracket => write!(f, "["),
+      TokenKind::Rbracket => write!(f, "]"),
     }
   }
 }

@@ -73,6 +73,8 @@ impl Lexer {
         kind: TokenKind::String,
         literal: self.read_string(),
       },
+      '[' => Lexer::new_token(TokenKind::Lbracket, self.ch),
+      ']' => Lexer::new_token(TokenKind::Rbracket, self.ch),
       '\0' => Token {
         kind: TokenKind::Eof,
         literal: "".to_string(),
@@ -247,6 +249,7 @@ mod tests {
       10!=9;
       "foobar"
       "foo bar"
+      [1, 2];
     "#;
 
     let expected = vec![
@@ -568,6 +571,30 @@ mod tests {
       Token {
         kind: TokenKind::String,
         literal: "foo bar".to_string(),
+      },
+      Token {
+        kind: TokenKind::Lbracket,
+        literal: "[".to_string(),
+      },
+      Token {
+        kind: TokenKind::Int,
+        literal: "1".to_string(),
+      },
+      Token {
+        kind: TokenKind::Comma,
+        literal: ",".to_string(),
+      },
+      Token {
+        kind: TokenKind::Int,
+        literal: "2".to_string(),
+      },
+      Token {
+        kind: TokenKind::Rbracket,
+        literal: "]".to_string(),
+      },
+      Token {
+        kind: TokenKind::Semicolon,
+        literal: ";".to_string(),
       },
       Token {
         kind: TokenKind::Eof,
