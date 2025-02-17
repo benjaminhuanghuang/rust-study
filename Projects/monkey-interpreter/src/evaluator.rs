@@ -1,7 +1,7 @@
 use crate::ast::{
   BlockStatement, ExpressionNode, Identifier, IfExpression, Program, StatementNode,
 };
-use crate::object::{Environment, Object};
+use crate::object::{Environment, Function, Object};
 
 const TRUE: Object = Object::Boolean(true);
 const FALSE: Object = Object::Boolean(false);
@@ -81,6 +81,11 @@ impl Evaluator {
           return self.eval_if_expression(if_exp);
         }
         ExpressionNode::IdentifierNode(ident) => self.eval_identifier(ident),
+        ExpressionNode::Function(fn_lit) => Object::Func(Function {
+          parameters: fn_lit.parameters,
+          body: fn_lit.body,
+          env: self.env.clone(),
+        }),
         _ => Object::Null,
       };
     }
@@ -222,7 +227,7 @@ impl Evaluator {
 #[cfg(test)]
 mod test {
   use super::*;
-  use crate::{lexer::Lexer, object::Object, parser::Parser};
+  use crate::{ast::Node, lexer::Lexer, object::Object, parser::Parser};
 
   #[test]
   fn test_eval_integer_expression() {
@@ -385,6 +390,34 @@ mod test {
     for test in tests {
       let evaluated = test_eval(test.0);
       test_integer_object(evaluated, test.1);
+    }
+  }
+
+  #[test]
+  fn test_function_object() {
+    let input = "fn(x) { x + 2; }";
+    let evaluated = test_eval(input);
+    match evaluated {
+      Object::Func(func) => {
+        assert_eq!(
+          func.parameters.len(),
+          1,
+          "function has wrong parameters length. got {}",
+          func.parameters.len()
+        );
+        assert_eq!(
+          func.parameters[0].value, "x",
+          "parameter is not 'x', got {}",
+          func.parameters[0].value
+        );
+        assert_eq!(
+          func.body.print_string(),
+          "(x + 2)",
+          "body is not '(x + 2)', got {}",
+          func.body.print_string()
+        );
+      }
+      _ => panic!("object is not function, got {:?}", evaluated),
     }
   }
   /*----------------HELPER----------------- */

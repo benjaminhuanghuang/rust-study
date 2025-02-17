@@ -79,7 +79,7 @@ impl Environment {
   }
 }
 
-#[derive(Debug, Clone, Display)]
+#[derive(Debug, Clone)]
 pub struct Function {
   pub parameters: Vec<Identifier>,
   pub body: BlockStatement,
