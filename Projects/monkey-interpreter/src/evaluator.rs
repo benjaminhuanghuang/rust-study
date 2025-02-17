@@ -17,6 +17,10 @@ impl Evaluator {
 
     for statement in program.statements {
       result = self.eval_statement(statement);
+
+      if let Object::ReturnValue(val) = result {
+        return *val;
+      }
     }
 
     result
@@ -25,6 +29,10 @@ impl Evaluator {
   fn eval_statement(&self, statement: StatementNode) -> Object {
     match statement {
       StatementNode::Expression(statement) => self.eval_expression(statement.expression),
+      StatementNode::Return(statement) => {
+        let val = self.eval_expression(statement.return_value);
+        return Object::ReturnValue(Box::new(val));
+      }
       _ => Object::Null,
     }
   }
@@ -242,6 +250,28 @@ mod test {
     }
   }
 
+  #[test]
+  fn test_return_statement() {
+    let tests = vec![
+      ("return 10;", 10),
+      ("return 10; 9;", 10),
+      ("return 2 * 5; 9;", 10),
+      ("9; return 2 * 5; 9;", 10),
+      // (
+      //   "if (10 > 1) {
+      //     if (10 > 1) {
+      //       return 10;
+      //     }
+      //     return 1;
+      //   }",
+      //   10,
+      // ),
+    ];
+    for test in tests {
+      let evaluated = test_eval(test.0);
+      test_integer_object(evaluated, test.1);
+    }
+  }
   /*----------------HELPER----------------- */
   fn test_eval(input: &str) -> Object {
     let lexer = Lexer::new(input);

@@ -33,3 +33,9 @@ eval_boolean_infix_expression
 ```rs
 test_if_else_expression
 ```
+
+## return
+
+```rs
+StatementNode::Return(statement) => {}
+```
