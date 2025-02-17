@@ -92,3 +92,27 @@ eval_expression() {
 eval_index_expression
 eval_array_index_expression
 ```
+
+## len(array), first(array)
+
+## Hash
+
+```rs
+// Lexer
+TokenKind {
+  Colon
+}
+
+next_token() {
+  ':' => Lexer::new_token(TokenKind::Colon, self.ch),
+}
+
+
+// Parsing
+pub struct HashLiteral {
+}
+
+ExpressionNode {
+  Hash(HashLiteral),
+}
+```

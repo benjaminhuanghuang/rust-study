@@ -29,6 +29,8 @@ pub enum TokenKind {
 
   Comma,
   Semicolon,
+  Colon,
+
   Lparen,
   Rparen,
   Lbrace,
@@ -80,6 +82,7 @@ impl Display for TokenKind {
       TokenKind::String => write!(f, "String"),
       TokenKind::Lbracket => write!(f, "["),
       TokenKind::Rbracket => write!(f, "]"),
+      TokenKind::Colon => write!(f, ":"),
     }
   }
 }
