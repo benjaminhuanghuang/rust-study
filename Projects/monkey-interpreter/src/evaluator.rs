@@ -63,6 +63,9 @@ impl Evaluator {
       (Object::Integer(left), Object::Integer(right), operator) => {
         return Self::eval_integer_infix_expression(operator, *left, *right);
       }
+      (Object::Boolean(left), Object::Boolean(right), operator) => {
+        return Self::eval_boolean_infix_expression(operator, *left, *right);
+      }
       _ => NULL,
     }
   }
@@ -75,6 +78,13 @@ impl Evaluator {
       "/" => Object::Integer(left / right),
       "<" => Self::native_bool_to_boolean_object(left < right),
       ">" => Self::native_bool_to_boolean_object(left > right),
+      "==" => Self::native_bool_to_boolean_object(left == right),
+      "!=" => Self::native_bool_to_boolean_object(left != right),
+      _ => NULL,
+    }
+  }
+  fn eval_boolean_infix_expression(operator: String, left: bool, right: bool) -> Object {
+    match operator.as_str() {
       "==" => Self::native_bool_to_boolean_object(left == right),
       "!=" => Self::native_bool_to_boolean_object(left != right),
       _ => NULL,
@@ -148,15 +158,15 @@ mod test {
       ("1 != 1", false),
       ("1 == 2", false),
       ("1 != 2", true),
-      // ("true == true", true),
-      // ("false == false", true),
-      // ("true == false", false),
-      // ("true != false", true),
-      // ("false != true", true),
-      // ("(1 < 2) == true", true),
-      // ("(1 < 2) == false", false),
-      // ("(1 > 2) == true", false),
-      // ("(1 > 2) == false", true),
+      ("true == true", true),
+      ("false == false", true),
+      ("true == false", false),
+      ("true != false", true),
+      ("false != true", true),
+      ("(1 < 2) == true", true),
+      ("(1 < 2) == false", false),
+      ("(1 > 2) == true", false),
+      ("(1 > 2) == false", true),
     ];
     for test in tests {
       let evaluated = test_eval(test.0);

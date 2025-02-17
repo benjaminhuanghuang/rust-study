@@ -25,4 +25,5 @@ eval_bang_operator_expression
 ExpressionNode::Infix(infix_exp) => {}
 eval_infix_expression
 eval_integer_infix_expression
+eval_boolean_infix_expression
 ```
