@@ -1,4 +1,4 @@
-use crate::ast::{ExpressionNode, Program, StatementNode};
+use crate::ast::{BlockStatement, ExpressionNode, IfExpression, Program, StatementNode};
 use crate::object::Object;
 
 const TRUE: Object = Object::Boolean(true);
@@ -42,6 +42,9 @@ impl Evaluator {
           let left = self.eval_expression(Some(*infix_exp.left));
           let right = self.eval_expression(Some(*infix_exp.right));
           return Self::eval_infix_expression(infix_exp.operator, &left, &right);
+        }
+        ExpressionNode::IfExpressionNode(if_exp) => {
+          return self.eval_if_expression(if_exp);
         }
         _ => Object::Null,
       };
@@ -89,6 +92,35 @@ impl Evaluator {
       "!=" => Self::native_bool_to_boolean_object(left != right),
       _ => NULL,
     }
+  }
+
+  fn eval_if_expression(&self, if_exp: IfExpression) -> Object {
+    let condition = self.eval_expression(Some(*if_exp.condition));
+
+    return if Self::is_truthy(condition) {
+      self.eval_block_expression(if_exp.consequence)
+    } else if let Some(alternative) = if_exp.alternative {
+      self.eval_block_expression(alternative)
+    } else {
+      Object::Null
+    };
+  }
+
+  fn is_truthy(obj: Object) -> bool {
+    match obj {
+      Object::Null => false,
+      Object::Boolean(value) => value,
+      _ => true,
+    }
+  }
+  fn eval_block_expression(&self, block: BlockStatement) -> Object {
+    let mut result = Object::Null;
+
+    for statement in block.statements {
+      result = self.eval_statement(statement);
+    }
+
+    result
   }
   fn eval_bang_operator_expression(right: Object) -> Object {
     match right {
@@ -173,6 +205,43 @@ mod test {
       test_boolean_object(evaluated, test.1);
     }
   }
+
+  #[test]
+  fn test_bang_operator() {
+    let tests = vec![
+      ("!true", false),
+      ("!false", true),
+      ("!5", false),
+      ("!!true", true),
+      ("!!false", false),
+      ("!!5", true),
+    ];
+    for test in tests {
+      let evaluated = test_eval(test.0);
+      test_boolean_object(evaluated, test.1);
+    }
+  }
+  #[test]
+  fn test_if_else_expression() {
+    let tests = vec![
+      ("if (true) { 10 }", 10),
+      ("if (false) { 10 }", -999),
+      ("if (1) { 10 }", 10),
+      ("if (1 < 2) { 10 }", 10),
+      ("if (1 > 2) { 10 }", -999),
+      ("if (1 > 2) { 10 } else { 20 }", 20),
+      ("if (1 < 2) { 10 } else { 20 }", 10),
+    ];
+    for test in tests {
+      let evaluated = test_eval(test.0);
+      if test.1 == -999 {
+        test_null_object(evaluated);
+      } else {
+        test_integer_object(evaluated, test.1);
+      }
+    }
+  }
+
   /*----------------HELPER----------------- */
   fn test_eval(input: &str) -> Object {
     let lexer = Lexer::new(input);
@@ -204,20 +273,10 @@ mod test {
       other => panic!("object is not bool, got {}", other),
     }
   }
-
-  #[test]
-  fn test_bang_operator() {
-    let tests = vec![
-      ("!true", false),
-      ("!false", true),
-      ("!5", false),
-      ("!!true", true),
-      ("!!false", false),
-      ("!!5", true),
-    ];
-    for test in tests {
-      let evaluated = test_eval(test.0);
-      test_boolean_object(evaluated, test.1);
+  fn test_null_object(obj: Object) {
+    match obj {
+      Object::Null => assert!(true),
+      _ => assert!(false),
     }
   }
 }

@@ -27,3 +27,9 @@ eval_infix_expression
 eval_integer_infix_expression
 eval_boolean_infix_expression
 ```
+
+## If else
+
+```rs
+test_if_else_expression
+```
