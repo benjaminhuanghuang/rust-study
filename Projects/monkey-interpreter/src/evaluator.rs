@@ -126,6 +126,10 @@ impl Evaluator {
 
     for statement in block.statements {
       result = self.eval_statement(statement);
+
+      if result.object_type() == "RETURN_VALUE" {
+        return result;
+      }
     }
 
     result
@@ -257,15 +261,15 @@ mod test {
       ("return 10; 9;", 10),
       ("return 2 * 5; 9;", 10),
       ("9; return 2 * 5; 9;", 10),
-      // (
-      //   "if (10 > 1) {
-      //     if (10 > 1) {
-      //       return 10;
-      //     }
-      //     return 1;
-      //   }",
-      //   10,
-      // ),
+      (
+        "if (10 > 1) {
+          if (10 > 1) {
+            return 10;
+          }
+          return 1;
+        }",
+        10,
+      ),
     ];
     for test in tests {
       let evaluated = test_eval(test.0);
