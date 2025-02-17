@@ -53,3 +53,42 @@ parser.register_prefix(TokenKind::Lbracket, Self::parse_array_literal); // [1, 2
 
 test_array_literal_parsing
 ```
+
+## Array[index]
+
+```rs
+// lexer
+IndexExpression
+
+// Parser
+pub enum ExpressionNode {
+  Index(IndexExpression),
+}
+
+enum PrecedenceLevel {
+  Index = 7,
+}
+TokenKind::Lbracket => PrecedenceLevel::Index,
+
+
+parser.register_infix(TokenKind::Lbracket, Self::parse_index_expression); // array[1]
+
+test_operator_precedence_parsing "a * [1, 2, 3, 4][b * c] * d",
+```
+
+## Evaluate Array
+
+```rs
+pub enum Object {
+  Array(Vec<Object>),
+}
+
+eval_expression() {
+  ExpressionNode::Array(array) => {}
+  ExpressionNode::Index(index) => {}
+
+}
+
+eval_index_expression
+eval_array_index_expression
+```

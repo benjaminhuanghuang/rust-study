@@ -21,7 +21,7 @@ impl Evaluator {
   }
 
   pub fn eval_program(&mut self, program: Program) -> Object {
-    let mut result = Object::Null;
+    let mut result = NULL;
 
     for statement in program.statements {
       result = self.eval_statement(statement);
@@ -52,7 +52,7 @@ impl Evaluator {
         }
         self.env.set(statement.name.value, val).unwrap()
       }
-      _ => Object::Null,
+      _ => NULL,
     }
   }
 
@@ -100,10 +100,52 @@ impl Evaluator {
           self.apply_function(function, arg)
         }
         ExpressionNode::StringExp(string_literal) => Object::StringObj(string_literal.value),
-        _ => Object::Null,
+        ExpressionNode::Array(array) => {
+          let elements = self.eval_expressions(array.elements);
+          if elements.len() == 1 && Self::is_error(&elements[0]) {
+            return elements[0].clone();
+          }
+          Object::Array(elements)
+        }
+        ExpressionNode::Index(index_exp) => {
+          let left = self.eval_expression(Some(*index_exp.left));
+          if Self::is_error(&left) {
+            return left;
+          }
+          let index = self.eval_expression(Some(*index_exp.index));
+          if Self::is_error(&index) {
+            return index;
+          }
+
+          self.eval_index_expression(left, index)
+        }
+        _ => NULL,
       };
     }
 
+    NULL
+  }
+
+  fn eval_index_expression(&mut self, left: Object, index: Object) -> Object {
+    if left.object_type() == "ARRAY" && index.object_type() == "INTEGER" {
+      return self.eval_array_index_expression(left, index);
+    }
+
+    Object::Error(format!(
+      "index operator not supported: {}",
+      left.object_type()
+    ))
+  }
+  fn eval_array_index_expression(&mut self, array: Object, index: Object) -> Object {
+    if let Object::Array(elements) = array {
+      if let Object::Integer(i) = index {
+        let max = elements.len() as i64 - 1;
+        if i < 0 || i > max {
+          return Object::Null;
+        }
+        return elements[i as usize].clone();
+      }
+    }
     Object::Null
   }
 
@@ -293,7 +335,7 @@ impl Evaluator {
 /*------------------Tests ------------------- */
 #[cfg(test)]
 mod test {
-  use std::any;
+  use std::any::{self};
 
   use super::*;
   use crate::{ast::Node, lexer::Lexer, object::Object, parser::Parser};
@@ -587,6 +629,55 @@ mod test {
       }
     }
   }
+
+  #[test]
+  fn test_array_literals() {
+    let input = "[1, 2 * 2, 3 + 3]";
+    let evaluated = test_eval(input);
+    match evaluated {
+      Object::Array(elements) => {
+        assert_eq!(elements.len(), 3, "array has wrong num of elements");
+        test_integer_object(elements[0].clone(), 1);
+        test_integer_object(elements[1].clone(), 4);
+        test_integer_object(elements[2].clone(), 6);
+      }
+      other => panic!("object is not array, got {:?}", other),
+    }
+  }
+
+  #[test]
+  fn test_array_index_expressions() {
+    let tests: Vec<(&str, Box<dyn any::Any>)> = vec![
+      ("[1, 2, 3][0]", Box::new(1_i64)),
+      ("[1, 2, 3][1]", Box::new(2_i64)),
+      ("[1, 2, 3][2]", Box::new(3_i64)),
+      ("let i = 0; [1][i];", Box::new(1_i64)),
+      ("[1, 2, 3][1 + 1];", Box::new(3_i64)),
+      ("let myArray = [1, 2, 3]; myArray[2];", Box::new(3_i64)),
+      (
+        "let myArray = [1, 2, 3]; myArray[0] + myArray[1] + myArray[2];",
+        Box::new(6_i64),
+      ),
+      (
+        "let myArray = [1, 2, 3]; let i = myArray[0]; myArray[i]",
+        Box::new(2_i64),
+      ),
+      ("[1, 2, 3][3]", Box::new(NULL)),
+      ("[1, 2, 3][-1]", Box::new(NULL)),
+    ];
+
+    for test in tests {
+      let evaluated = test_eval(test.0);
+      match test.1.downcast_ref::<i64>() {
+        Some(expected) => test_integer_object(evaluated, *expected),
+        None => match test.1.downcast_ref::<i64>() {
+          Some(expected) => test_integer_object(evaluated, *expected),
+          None => test_null_object(evaluated),
+        },
+      }
+    }
+  }
+
   /*----------------HELPER----------------- */
   fn test_eval(input: &str) -> Object {
     let lexer = Lexer::new(input);

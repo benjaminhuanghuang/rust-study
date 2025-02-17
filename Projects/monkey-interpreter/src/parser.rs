@@ -3,8 +3,8 @@ use std::collections::HashMap;
 use crate::{
   ast::{
     ArrayLiteral, BlockStatement, Boolean, CallExpression, ExpressionNode, ExpressionStatement,
-    FunctionLiteral, Identifier, IfExpression, InfixExpression, IntegerLiteral, LetStatement,
-    PrefixExpression, Program, ReturnStatement, StatementNode, StringLiteral,
+    FunctionLiteral, Identifier, IfExpression, IndexExpression, InfixExpression, IntegerLiteral,
+    LetStatement, PrefixExpression, Program, ReturnStatement, StatementNode, StringLiteral,
   },
   lexer::Lexer,
   token::{Token, TokenKind},
@@ -22,6 +22,7 @@ enum PrecedenceLevel {
   Product = 4,     // *
   Prefix = 5,      // -X or !X
   Call = 6,
+  Index = 7,
 }
 
 fn precedence_map(kind: &TokenKind) -> PrecedenceLevel {
@@ -35,6 +36,7 @@ fn precedence_map(kind: &TokenKind) -> PrecedenceLevel {
     TokenKind::Slash => PrecedenceLevel::Product,
     TokenKind::Asterisk => PrecedenceLevel::Product,
     TokenKind::Lparen => PrecedenceLevel::Call,
+    TokenKind::Lbracket => PrecedenceLevel::Index,
     _ => PrecedenceLevel::Lowest,
   };
 }
@@ -82,6 +84,7 @@ impl Parser {
     parser.register_infix(TokenKind::Lt, Self::parse_infix_expression); // 1 > 1
     parser.register_infix(TokenKind::Gt, Self::parse_infix_expression); // 1 < 1
     parser.register_infix(TokenKind::Lparen, Self::parse_call_expression); // add(1, 2)
+    parser.register_infix(TokenKind::Lbracket, Self::parse_index_expression); // array[1]
 
     parser.next_token();
     parser.next_token();
@@ -224,6 +227,29 @@ impl Parser {
     };
 
     Some(ExpressionNode::Array(array))
+  }
+
+  fn parse_index_expression(&mut self, left: ExpressionNode) -> Option<ExpressionNode> {
+    self.next_token();
+
+    let mut expression = IndexExpression {
+      token: self.cur_token.clone(),
+      left: Box::new(left),
+      index: Default::default(),
+    };
+
+    self.next_token();
+    expression.index = Box::new(
+      self
+        .parse_expression(PrecedenceLevel::Lowest)
+        .expect("error parsing index expression"),
+    );
+
+    if !self.expect_peek(TokenKind::Rbracket) {
+      return None;
+    }
+
+    Some(ExpressionNode::Index(expression))
   }
 
   fn parse_function_parameters(&mut self) -> Option<Vec<Identifier>> {
@@ -737,7 +763,7 @@ mod tests {
 
   #[test]
   fn test_operator_precedence_parsing() {
-    let tests = vec![
+    let tests: Vec<(&str, &str)> = vec![
       ("-a * b", "((-a) * b)"),
       ("!-a", "(!(-a))"),
       ("a + b + c", "((a + b) + c)"),
@@ -760,6 +786,23 @@ mod tests {
       ("2/(5+5)", "(2 / (5 + 5))"),
       ("-(5+5)", "(-(5 + 5))"),
       ("!(true == true)", "(!(true == true))"),
+      ("a + add(b * c) + d", "((a + add((b * c))) + d)"),
+      (
+        "add(a, b, 1, 2 * 3, 4 + 5, add(6, 7 * 8))",
+        "add(a, b, 1, (2 * 3), (4 + 5), add(6, (7 * 8)))",
+      ),
+      (
+        "add(a + b + c * d / f + g)",
+        "add((((a + b) + ((c * d) / f)) + g))",
+      ),
+      // (
+      //   "a * [1, 2, 3, 4][b * c] * d",
+      //   "((a * ([1, 2, 3, 4][(b * c)])) * d)",
+      // ),
+      // (
+      //   "add(a * b[2], b[1], 2 * [1, 2][1])",
+      //   "add((a * (b[2])), (b[1]), (2 * ([1, 2][1])))",
+      // ),
     ];
     for test in tests {
       let lexer = Lexer::new(test.0);
@@ -1236,6 +1279,39 @@ mod tests {
       ),
     }
   }
+
+  #[test]
+  fn test_array_index_expressions_parsing() {
+    let input = "mayArray[1 + 2]";
+    let lexer = Lexer::new(input);
+    let mut parser = Parser::new(lexer);
+    let program = parser.parse_program().unwrap();
+    check_parser_errors(&parser);
+
+    match &program.statements[0] {
+      StatementNode::Expression(exp_stmt) => match &exp_stmt
+        .expression
+        .as_ref()
+        .expect("error parsing expression")
+      {
+        ExpressionNode::Index(index_expr) => {
+          test_identifier(&index_expr.left, String::from("mayArray"));
+          test_infix_expression(
+            &index_expr.index,
+            Box::new(1),
+            String::from("+"),
+            Box::new(2),
+          );
+        }
+        other => panic!("exp not index expression. got {:?}", other),
+      },
+      other => panic!(
+        "program.statement[0] not ExpressionStatement. got {:?}",
+        other
+      ),
+    }
+  }
+
   /* ---------------------------------HELPERS---------------------------------*/
   fn test_let_statement(statement: &StatementNode, expected: &str) {
     assert_eq!(

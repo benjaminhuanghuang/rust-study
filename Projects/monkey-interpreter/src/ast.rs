@@ -47,6 +47,7 @@ pub enum ExpressionNode {
   Call(CallExpression),
   StringExp(StringLiteral),
   Array(ArrayLiteral),
+  Index(IndexExpression),
 }
 
 impl Node for ExpressionNode {
@@ -62,6 +63,7 @@ impl Node for ExpressionNode {
       Self::Call(call_expression) => call_expression.token_literal(),
       Self::StringExp(string_literal) => string_literal.token_literal(),
       Self::Array(array_literal) => array_literal.token_literal(),
+      Self::Index(index_expression) => index_expression.token_literal(),
       Self::None => String::from(""),
     };
   }
@@ -78,6 +80,7 @@ impl Node for ExpressionNode {
       Self::Call(call_expression) => call_expression.print_string(),
       Self::StringExp(string_literal) => string_literal.print_string(),
       Self::Array(array_literal) => array_literal.print_string(),
+      Self::Index(index_expression) => index_expression.print_string(),
       Self::None => String::from(""),
     };
   }
@@ -359,7 +362,7 @@ impl Node for FunctionLiteral {
     }
     out.push_str(self.token_literal().as_str());
     out.push_str("(");
-    out.push_str(params.join(",").as_str());
+    out.push_str(params.join(", ").as_str());
     out.push_str(")");
     out.push_str(self.body.print_string().as_str());
     out
@@ -388,7 +391,7 @@ impl Node for CallExpression {
 
     out.push_str(self.function.print_string().as_str());
     out.push_str("(");
-    out.push_str(args.join(",").as_str());
+    out.push_str(args.join(", ").as_str());
     out.push_str(")");
 
     out
@@ -430,8 +433,32 @@ impl Node for ArrayLiteral {
     }
 
     out.push_str("[");
-    out.push_str(elements.join(",").as_str());
+    out.push_str(elements.join(", ").as_str());
     out.push_str("]");
+
+    out
+  }
+}
+#[derive(Debug, Clone)]
+pub struct IndexExpression {
+  pub token: Token,
+  pub left: Box<ExpressionNode>,
+  pub index: Box<ExpressionNode>,
+}
+
+impl Node for IndexExpression {
+  fn token_literal(&self) -> String {
+    self.token.literal.clone()
+  }
+
+  fn print_string(&self) -> String {
+    let mut out = String::from("");
+
+    out.push_str("(");
+    out.push_str(self.left.print_string().as_str());
+    out.push_str("[");
+    out.push_str(self.index.print_string().as_str());
+    out.push_str("])");
 
     out
   }

@@ -19,6 +19,7 @@ pub enum Object {
   Func(Function),
   StringObj(String),
   Builtin(BuiltinFunction),
+  Array(Vec<Object>),
   Null,
 }
 
@@ -32,6 +33,7 @@ impl Object {
       Object::Func(_) => String::from("FUNCTION"),
       Object::StringObj(_) => String::from("STRING"),
       Object::Builtin(_) => String::from("BUILTIN"),
+      Object::Array(_) => String::from("ARRAY"),
       Object::Null => String::from("NULL"),
     }
   }
@@ -40,11 +42,11 @@ impl Object {
 impl Display for Object {
   fn fmt(&self, f: &mut Formatter<'_>) -> Result {
     match self {
-      Object::Integer(value) => write!(f, "{}", value),
-      Object::Boolean(value) => write!(f, "{}", value),
-      Object::ReturnValue(value) => write!(f, "{}", *value),
-      Object::Error(err) => write!(f, "{}", err),
-      Object::Func(func) => {
+      Self::Integer(value) => write!(f, "{}", value),
+      Self::Boolean(value) => write!(f, "{}", value),
+      Self::ReturnValue(value) => write!(f, "{}", *value),
+      Self::Error(err) => write!(f, "{}", err),
+      Self::Func(func) => {
         let mut out = String::from("");
         let mut params = vec![];
         for p in &func.parameters {
@@ -58,9 +60,19 @@ impl Display for Object {
         out.push_str("\n}");
         write!(f, "{}", out)
       }
-      Object::StringObj(value) => write!(f, "{}", value),
-      Object::Builtin(_) => write!(f, "builtin function"),
-      Object::Null => write!(f, "null"),
+      Self::StringObj(value) => write!(f, "{}", value),
+      Self::Builtin(_) => write!(f, "builtin function"),
+      Self::Array(values) => {
+        let mut out = String::from("[");
+        let mut elements = vec![];
+        for e in values {
+          elements.push(e.to_string());
+        }
+        out.push_str(&elements.join(", "));
+        out.push_str("]");
+        write!(f, "{}", out)
+      }
+      Self::Null => write!(f, "null"),
     }
   }
 }
