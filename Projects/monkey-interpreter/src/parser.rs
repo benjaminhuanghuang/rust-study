@@ -4,7 +4,7 @@ use crate::{
   ast::{
     BlockStatement, Boolean, CallExpression, ExpressionNode, ExpressionStatement, FunctionLiteral,
     Identifier, IfExpression, InfixExpression, IntegerLiteral, LetStatement, PrefixExpression,
-    Program, ReturnStatement, StatementNode,
+    Program, ReturnStatement, StatementNode, StringLiteral,
   },
   lexer::Lexer,
   token::{Token, TokenKind},
@@ -70,6 +70,7 @@ impl Parser {
 
     parser.register_prefix(TokenKind::If, Self::parse_if_expression); // (1 + 1)
     parser.register_prefix(TokenKind::Function, Self::parse_function_literal); // fn(x, y) { x + y; }
+    parser.register_prefix(TokenKind::String, Self::parse_string_literal); // "hello world"
 
     parser.register_infix(TokenKind::Plus, Self::parse_infix_expression); // 1 + 1
     parser.register_infix(TokenKind::Minus, Self::parse_infix_expression); // 1 - 1
@@ -206,6 +207,13 @@ impl Parser {
     literal.body = self.parse_block_statement();
 
     Some(ExpressionNode::Function(literal))
+  }
+
+  fn parse_string_literal(&mut self) -> Option<ExpressionNode> {
+    Some(ExpressionNode::StringExp(StringLiteral {
+      token: self.cur_token.clone(),
+      value: self.cur_token.literal.clone(),
+    }))
   }
 
   fn parse_function_parameters(&mut self) -> Option<Vec<Identifier>> {
@@ -472,7 +480,7 @@ mod tests {
   use super::Parser;
   use crate::{
     ast::{ExpressionNode, Identifier, Node, StatementNode},
-    lexer::Lexer,
+    lexer::{self, Lexer},
     token::TokenKind,
   };
 
@@ -1138,6 +1146,42 @@ mod tests {
     }
   }
 
+  #[test]
+  fn test_string_literal_expression() {
+    let input = r#""hello world";"#;
+    let lexer = Lexer::new(input);
+    let mut parser = Parser::new(lexer);
+    let program = parser.parse_program();
+    check_parser_errors(&parser);
+
+    match &program.unwrap().statements[0] {
+      StatementNode::Expression(exp_stmt) => match &exp_stmt
+        .expression
+        .as_ref()
+        .expect("error parsing expression")
+      {
+        ExpressionNode::StringExp(string) => {
+          assert_eq!(
+            string.value, "hello world",
+            "string.value not {}. got {}",
+            "hello world", string.value
+          );
+          assert_eq!(
+            string.token_literal(),
+            "hello world",
+            "string.token_literal not `{}`. got {}",
+            "hello world",
+            string.token_literal()
+          );
+        }
+        other => panic!("exp not StringLiteral. got {:?}", other),
+      },
+      other => panic!(
+        "program.statement[0] not ExpressionStatement. got {:?}",
+        other
+      ),
+    }
+  }
   /* ---------------------------------HELPERS---------------------------------*/
   fn test_let_statement(statement: &StatementNode, expected: &str) {
     assert_eq!(
