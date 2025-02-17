@@ -1,18 +1,22 @@
 use crate::ast::{BlockStatement, ExpressionNode, IfExpression, Program, StatementNode};
-use crate::object::Object;
+use crate::object::{Environment, Object};
 
 const TRUE: Object = Object::Boolean(true);
 const FALSE: Object = Object::Boolean(false);
 const NULL: Object = Object::Null;
 
-pub struct Evaluator {}
+pub struct Evaluator {
+  env: Environment,
+}
 
 impl Evaluator {
   pub fn new() -> Self {
-    Evaluator {}
+    Evaluator {
+      env: Environment::new_environment(),
+    }
   }
 
-  pub fn eval_program(&self, program: Program) -> Object {
+  pub fn eval_program(&mut self, program: Program) -> Object {
     let mut result = Object::Null;
 
     for statement in program.statements {
@@ -30,29 +34,45 @@ impl Evaluator {
     result
   }
 
-  fn eval_statement(&self, statement: StatementNode) -> Object {
+  fn eval_statement(&mut self, statement: StatementNode) -> Object {
     match statement {
       StatementNode::Expression(statement) => self.eval_expression(statement.expression),
       StatementNode::Return(statement) => {
         let val = self.eval_expression(statement.return_value);
         return Object::ReturnValue(Box::new(val));
       }
+      StatementNode::Let(statement) => {
+        let val = self.eval_expression(statement.value);
+        if Self::is_error(&val) {
+          return val;
+        }
+        self.env.set(statement.name.value, val).unwrap()
+      }
       _ => Object::Null,
     }
   }
 
-  fn eval_expression(&self, expression: Option<ExpressionNode>) -> Object {
+  fn eval_expression(&mut self, expression: Option<ExpressionNode>) -> Object {
     if let Some(exp) = expression {
       return match exp {
         ExpressionNode::Integer(int) => Object::Integer(int.value),
         ExpressionNode::BooleanNode(bool) => Self::native_bool_to_boolean_object(bool.value),
         ExpressionNode::Prefix(prefix_exp) => {
           let right = self.eval_expression(Some(*prefix_exp.right));
+          if Self::is_error(&right) {
+            return right;
+          }
           return Self::eval_prefix_expression(prefix_exp.operator, right);
         }
         ExpressionNode::Infix(infix_exp) => {
           let left = self.eval_expression(Some(*infix_exp.left));
+          if Self::is_error(&left) {
+            return left;
+          }
           let right = self.eval_expression(Some(*infix_exp.right));
+          if Self::is_error(&right) {
+            return right;
+          }
           return Self::eval_infix_expression(infix_exp.operator, &left, &right);
         }
         ExpressionNode::IfExpressionNode(if_exp) => {
@@ -125,7 +145,7 @@ impl Evaluator {
     }
   }
 
-  fn eval_if_expression(&self, if_exp: IfExpression) -> Object {
+  fn eval_if_expression(&mut self, if_exp: IfExpression) -> Object {
     let condition = self.eval_expression(Some(*if_exp.condition));
 
     return if Self::is_truthy(condition) {
@@ -144,7 +164,7 @@ impl Evaluator {
       _ => true,
     }
   }
-  fn eval_block_expression(&self, block: BlockStatement) -> Object {
+  fn eval_block_expression(&mut self, block: BlockStatement) -> Object {
     let mut result = Object::Null;
 
     for statement in block.statements {
@@ -176,6 +196,13 @@ impl Evaluator {
       TRUE
     } else {
       FALSE
+    }
+  }
+
+  fn is_error(obj: &Object) -> bool {
+    match obj {
+      Object::Error(_) => true,
+      _ => false,
     }
   }
 }
@@ -335,12 +362,26 @@ mod test {
     }
   }
 
+  #[test]
+  fn test_let_statement() {
+    let tests = vec![
+      ("let a = 5; a;", 5),
+      ("let a = 5 * 5; a;", 25),
+      ("let a = 5; let b = a; b;", 5),
+      ("let a = 5; let b = a; let c = a + b + 5; c;", 15),
+    ];
+
+    for test in tests {
+      let evaluated = test_eval(test.0);
+      test_integer_object(evaluated, test.1);
+    }
+  }
   /*----------------HELPER----------------- */
   fn test_eval(input: &str) -> Object {
     let lexer = Lexer::new(input);
     let mut parser = Parser::new(lexer);
     let program = parser.parse_program();
-    let evaluator = Evaluator::new();
+    let mut evaluator = Evaluator::new();
 
     evaluator.eval_program(program.unwrap())
   }

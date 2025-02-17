@@ -50,3 +50,9 @@ pub enum Object {
 
 eval_prefix_expression
 ```
+
+## let x = 4 \* 4;
+
+```rs
+ StatementNode::Let(statement) => {}
+```

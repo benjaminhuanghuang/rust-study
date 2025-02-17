@@ -5,7 +5,7 @@ use crate::lexer;
 use crate::parser::Parser;
 
 pub fn start(stdin: Stdin, mut stdout: Stdout) {
-  let evaluator = Evaluator::new();
+  let mut evaluator = Evaluator::new();
   loop {
     write!(stdout, ">> ").expect("should have written prompt string >>");
     stdout.flush().expect("should have flushed stdout");
