@@ -5,6 +5,8 @@ use std::{
 
 use crate::ast::{BlockStatement, Identifier, Node};
 
+pub type BuiltinFunction = fn(Vec<Object>) -> Object;
+
 #[derive(Debug, Clone)]
 pub enum Object {
   Integer(i64),
@@ -13,6 +15,7 @@ pub enum Object {
   Error(String),
   Func(Function),
   StringObj(String),
+  BuildIn(BuiltinFunction),
   Null,
 }
 
@@ -25,6 +28,7 @@ impl Object {
       Object::Error(_) => String::from("ERROR"),
       Object::Func(_) => String::from("FUNCTION"),
       Object::StringObj(_) => String::from("STRING"),
+      Object::BuildIn(_) => String::from("BUILTIN"),
       Object::Null => String::from("NULL"),
     }
   }
@@ -52,6 +56,7 @@ impl Display for Object {
         write!(f, "{}", out)
       }
       Object::StringObj(value) => write!(f, "{}", value),
+      Object::BuildIn(_) => write!(f, "builtin function"),
       Object::Null => write!(f, "null"),
     }
   }
