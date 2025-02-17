@@ -491,6 +491,20 @@ mod test {
       test_integer_object(evaluated, test.1);
     }
   }
+
+  #[test]
+  fn test_closures() {
+    let input = "
+    let newAdder = fn(x) {
+      fn(y) { x + y };
+    };
+    let addTwo = newAdder(2);
+    addTwo(2);
+    ";
+    let evaluated = test_eval(input);
+    test_integer_object(evaluated, 4);
+  }
+
   /*----------------HELPER----------------- */
   fn test_eval(input: &str) -> Object {
     let lexer = Lexer::new(input);

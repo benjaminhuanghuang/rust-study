@@ -41,6 +41,8 @@ pub enum TokenKind {
   If,
   Else,
   Return,
+
+  String,
 }
 
 impl Display for TokenKind {
@@ -73,6 +75,7 @@ impl Display for TokenKind {
       TokenKind::Return => write!(f, "return"),
       TokenKind::Eq => write!(f, "=="),
       TokenKind::NotEq => write!(f, "!="),
+      TokenKind::String => write!(f, "String"),
     }
   }
 }

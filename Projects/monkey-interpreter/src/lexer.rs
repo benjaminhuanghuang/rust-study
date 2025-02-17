@@ -69,6 +69,10 @@ impl Lexer {
       '/' => Lexer::new_token(TokenKind::Slash, self.ch),
       '<' => Lexer::new_token(TokenKind::Lt, self.ch),
       '>' => Lexer::new_token(TokenKind::Gt, self.ch),
+      '"' => Token {
+        kind: TokenKind::String,
+        literal: self.read_string(),
+      },
       '\0' => Token {
         kind: TokenKind::Eof,
         literal: "".to_string(),
@@ -142,8 +146,21 @@ impl Lexer {
       self.input[self.read_position]
     }
   }
-}
 
+  fn read_string(&mut self) -> String {
+    let pos = self.position + 1;
+    self.read_char();
+
+    while self.ch != '"' && self.ch != '\0' {
+      self.read_char();
+    }
+
+    let string_slice = &self.input[pos..self.position];
+
+    string_slice.iter().collect()
+  }
+}
+/*---------------------------TEST --------------------------- */
 #[cfg(test)]
 mod tests {
   use super::Lexer;
@@ -228,6 +245,8 @@ mod tests {
       }
       10==10;
       10!=9;
+      "foobar"
+      "foo bar"
     "#;
 
     let expected = vec![
@@ -541,6 +560,14 @@ mod tests {
       Token {
         kind: TokenKind::Semicolon,
         literal: ";".to_string(),
+      },
+      Token {
+        kind: TokenKind::String,
+        literal: "foobar".to_string(),
+      },
+      Token {
+        kind: TokenKind::String,
+        literal: "foo bar".to_string(),
       },
       Token {
         kind: TokenKind::Eof,
