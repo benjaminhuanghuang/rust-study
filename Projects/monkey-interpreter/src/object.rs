@@ -21,6 +21,7 @@ pub enum Object {
   StringObj(String),
   Builtin(BuiltinFunction),
   Array(Vec<Object>),
+  HashObj(HashStruct),
   Null,
 }
 
@@ -35,6 +36,7 @@ impl Object {
       Object::StringObj(_) => String::from("STRING"),
       Object::Builtin(_) => String::from("BUILTIN"),
       Object::Array(_) => String::from("ARRAY"),
+      Object::HashObj(_) => String::from("HASH"),
       Object::Null => String::from("NULL"),
     }
   }
@@ -71,6 +73,17 @@ impl Display for Object {
         }
         out.push_str(&elements.join(", "));
         out.push_str("]");
+        write!(f, "{}", out)
+      }
+      Self::HashObj(hash) => {
+        let mut out = String::from("{");
+        let mut pairs = vec![];
+        for (_, pair) in &hash.pairs {
+          pairs.push(format!("{}: {}", pair.key, pair.value));
+        }
+        out.push_str("{");
+        out.push_str(&pairs.join(", "));
+        out.push_str("}");
         write!(f, "{}", out)
       }
       Self::Null => write!(f, "null"),
@@ -134,18 +147,11 @@ pub struct Function {
   pub env: Environment,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct HashKey {
   pub object_type: String,
   pub value: i64,
 }
-
-// impl Hash for HashKey {
-//   fn hash<H: Hasher>(&self, state: &mut H) {
-//     self.value.hash(state);
-//     self.object_type.hash(state)
-//   }
-// }
 pub trait Hashable {
   fn hash_key(&self) -> Result<HashKey, String>;
 }
@@ -175,6 +181,16 @@ impl Hashable for Object {
       other => Err(format!("unusable as hash key: {}", other.object_type())),
     }
   }
+}
+
+#[derive(Debug, Clone)]
+pub struct HashPair {
+  pub key: Object,
+  pub value: Object,
+}
+#[derive(Debug, Clone)]
+pub struct HashStruct {
+  pub pairs: HashMap<HashKey, HashPair>,
 }
 /*-------------------------------------------------------------
 *                     TEST

@@ -122,3 +122,8 @@ test_parsing_hash_literal_string_keys
 ```
 
 ## Hash Object
+
+```rs
+HashPair
+HashStruct
+```
