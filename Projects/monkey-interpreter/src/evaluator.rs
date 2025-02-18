@@ -148,7 +148,10 @@ impl Evaluator {
 
   fn eval_index_expression(&mut self, left: Object, index: Object) -> Object {
     if left.object_type() == "ARRAY" && index.object_type() == "INTEGER" {
-      return self.eval_array_index_expression(left, index);
+      return Self::eval_array_index_expression(left, index);
+    }
+    if left.object_type() == "HASH" {
+      return Self::eval_hash_index_expression(left, index);
     }
 
     Object::Error(format!(
@@ -156,7 +159,7 @@ impl Evaluator {
       left.object_type()
     ))
   }
-  fn eval_array_index_expression(&mut self, array: Object, index: Object) -> Object {
+  fn eval_array_index_expression(array: Object, index: Object) -> Object {
     if let Object::Array(elements) = array {
       if let Object::Integer(i) = index {
         let max = elements.len() as i64 - 1;
@@ -167,6 +170,24 @@ impl Evaluator {
       }
     }
     Object::Null
+  }
+
+  fn eval_hash_index_expression(hash: Object, index: Object) -> Object {
+    match hash {
+      Object::HashObj(hash) => {
+        let key = match index.hash_key() {
+          Ok(key) => key,
+          Err(err) => return Object::Error(err.to_string()),
+        };
+
+        let pair = match hash.pairs.get(&key) {
+          Some(pair) => pair,
+          None => return Object::Null,
+        };
+        return pair.value.clone();
+      }
+      _ => Object::Error(format!("unusable as hash key: {}", hash.object_type())),
+    }
   }
 
   fn apply_function(&mut self, func: Object, args: Vec<Object>) -> Object {
@@ -499,6 +520,10 @@ mod test {
       ),
       ("foobar", "identifier not found: foobar"),
       (r#""Hello" - "World""#, "unknown operator: STRING - STRING"),
+      (
+        r#"{"name":"monkey"}[fn(x) { x }];"#,
+        "unusable as hash key: FUNCTION",
+      ),
     ];
 
     for tests in tests {

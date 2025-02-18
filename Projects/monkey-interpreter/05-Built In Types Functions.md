@@ -130,4 +130,10 @@ HashStruct
 
 test_hash_literals
 test_hash_index_expressions
+
+test_error_handling
+
+
+eval_index_expression
+eval_hash_index_expression
 ```
