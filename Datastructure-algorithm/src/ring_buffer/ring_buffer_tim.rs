@@ -1,3 +1,9 @@
+/*
+https://www.youtube.com/watch?v=TQVwv_e_rMw
+
+https://gist.github.com/timClicks/68955827abfe0ff964ce1a61996afed9
+
+*/
 #[derive(Debug)]
 pub struct RingBuffer<T> {
   storage: Vec<T>,
@@ -67,20 +73,20 @@ mod tests {
 
   #[test]
   fn test_ring_buffer() {
-    let mut storage = RingBuffer::<i32>::new(3);
-    assert!(storage.is_empty());
-    assert!(!storage.is_full());
+    let mut rb = RingBuffer::<i32>::new(3);
+    assert!(rb.is_empty());
+    assert!(!rb.is_full());
 
-    storage.push(1);
-    storage.push(2);
-    storage.push(3);
+    rb.push(1);
+    rb.push(2);
+    rb.push(3);
 
-    assert_eq!(storage.size(), 3);
-    assert!(storage.is_full());
+    assert_eq!(rb.size(), 3);
+    assert!(rb.is_full());
 
-    assert_eq!(storage.pop(), Some(1));
-    assert_eq!(storage.pop(), Some(2));
-    assert_eq!(storage.pop(), Some(3));
-    assert!(storage.is_empty());
+    assert_eq!(rb.pop(), Some(1));
+    assert_eq!(rb.pop(), Some(2));
+    assert_eq!(rb.pop(), Some(3));
+    assert!(rb.is_empty());
   }
 }

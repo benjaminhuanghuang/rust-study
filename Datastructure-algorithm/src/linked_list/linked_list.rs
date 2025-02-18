@@ -1,196 +1,161 @@
+/*
 
 
-use std::rc::Rc;
+
+*/
 use std::cell::RefCell;
-use std::clone::Clone;
+use std::rc::Rc;
 
-struct ListNode<T>
-{
-    value :T,
-    next: Option<Rc<RefCell<ListNode<T>>>>,
+struct ListNode<T> {
+  value: T,
+  next: Option<Rc<RefCell<ListNode<T>>>>,
 }
-
 
 impl<T> ListNode<T> {
-  fn new(value:T) -> Rc<RefCell<ListNode<T>>>{
-      let pointer = Rc::new(RefCell::new(ListNode {
-          value,
-          next: None,
-      }));
-      Rc::clone(&pointer)
+  fn new(value: T) -> Rc<RefCell<ListNode<T>>> {
+    Rc::new(RefCell::new(ListNode { value, next: None }))
   }
 }
 
-pub struct LinkedList<T>{
-  length: u32,
+pub struct LinkedList<T> {
+  length: usize,
   head: Option<Rc<RefCell<ListNode<T>>>>,
-  tail: Option<Rc<RefCell<ListNode<T>>>>
+  tail: Option<Rc<RefCell<ListNode<T>>>>,
 }
 
-
-impl<T> LinkedList<T> {
+impl<T: Clone> LinkedList<T> {
   pub fn new() -> Self {
-      LinkedList {
-          length: 0,
-          head: None,
-          tail: None,
-      }
+    LinkedList {
+      length: 0,
+      head: None,
+      tail: None,
+    }
   }
 
-  pub fn get_length(&self) -> u32 {
-      self.length
+  pub fn get_length(&self) -> usize {
+    self.length
   }
 
-  // add node to the end of the list
-  pub fn push(&mut self,value:T){
+  pub fn push(&mut self, value: T) {
     let node = ListNode::new(value);
     match self.tail.take() {
-        Some(here) => old.borrow_mut().next = Some(node.clone()),
-        None => self.head = Some(node.clone()),
+      Some(tail_node) => tail_node.borrow_mut().next = Some(node.clone()),
+      None => self.head = Some(node.clone()),
     };
-    self.length += 1;
     self.tail = Some(node);
+    self.length += 1;
   }
 
-  // add node to the beginning of the list
-  pub fn unshift(&mut self, value:T){
-      let node = ListNode::new(value);
-      node.borrow_mut().next = self.head.take();
-      match self.tail.take() {
-          Some(here) => self.tail = Some(here),
-          None => self.tail = Some(node),
-      };
-      self.length += 1;
-      self.head = Some(node);
-
+  pub fn unshift(&mut self, value: T) {
+    let node = ListNode::new(value);
+    node.borrow_mut().next = self.head.take();
+    if self.tail.is_none() {
+      self.tail = Some(node.clone());
+    }
+    self.head = Some(node);
+    self.length += 1;
   }
 
-  pub fn shift(&mut self) -> T {
-      if self.length == 0 {
-          panic!("No Items for pop!");
+  pub fn pop(&mut self) -> Option<T> {
+    if self.length == 0 {
+      return None;
+    }
+
+    let mut current = self.head.clone();
+    let mut prev: Option<Rc<RefCell<ListNode<T>>>> = None;
+    while let Some(ref node) = current.clone() {
+      if node.borrow().next.is_none() {
+        let val = node.borrow().value.clone();
+        if let Some(prev_node) = prev {
+          prev_node.borrow_mut().next = None;
+          self.tail = Some(prev_node);
+        } else {
+          self.head = None;
+          self.tail = None;
+        }
+        self.length -= 1;
+        return Some(val);
       }
-      let mut value = 0;
-      let mut pointer_pnext = None;
-      if let Some(ref f) = self.first {
-          if let Some(ref p) = f.borrow().next {
-              if let Some(ref pnext) = p.borrow().next {
-                  pointer_pnext = Some(Rc::clone(&pnext));
-                  pnext.borrow_mut().prev = Some(Rc::clone(&f));
-              }
-              return p.borrow().value;
-          };
-          f.borrow_mut().next = pointer_pnext;
-      };
-      self.count +=1;
-      None
+      prev = current;
+      current = node.borrow().next.clone();
+    }
+    None
   }
 
-  // remove node at the end the list
-  pub fn pop(&mut self) -> T {
-      if self.length == 0 {
-          panic!("No Items for pop!");
+  pub fn shift(&mut self) -> Option<T> {
+    self.head.take().map(|node| {
+      let value = node.borrow().value.clone();
+      self.head = node.borrow_mut().next.take();
+      if self.head.is_none() {
+        self.tail = None;
       }
-      let mut value = 0;
-      let mut pointer_pnext = None;
-      if let Some(ref l) = self.tail {
-          if let Some(ref p) = l.borrow().prev {
-              if let Some(ref pnext) = p.borrow().prev {
-                  pointer_pnext = Some(Rc::clone(&pnext));
-                  pnext.borrow_mut().next = Some(Rc::clone(&l));
-              }
-              value = p.borrow().value;
-          };
-          l.borrow_mut().prev = pointer_pnext;
-      };
-      self.count--;
+      self.length -= 1;
       value
+    })
   }
 
-  pub fn list_first(&self) -> T {
-      if self.length == 0 {
-          panic!("No Items!");
-      }
-      let mut value = 0;
-      if let Some(ref f) = self.first {
-          if let Some(ref n) = f.borrow().next {
-              value = n.borrow().value;
-          };
-      }
-      value
+  pub fn get_first(&self) -> Option<T> {
+    self.head.as_ref().map(|node| node.borrow().value.clone())
   }
 
-  pub fn get_tail(&self) -> Option<T> {
-      if self.length == 0 {
-          panic!("No Items!");
-      }
-      self.tail
+  pub fn get_last(&self) -> Option<T> {
+    self.tail.as_ref().map(|node| node.borrow().value.clone())
   }
 
-  pub fn clear(&mut self){
-      while self.length > 0 {
-          self.pop();
-      }
+  pub fn clear(&mut self) {
+    self.head = None;
+    self.tail = None;
+    self.length = 0;
   }
-
 }
 
-
 #[cfg(test)]
-mod test {
-    use super::*;
-    #[test]
-    fn test_push_pop(){
-        let mut a = List::new();
-        a.list_push(1);
-        a.list_push(2);
-        assert_eq!(a.list_pop(),2);
-        assert_eq!(a.list_pop(),1);
-    }
+mod tests {
+  use super::*;
+  #[test]
+  fn test_push_pop() {
+    let mut a: LinkedList<i32> = LinkedList::new();
+    a.push(1);
+    a.push(2);
+    assert_eq!(a.pop(), Some(2));
+    assert_eq!(a.pop(), Some(1));
+  }
 
-    #[test]
-    fn test_shift(){
-        let mut a = List::new();
-        a.list_unshift(3);
-        a.list_unshift(1);
-        a.list_unshift(2);
-        assert_eq!(a.list_shift(),2);
-        assert_eq!(a.list_shift(),1);
-    }
+  #[test]
+  fn test_shift() {
+    let mut a: LinkedList<i32> = LinkedList::new();
+    a.unshift(3);
+    a.unshift(1);
+    a.unshift(2);
+    assert_eq!(a.shift(), Some(2));
+    assert_eq!(a.shift(), Some(1));
+  }
 
-    #[test]
-    fn test_shift_push(){
-        let mut a = List::new();
-        a.list_push(1);
-        a.list_push(2);
-        assert_eq!(a.list_shift(),1);
-        assert_eq!(a.list_shift(),2);
-    }
+  #[test]
+  fn test_shift_push() {
+    let mut a = LinkedList::new();
+    a.push(1);
+    a.push(2);
+    assert_eq!(a.shift(), Some(1));
+    assert_eq!(a.shift(), Some(2));
+  }
 
-    #[test]
-    fn test_clear(){
-        let mut a = List::new();
-        a.list_push(1);
-        a.list_push(2);
-        a.list_clear();
-        assert_eq!(a.list_count(),0);
-    }
+  #[test]
+  fn test_clear() {
+    let mut a = LinkedList::new();
+    a.push(1);
+    a.push(2);
+    a.clear();
+    assert_eq!(a.get_length(), 0);
+  }
 
-    #[test]
-    #[should_panic]
-    fn test_pop_empty(){
-        let mut a = List::new();
-        a.list_push(1);
-        a.list_pop();
-        a.list_pop();
-    }
-
-    #[test]
-    fn test_first_last(){
-        let mut a = List::new();
-        a.list_push(1);
-        a.list_push(2);
-        a.list_push(3);
-        assert_eq!(a.list_first(),1);
-        assert_eq!(a.list_last(),3);
-    }
+  #[test]
+  fn test_first_last() {
+    let mut a = LinkedList::new();
+    a.push(1);
+    a.push(2);
+    a.push(3);
+    assert_eq!(a.get_first(), Some(1));
+    assert_eq!(a.get_last(), Some(3));
+  }
 }
