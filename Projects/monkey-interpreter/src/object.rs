@@ -81,7 +81,6 @@ impl Display for Object {
         for (_, pair) in &hash.pairs {
           pairs.push(format!("{}: {}", pair.key, pair.value));
         }
-        out.push_str("{");
         out.push_str(&pairs.join(", "));
         out.push_str("}");
         write!(f, "{}", out)
