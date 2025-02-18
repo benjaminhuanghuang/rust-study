@@ -15,7 +15,8 @@ members = [
   # "Tauri/tauri-zoom-launcher/src-tauri",
   "Tauri/time-tracker/src-tauri", "Projects/rust-vm", "Projects/pwd_cracker", "Statistics with Rust/my_statistics_project", "Projects/rust-lib-design/rat-rs"
 , "Rust-DB-SurrealDB/rust-surrealdb-basic", "Axum/rs-counter-study", "Rust-Debug/Debugging Rust 2021 Applications/debugging-rust",
-  "Projects/monkey-interpreter"
+  "Projects/monkey-interpreter",
+  "Datastructure-algorithm",
 ]
 exclude = [
   "Tauri",
@@ -24,7 +25,6 @@ exclude = [
   "Projects",
   "Bevy",
   "03-BestPractice-Project-structure",
-  "Datastructure-algorithm",
   "Rust-DB-Firebase/rust-firebase-basic","Rust-Async"
 ]
 
