@@ -120,3 +120,5 @@ parser.register_infix(TokenKind::Lbrace, Self::parse_hash_literal); // { "key": 
 
 test_parsing_hash_literal_string_keys
 ```
+
+## Hash Object

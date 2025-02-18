@@ -1,6 +1,7 @@
 use std::{
-  collections::HashMap,
-  fmt::{Display, Formatter, Result},
+  collections::{hash_map::DefaultHasher, HashMap},
+  fmt::{Display, Formatter},
+  hash::{Hash, Hasher},
 };
 
 use crate::{
@@ -40,7 +41,7 @@ impl Object {
 }
 
 impl Display for Object {
-  fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+  fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
     match self {
       Self::Integer(value) => write!(f, "{}", value),
       Self::Boolean(value) => write!(f, "{}", value),
@@ -131,4 +132,73 @@ pub struct Function {
   pub parameters: Vec<Identifier>,
   pub body: BlockStatement,
   pub env: Environment,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct HashKey {
+  pub object_type: String,
+  pub value: i64,
+}
+
+// impl Hash for HashKey {
+//   fn hash<H: Hasher>(&self, state: &mut H) {
+//     self.value.hash(state);
+//     self.object_type.hash(state)
+//   }
+// }
+pub trait Hashable {
+  fn hash_key(&self) -> Result<HashKey, String>;
+}
+
+impl Hashable for Object {
+  fn hash_key(&self) -> Result<HashKey, String> {
+    match &self {
+      Object::Boolean(bool) => {
+        let value = if *bool { 1 } else { 0 };
+        Ok(HashKey {
+          object_type: self.object_type(),
+          value,
+        })
+      }
+      Object::Integer(int) => Ok(HashKey {
+        object_type: self.object_type(),
+        value: *int,
+      }),
+      Object::StringObj(str) => {
+        let mut hasher = DefaultHasher::new();
+        str.hash(&mut hasher);
+        Ok(HashKey {
+          object_type: self.object_type(),
+          value: hasher.finish() as i64,
+        })
+      }
+      other => Err(format!("unusable as hash key: {}", other.object_type())),
+    }
+  }
+}
+/*-------------------------------------------------------------
+*                     TEST
+-------------------------------------------------------------*/
+#[cfg(test)]
+mod test {
+  use super::{Hashable, Object};
+
+  #[test]
+  fn test_string_hash_key() {
+    let hello1 = Object::StringObj("Hello World".to_string());
+    let hello2 = Object::StringObj("Hello World".to_string());
+    let some_other = Object::StringObj("Some Other".to_string());
+
+    assert_eq!(
+      hello1.hash_key(),
+      hello2.hash_key(),
+      "strings with same content have different hash key"
+    );
+
+    assert_ne!(
+      hello1.hash_key(),
+      some_other.hash_key(),
+      "strings with different content have same hash key"
+    )
+  }
 }
