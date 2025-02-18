@@ -742,6 +742,27 @@ mod test {
     }
   }
 
+  #[test]
+  fn test_hash_index_expressions() {
+    let tests: Vec<(&str, Box<dyn any::Any>)> = vec![
+      (r#"{"foo": 5}["foo"]"#, Box::new(5_i64)),
+      (r#"{"foo": 5}["bar"]"#, Box::new(NULL)),
+      (r#"let key= "foo"; {"foo": 5}[key]"#, Box::new(5_i64)),
+      (r#"{}["foo"]"#, Box::new(NULL)),
+      (r#"{5: 5}[5]"#, Box::new(5_i64)),
+      (r#"{true: 5}[true]"#, Box::new(5_i64)),
+      (r#"{false: 5}[false]"#, Box::new(5_i64)),
+    ];
+
+    for test in tests {
+      let evaluated = test_eval(test.0);
+      match test.1.downcast_ref::<i64>() {
+        Some(expected) => test_integer_object(evaluated, *expected),
+        None => test_null_object(evaluated),
+      }
+    }
+  }
+
   /*----------------HELPER----------------- */
   fn test_eval(input: &str) -> Object {
     let lexer = Lexer::new(input);

@@ -126,4 +126,8 @@ test_parsing_hash_literal_string_keys
 ```rs
 HashPair
 HashStruct
+
+
+test_hash_literals
+test_hash_index_expressions
 ```
