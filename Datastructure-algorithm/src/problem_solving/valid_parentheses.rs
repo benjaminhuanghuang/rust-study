@@ -23,6 +23,7 @@ pub fn is_valid(s: String) -> bool {
           return false;
         }
       }
+      // Skip other characters
       _ => {}
     }
   }
@@ -35,8 +36,8 @@ mod tests {
 
   #[test]
   fn test_valid_parentheses() {
-    assert!(is_valid("()".to_string()));
-    assert!(is_valid("()[]{}".to_string()));
+    assert!(is_valid("(a)".to_string()));
+    assert!(is_valid("(b)[]{c}".to_string()));
     assert!(is_valid("{[()()]}".to_string()));
     assert!(is_valid("".to_string()));
   }

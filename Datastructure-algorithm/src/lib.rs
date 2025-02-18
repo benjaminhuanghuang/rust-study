@@ -1,4 +1,4 @@
 pub mod linked_list;
-pub mod problems;
+pub mod problem_solving;
 pub mod ring_buffer;
 pub mod stack;
