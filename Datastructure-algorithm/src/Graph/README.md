@@ -1,6 +1,6 @@
 # Graph in Rush
 
-Dijkstra algorithm, breadth first search and depth first search 
+Dijkstra algorithm, breadth first search and depth first search
 
 ## Terminology
 
@@ -28,28 +28,12 @@ Complete graph: there is an edge between every pair of vertices
 - Adjacency matrix: A 2D array of size V x V where V is the number of vertices in the graph.
 
 - Adjacency list
-  
+
 ## Depth First Search
 
 1. Start from a vertex
 2. Make sure to track the visited vertex
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## References
+
 https://www.bilibili.com/video/BV1Ke411X7is?p=54&vd_source=b7025abbc1efd8b7631e43fa506ade3a
