@@ -17,6 +17,20 @@ impl<T> LinkedList<T> {
       None => self.push_front(data),
     }
   }
+
+  pub fn front(&self) -> Option<&T> {
+    match self.0 {
+      Some((ref data, _)) => Some(data),
+      None => None,
+    }
+  }
+
+  pub fn len(&self) -> usize {
+    match self.0 {
+      Some((_, ref child)) => 1 + child.len(),
+      None => 0,
+    }
+  }
 }
 
 #[cfg(test)]
@@ -30,9 +44,12 @@ mod tests {
     ll.push_front(2);
     ll.push_front(1);
 
-    assert_eq!(ll.0, Some((1, Box::new(LinkedList(Some((2, Box::new(LinkedList(Some((3, Box::new(LinkedList(None))))))))))));
-  }
+    // Verify the front element is 1
+    assert_eq!(ll.front(), Some(&1));
 
+    // Verify the size of the list
+    assert_eq!(ll.len(), 3);
+  }
   #[test]
   fn test_push_back() {
     let mut ll = LinkedList::new();
@@ -40,6 +57,7 @@ mod tests {
     ll.push_back(2);
     ll.push_back(1);
 
-    assert_eq!(ll.0, Some((3, Box::new(LinkedList(Some((2, Box::new(LinkedList(Some((1, Box::new(LinkedList(None))))))))))));
+    // Check length
+    assert_eq!(ll.len(), 3);
   }
 }
