@@ -147,11 +147,19 @@ pub struct Function {
   pub env: Environment,
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Eq)]
 pub struct HashKey {
   pub object_type: String,
   pub value: i64,
 }
+
+impl Hash for HashKey {
+  fn hash<H: Hasher>(&self, state: &mut H) {
+    self.object_type.hash(state);
+    self.value.hash(state);
+  }
+}
+
 pub trait Hashable {
   fn hash_key(&self) -> Result<HashKey, String>;
 }
