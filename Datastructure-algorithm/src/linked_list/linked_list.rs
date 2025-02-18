@@ -1,7 +1,10 @@
 /*
 
+Rc<T>	Shared ownership of nodes (avoids ownership issues). Without Rc, once the list goes out of scope, nodes would be dropped immediately when a single reference is lost.
 
+RefCell<T>	Allows mutable access to next without violating borrowing rules.
 
+A Box<T> is a single-owner heap allocation, which means we can’t have multiple references to the same node (like head and tail).
 */
 use std::cell::RefCell;
 use std::rc::Rc;

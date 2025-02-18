@@ -1,69 +1,73 @@
 /*
+Writing a Rust-based ring buffer By Tim McNamara
+
+https://en.wikipedia.org/wiki/Circular_buffer
+
 https://www.youtube.com/watch?v=TQVwv_e_rMw
 
 https://gist.github.com/timClicks/68955827abfe0ff964ce1a61996afed9
 
 */
 #[derive(Debug)]
-pub struct RingBuffer<T> {
-  storage: Vec<T>,
-  head: usize,
-  tail: usize,
-  size: usize,
+pub struct RingBuffer<T: Clone> {
+  storage: Vec<Option<T>>,
+  read_idx: usize,
+  write_idx: usize,
 }
+#[derive(Debug, PartialEq)]
+struct Full;
+
 /*
 The first T is used to define the type parameter for the implementation block.
 The second T refers to the type parameter for the RingBuffer struct itself
+
+If T does not implement Clone, we cannot easily retrieve elements:
+
+fn get(&self, index: usize) -> Option<T> {
+    self.storage[index] // Error: Cannot move out of `Option<T>`
+}
 */
-impl<T> RingBuffer<T> {
-  // Create a new ring storage with a given capacity
+impl<T: Clone> RingBuffer<T> {
   pub fn new(capacity: usize) -> Self {
     RingBuffer {
-      storage: Vec::with_capacity(capacity),
-      head: 0,
-      tail: 0,
-      size: 0,
+      storage: vec![None; capacity],
+      read_idx: 1,
+      write_idx: 0,
     }
   }
 
-  // Add an element to the storage
-  pub fn push(&mut self, item: T) {
-    if self.size == self.storage.capacity() {
-      panic!("Buffer is full");
+  fn push(&mut self, item: T) -> Result<(), Full> {
+    if self.is_full() {
+      return Err(Full);
     }
-    if self.size == self.storage.len() {
-      self.storage.push(item);
-    } else {
-      self.storage[self.tail] = item;
-    }
-    self.tail = (self.tail + 1) % self.storage.capacity();
-    self.size += 1;
+
+    self.storage[self.write_idx] = Some(item);
+    self.write_idx = self.advance_idx(self.write_idx);
+    Ok(())
   }
 
-  // Remove and return the oldest element from the storage
-  pub fn pop(&mut self) -> Option<T> {
-    if self.size == 0 {
+  fn pull(&self) -> Option<T> {
+    if self.is_empty() {
       return None;
     }
-    let item = std::mem::replace(&mut self.storage[self.head], unsafe { std::mem::zeroed() });
-    self.head = (self.head + 1) % self.storage.capacity();
-    self.size -= 1;
-    Some(item)
+
+    if let Some(item) = &self.storage[self.write_idx] {
+      Some(item.clone())
+    } else {
+      None
+    }
   }
 
-  // Check if the storage is empty
-  pub fn is_empty(&self) -> bool {
-    self.size == 0
+  fn advance_idx(&self, idx: usize) -> usize {
+    (idx + 1) % self.storage.len()
   }
 
-  // Check if the storage is full
-  pub fn is_full(&self) -> bool {
-    self.size == self.storage.capacity()
+  fn is_empty(&self) -> bool {
+    todo!()
   }
 
-  // Get the current size of the storage
-  pub fn size(&self) -> usize {
-    self.size
+  fn is_full(&self) -> bool {
+    ((self.write_idx as i64) - (self.read_idx as i64)) + 1 == self.storage.len() as i64
   }
 }
 
@@ -73,20 +77,14 @@ mod tests {
 
   #[test]
   fn test_ring_buffer() {
-    let mut rb = RingBuffer::<i32>::new(3);
-    assert!(rb.is_empty());
-    assert!(!rb.is_full());
-
-    rb.push(1);
-    rb.push(2);
-    rb.push(3);
-
-    assert_eq!(rb.size(), 3);
-    assert!(rb.is_full());
-
-    assert_eq!(rb.pop(), Some(1));
-    assert_eq!(rb.pop(), Some(2));
-    assert_eq!(rb.pop(), Some(3));
-    assert!(rb.is_empty());
+    let mut buffer = RingBuffer::new(3);
+    assert_eq!(buffer.push(1), Ok(()));
+    assert_eq!(buffer.push(2), Ok(()));
+    assert_eq!(buffer.push(3), Ok(()));
+    assert_eq!(buffer.push(4), Err(Full));
+    assert_eq!(buffer.pull(), Some(1));
+    assert_eq!(buffer.pull(), Some(2));
+    assert_eq!(buffer.pull(), Some(3));
+    assert_eq!(buffer.pull(), None);
   }
 }
