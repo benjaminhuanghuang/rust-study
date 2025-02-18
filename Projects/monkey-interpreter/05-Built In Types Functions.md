@@ -137,3 +137,5 @@ test_error_handling
 eval_index_expression
 eval_hash_index_expression
 ```
+
+## puts
