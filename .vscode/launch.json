@@ -2,6 +2,19 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Debug unit tests'",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceFolder}/Projects/rust-interpreter/target/debug/rust-interpreter",
+      "args": [],
+      "cwd": "${workspaceFolder}/Projects/rust-interpreter",
+      "console": "integratedTerminal",
+      "sourceLanguages": ["rust"],
+      "env": {
+        "RUST_BACKTRACE": "1"
+      }
+    },
+    {
       "type": "cppvsdbg",
       "request": "launch",
       "name": "(Windows)debug",

@@ -1,3 +1,8 @@
+/*
+`Vec<T>` Faster due to contiguous memory.
+`LinkedList<T>` Slower but avoids reallocations.
+*/
+
 #[derive(Debug)]
 pub struct StackNode<T> {
   elem: T,

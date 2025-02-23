@@ -1,4 +1,8 @@
-// Stack structure
+/*
+  `Vec<T>` Faster due to contiguous memory.
+  `LinkedList<T>` Slower but avoids reallocations.
+*/
+
 pub struct Stack<T> {
   data: Vec<T>,
 }
