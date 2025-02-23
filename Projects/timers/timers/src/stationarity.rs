@@ -1,5 +1,8 @@
-// Import necessary modules
-
+/*
+Stationarity refers to a statistical property of a time series where its key characteristics—such as mean,
+variance, and autocorrelation—do not change over time.
+In other words, a stationary time series looks the same statistically at different time points.
+*/
 use std::f64;
 
 fn mean(data: &[f64]) -> f64 {

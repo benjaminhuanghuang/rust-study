@@ -1,5 +1,7 @@
 # Build an Open-Source Time Series Lib from Scratch in Rust
 
+https://www.udemy.com/course/build-an-open-source-time-series-lib-from-scratch-in-rust
+
 https://www.bilibili.com/video/BV1CzN3eCEtr
 
 https://github.com/ravinthiranpartheepan1407/timers

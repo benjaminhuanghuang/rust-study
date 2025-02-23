@@ -1,0 +1,22 @@
+pub mod autocorrelation;
+pub mod ses;
+
+use crate::autocorrelation::autocorrelation;
+
+fn main() {
+  let series = vec![10.0, 12.0, 14.0, 16.0, 18.0, 20.0];
+
+  let model = ses::ExponentialSmoothing {
+    alpha: 0.5,
+    beta: Some(0.0),
+  };
+
+  let single_exponential_smoothing = model.single_exponential_smoothing(&series);
+  println!(
+    "Single Exponential Smoothing: {:?}",
+    single_exponential_smoothing
+  );
+
+  let autocorrelation_result = autocorrelation(&series, 2);
+  println!("Autocorrealtion Result {}", autocorrelation_result);
+}
