@@ -2,6 +2,8 @@
 
 https://www.youtube.com/watch?v=68356rTmqxY
 
+This implementation does not support the insert operation.
+
 */
 
 #[derive(Debug)]
