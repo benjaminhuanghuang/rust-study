@@ -1,5 +1,8 @@
-#![allow(dead_code)]
-#![allow(unused_variables)]
+/*
+https://www.youtube.com/watch?v=IiDHTIsmUi4
+
+By Ryan Levick
+*/
 
 struct Node<T> {
   element: T,

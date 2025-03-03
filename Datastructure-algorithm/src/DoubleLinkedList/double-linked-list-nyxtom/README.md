@@ -2,12 +2,11 @@
 
 https://www.youtube.com/watch?v=k0cL6K28SL0
 
-
 ## Rc<T>, the Reference Counted Smart Pointer
 
 The type Rc<T> provides shared ownership of a value of type T, allocated in the heap.
 
-Invoking clone() on Rc produces a new pointer to the same allocation in the heap. 
+Invoking clone() on Rc produces a new pointer to the same allocation in the heap.
 
 When the last Rc pointer to a given allocation is destroyed, the value stored in that allocation is also dropped.
 
