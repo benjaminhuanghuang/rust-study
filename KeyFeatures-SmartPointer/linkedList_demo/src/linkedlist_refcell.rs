@@ -1,3 +1,7 @@
+/*
+
+
+*/
 type LinkedNode<T> = Rc<RefCell<Node<T>>>;
 
 struct Node<T> {
