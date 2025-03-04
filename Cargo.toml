@@ -19,7 +19,7 @@ members = [
   "Datastructure-algorithm", "Projects/timers/timers",
   "KeyFeatures-SmartPointer/linkedList_demo",
   "rust-problem-solving"
-]
+, "Projects/Rust-Next.js-FileShare/secureshare_backend"]
 exclude = [
   "Tauri",
   "Projects/ToDoList/todo-rust",
