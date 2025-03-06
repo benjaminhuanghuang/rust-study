@@ -20,7 +20,7 @@ use crate::{
   db::UserExt,
   dtos::{FileUploadDtos, Response as ResponseDto, RetrieveFileDto},
   error::HttpError,
-  middleware::JWTAuthMiddeware,
+  middleware::JWTAuthMiddleware,
   utils::{decrypt::decrypt_file, encrypt::encrypt_file, password},
   AppState,
 };
@@ -33,7 +33,7 @@ pub fn file_handle() -> Router {
 
 pub async fn upload_file(
   Extension(app_state): Extension<Arc<AppState>>,
-  Extension(user): Extension<JWTAuthMiddeware>,
+  Extension(user): Extension<JWTAuthMiddleware>,
   mut multipart: Multipart,
 ) -> Result<impl IntoResponse, HttpError> {
   let mut file_data = Vec::new();
@@ -134,7 +134,7 @@ pub async fn upload_file(
 
 pub async fn retrieve_file(
   Extension(app_state): Extension<Arc<AppState>>,
-  Extension(user): Extension<JWTAuthMiddeware>,
+  Extension(user): Extension<JWTAuthMiddleware>,
   Json(body): Json<RetrieveFileDto>,
 ) -> Result<impl IntoResponse, HttpError> {
   body

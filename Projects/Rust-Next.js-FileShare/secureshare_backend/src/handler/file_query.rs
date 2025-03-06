@@ -10,7 +10,7 @@ use crate::{
     UserSendFileListResponseDto,
   },
   error::HttpError,
-  middleware::JWTAuthMiddeware,
+  middleware::JWTAuthMiddleware,
   AppState,
 };
 
@@ -23,7 +23,7 @@ pub fn get_file_list_handler() -> Router {
 pub async fn get_user_shared_files(
   Query(query_params): Query<RequestQueryDto>,
   Extension(app_state): Extension<Arc<AppState>>,
-  Extension(user): Extension<JWTAuthMiddeware>,
+  Extension(user): Extension<JWTAuthMiddleware>,
 ) -> Result<impl IntoResponse, HttpError> {
   query_params
     .validate()
@@ -56,7 +56,7 @@ pub async fn get_user_shared_files(
 pub async fn get_receive_shared_files(
   Query(query_params): Query<RequestQueryDto>,
   Extension(app_state): Extension<Arc<AppState>>,
-  Extension(user): Extension<JWTAuthMiddeware>,
+  Extension(user): Extension<JWTAuthMiddleware>,
 ) -> Result<impl IntoResponse, HttpError> {
   query_params
     .validate()

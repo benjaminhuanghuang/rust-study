@@ -13,7 +13,7 @@ use crate::{
 };
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct JWTAuthMiddeware {
+pub struct JWTAuthMiddleware {
   pub user: User,
 }
 
@@ -64,7 +64,7 @@ pub async fn auth(
 
   req
     .extensions_mut()
-    .insert(JWTAuthMiddeware { user: user.clone() });
+    .insert(JWTAuthMiddleware { user: user.clone() });
 
   Ok(next.run(req).await)
 }

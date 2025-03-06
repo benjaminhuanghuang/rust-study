@@ -15,7 +15,7 @@ use crate::{
     SearchQueryByEmailDTO, UserData, UserPasswordUpdateDto, UserResponseDto,
   },
   error::{ErrorMessage, HttpError},
-  middleware::JWTAuthMiddeware,
+  middleware::JWTAuthMiddleware,
   utils::password,
   AppState,
 };
@@ -30,7 +30,7 @@ pub fn users_handler() -> Router {
 
 pub async fn get_me(
   Extension(_app_state): Extension<Arc<AppState>>,
-  Extension(user): Extension<JWTAuthMiddeware>,
+  Extension(user): Extension<JWTAuthMiddleware>,
 ) -> Result<impl IntoResponse, HttpError> {
   let filtered_user = FilterUserDto::filter_user(&user.user);
 
@@ -46,7 +46,7 @@ pub async fn get_me(
 
 pub async fn update_user_name(
   Extension(app_state): Extension<Arc<AppState>>,
-  Extension(user): Extension<JWTAuthMiddeware>,
+  Extension(user): Extension<JWTAuthMiddleware>,
   Json(body): Json<NameUpdateDto>,
 ) -> Result<impl IntoResponse, HttpError> {
   body
@@ -76,7 +76,7 @@ pub async fn update_user_name(
 
 pub async fn update_user_password(
   Extension(app_state): Extension<Arc<AppState>>,
-  Extension(user): Extension<JWTAuthMiddeware>,
+  Extension(user): Extension<JWTAuthMiddleware>,
   Json(body): Json<UserPasswordUpdateDto>,
 ) -> Result<impl IntoResponse, HttpError> {
   body
@@ -126,7 +126,7 @@ pub async fn update_user_password(
 pub async fn search_by_email(
   Query(params): Query<SearchQueryByEmailDTO>,
   Extension(app_state): Extension<Arc<AppState>>,
-  Extension(user): Extension<JWTAuthMiddeware>,
+  Extension(user): Extension<JWTAuthMiddleware>,
 ) -> Result<impl IntoResponse, HttpError> {
   params
     .validate()
