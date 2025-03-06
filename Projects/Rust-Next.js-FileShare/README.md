@@ -1,5 +1,7 @@
 # Build a Secure File Sharing App with Rust, Axum, Next.js & ShadCN | End-to-End Encryption
 
+https://www.youtube.com/watch?v=t5w2dauFmhM
+
 https://github.com/AarambhDevHub/file-share-rust-backend
 https://github.com/AarambhDevHub/file-share-frontend
 
