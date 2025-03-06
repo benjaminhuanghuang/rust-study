@@ -29,3 +29,23 @@ sqlx migrate add tables
 sqlx database create
 sqlx migrate run
 ```
+
+Run
+
+```sh
+cargo run
+```
+
+## Frontend
+
+```sh
+npx shadcn@latest init
+Zinc
+
+npm i next-auth@beta
+
+#
+npx shadcn@latest add button card from input select separator popover calendar dialog table
+
+npm i @tanstack/react-table
+```
