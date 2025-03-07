@@ -49,4 +49,5 @@ npx shadcn@latest add button card from input select separator popover calendar d
 
 npm i @tanstack/react-table
 npm i react-hot-roast
+npm i next-themes
 ```
