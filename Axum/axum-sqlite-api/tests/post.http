@@ -1,0 +1,8 @@
+# Test POST request
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+  "name": "ben",
+  "email": "ben@gmail.com"
+}
