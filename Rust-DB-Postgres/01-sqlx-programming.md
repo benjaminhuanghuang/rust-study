@@ -1,5 +1,13 @@
 # Sqlx programming
 
+## Config
+
+```toml
+DATABASE_URL = postgres://<username>:<password>@<host>:<port>/<database_name>
+
+DATABASE_URL = 'postgres://axum_postgres:laxum_postgres@127.0.0.1:5432/axum_postgres'
+```
+
 ## Dependency
 
 ```sh
