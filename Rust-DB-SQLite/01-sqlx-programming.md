@@ -2,6 +2,10 @@
 
 ## Dependency
 
+```sh
+cargo add tokio sqlx serde serde_json uuid
+```
+
 ```toml
 
 [dependencies]

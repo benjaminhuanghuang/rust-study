@@ -11,3 +11,13 @@ tokio={version="1.0", features=["full"]}
 dotenv ="0.15"
 
 
+
+
+[[bin]]
+name = "insert"
+path = "src/insert.rs"
+
+
+[[bin]]
+name = "crud"
+path = "src/crud.rs"

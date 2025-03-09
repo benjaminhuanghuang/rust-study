@@ -8,6 +8,10 @@ async fn main() -> Result<(), sqlx::Error> {
   let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
 
   let pool = SqlitePool::connect(&database_url).await?;
+
+  /*
+    sqlx::migrate!() macro automatically applies all pending migrations.
+  */
   sqlx::migrate!().run(&pool).await?;
 
   println!("Connected to SQLite database!");
