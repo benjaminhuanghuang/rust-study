@@ -13,13 +13,17 @@ members = [
   "_Courses/Hands-On Data Structures and Algorithms in Rust-2020/02-Sorting/v1-sorting",
   "_Courses/Hands-On Data Structures and Algorithms in Rust-2020/03-LinkdedList/v1-ll",
   # "Tauri/tauri-zoom-launcher/src-tauri",
-  "Tauri/time-tracker/src-tauri", "Projects/rust-vm", "Projects/pwd_cracker", "Statistics with Rust/my_statistics_project", "Projects/rust-lib-design/rat-rs"
-, "Rust-DB-SurrealDB/rust-surrealdb-basic", "Axum/rs-counter-study", "Rust-Debug/Debugging Rust 2021 Applications/debugging-rust",
+  "Tauri/time-tracker/src-tauri", "Projects/rust-vm", "Projects/pwd_cracker", "Statistics with Rust/my_statistics_project", "Projects/rust-lib-design/rat-rs", 
+  "Rust-DB-SurrealDB/rust-surrealdb-basic", "Axum/rs-counter-study", "Rust-Debug/Debugging Rust 2021 Applications/debugging-rust",
   "Projects/monkey-interpreter",
   "Datastructure-algorithm", "Projects/timers/timers",
   "KeyFeatures-SmartPointer/linkedList_demo",
-  "rust-problem-solving"
-, "Projects/Rust-Next.js-FileShare/secureshare_backend", "Axum/axum-sqlite-api", "Axum/axum-demo", "KeyFeatures-Async/tokio-demo", "Rust-DB-SQLite/sqlite-sqlx-demo"]
+  "rust-problem-solving", 
+  "Projects/Rust-Next.js-FileShare/secureshare_backend", 
+  "Axum/axum-sqlite-api", "Axum/axum-demo", "KeyFeatures-Async/tokio-demo", 
+  "Rust-DB-SQLite/sqlite-sqlx-demo",
+  "Rust-DB-Postgres/axum_postgres_api"
+]
 exclude = [
   "Tauri",
   "Projects/ToDoList/todo-rust",

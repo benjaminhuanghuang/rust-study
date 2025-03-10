@@ -1,0 +1,8 @@
+# Create task request
+POST http://localhost:7878/tasks
+content-type: application/json
+
+{
+    "name": "coding",
+    "priority": 2
+}

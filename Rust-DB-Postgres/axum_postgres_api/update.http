@@ -1,0 +1,7 @@
+# Create task request
+PATCH http://localhost:7878/tasks/1
+content-type: application/json
+
+{
+    "priority": 3
+}
