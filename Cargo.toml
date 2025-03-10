@@ -23,7 +23,7 @@ members = [
   "Axum/axum-sqlite-api", "Axum/axum-demo", "KeyFeatures-Async/tokio-demo", 
   "Rust-DB-SQLite/sqlite-sqlx-demo",
   "Rust-DB-Postgres/axum_postgres_api"
-]
+, "KeyFeatures-Async/async-demo", "KeyFeatures-Async/chat_tokio_stream"]
 exclude = [
   "Tauri",
   "Projects/ToDoList/todo-rust",
