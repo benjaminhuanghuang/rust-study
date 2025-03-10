@@ -40,4 +40,8 @@ serde_json = {version = "1.0.111"}
 dotenvy = "0.15.7"
 ```
 
+## Config
+
+.env
+
 ## API

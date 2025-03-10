@@ -48,6 +48,9 @@ async fn main() {
     .expect("Error serving application");
 }
 
+/*
+State(db_pool): destructures the State<PgPool> wrapper to access the actual PgPool database connection pool.
+*/
 async fn get_tasks(
   State(db_pool): State<PgPool>,
 ) -> Result<(StatusCode, String), (StatusCode, String)> {
@@ -67,6 +70,11 @@ async fn get_tasks(
   ))
 }
 
+/*
+Return Type: Result<(StatusCode, String), (StatusCode, String)>
+On success: Returns StatusCode::CREATED (201) and a JSON success response.
+On error: Returns StatusCode::INTERNAL_SERVER_ERROR (500) with an error message.
+*/
 async fn create_task(
   State(db_pool): State<PgPool>,
   Json(task): Json<CreateTaskReq>,
