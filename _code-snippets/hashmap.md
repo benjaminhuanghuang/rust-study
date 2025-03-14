@@ -1,3 +1,5 @@
+# HashMap
+
 ```rs
 // Create
 let mut num_map: HashMap<i32, i32> = HashMap::new();
