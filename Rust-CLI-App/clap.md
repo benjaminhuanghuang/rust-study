@@ -1,9 +1,15 @@
 # Clap
 
+## Handling Flags and Options with `Clap` crate
+
+```sh
+cargo run -- Alice --greeting "Hi" -v
+```
+
 ## Add dependencies
 
 ```sh
-cargo add clap@2
+cargo add clap --features=cargo
 ```
 
 Cargo.toml
@@ -23,6 +29,10 @@ cargo run -- --help
 
 ## Optional argument
 
+```sh
+cargo run -- -f firstName -l lastname
+```
+
 the -n is an optional argument because you can leave it out
 
 program options common to have short names with one dash and a single
@@ -33,6 +43,10 @@ two dashes and a word, like --help
 
 positional arguments's position relative to the name of the program (the first
 element in the arguments)
+
+```sh
+cargo run -- posarg1 posarg2
+```
 
 ## flag argument
 
