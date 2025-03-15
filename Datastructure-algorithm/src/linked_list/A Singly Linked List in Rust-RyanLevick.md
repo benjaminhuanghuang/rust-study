@@ -2,7 +2,24 @@
 
 https://www.youtube.com/watch?v=IiDHTIsmUi4
 
+## setup
+
+```sh
+cargo new linked-list --lib
+```
+
 ## Implementation 1
+
+```rs
+enum Node {
+  Empty,
+  NonEmpty(u32, Node),
+}
+```
+
+Error: recursive type has infinite size, recursive without indirection
+
+## Implementation 2
 
 ```rs
 enum Node {
@@ -17,6 +34,17 @@ There are 2 issues:
 
 - We'are allocating a node that just says "I am not actually a Node"
 - One of the nodes isn't heap allocated at all
+
+## Implementation 2.1
+
+```rs
+enum Node<'a> {
+  Empty,
+  NonEmpty(u32, &'a Node<'a'>),
+}
+
+let list = Node::NonEmpty(123, Box::new(Node::Empty));
+```
 
 ## Implementation 1.1
 
