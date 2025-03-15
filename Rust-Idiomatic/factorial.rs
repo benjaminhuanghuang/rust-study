@@ -10,6 +10,8 @@ fn factorial(num: u64) -> u64 {
   // - additional variables
   // For an extra challenge, don't use:
   // - recursion
+
+  // .fold(initial_value, closure): The fold method takes two arguments:
   (1..=num).fold(1, |acc, x| acc * x)
 }
 

@@ -1,5 +1,8 @@
+# Array
+
 ## Array
-```
+
+```rs
   let list = [1,2,3];
 
   for item in &list {
@@ -9,8 +12,7 @@
   }
 ```
 
-
-```
+```rs
   let list = [1,2,3];
 
   for item in list.iter() {
@@ -21,8 +23,10 @@
 ```
 
 ## Vector
+
 Create
-```
+
+```rs
   let v: Vec<i8> = Vec::new();
 ```
 
@@ -36,8 +40,7 @@ Create
   }
 ```
 
-
-```
+```rs
   let list: Vec<i32> = vec![1,2,3];
 
   for item in list.into_iter() {
@@ -46,8 +49,10 @@ Create
     }
   }
 ```
+
 - Change
-```
+
+```rs
   let mut list: Vec<i32> = vec![1,2,3];
 
   for item in list.iter_mut() {
@@ -58,13 +63,16 @@ Create
 
   print("{:?}", list);
 ```
+
 - Range to vec
-```
+
+```rs
   let bucket = range[count..count + bucket_size].to_vec();
 ```
 
 ## Iterator
-```
+
+```rs
   struct Stepper{
     cur: i32
     step: i32
@@ -96,8 +104,9 @@ Create
   }
 ```
 
-## nieghbour cells
-```
+## neighbor cells
+
+```rs
    let _nei: Vec<Position> = (x - 1..=x + 1)
       .flat_map(|i| (y - 1..=y + 1).map(move |j| (i, j)))
       .collect();
