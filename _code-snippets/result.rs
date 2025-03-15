@@ -30,3 +30,14 @@ fn divide(a: i32, b:i32) -> Res<i32, String> {
 
   Res::Thing(a/b);
 }
+
+fn total_cost(item_quantity: &str) -> Result<i32, ParseIntError> {
+  let processing_fee = 1;
+  let cost_per_item = 5;
+  
+  let qty = match item_quantity.parse::<i32>() {
+      Ok(num) => Ok(num * cost_per_item + processing_fee),
+      Err(s) => Err(s),
+  };
+  qty
+}
