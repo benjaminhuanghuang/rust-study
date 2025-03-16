@@ -1,0 +1,17 @@
+[package]
+name = "macro_demo"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+
+[[bin]]
+name = "macro_hello"
+path = "src/macro_hello.rs"
+
+
+
+[[bin]]
+name = "macro_sample"
+path = "src/macro_sample.rs"

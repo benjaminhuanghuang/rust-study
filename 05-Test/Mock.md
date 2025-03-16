@@ -1,4 +1,4 @@
-
+# Mock
 
 ## Examples of Non-Deterministic Resources
 
@@ -16,7 +16,6 @@
 - Improved Test Stability and Reliability
 - Efficiency and Speed
 - Enabling Testing of Unavailable or Incomplete Components
-
 
 ## mockall crate
 
