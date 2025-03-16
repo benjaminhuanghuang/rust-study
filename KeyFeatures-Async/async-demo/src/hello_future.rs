@@ -16,3 +16,7 @@ impl Future for HelloFuture {
 fn hello() -> impl Future<Output = ()> {
   HelloFuture
 }
+
+fn main() {
+  let future = hello();
+}

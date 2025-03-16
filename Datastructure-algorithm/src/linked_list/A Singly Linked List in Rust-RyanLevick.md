@@ -23,7 +23,7 @@ Error: recursive type has infinite size, recursive without indirection
 
 ```rs
 enum Node {
-  Empty,
+  Empty,`
   NonEmpty(u32, Box<Node>),
 }
 
