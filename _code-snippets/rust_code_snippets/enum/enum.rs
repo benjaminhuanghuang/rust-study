@@ -1,6 +1,6 @@
 
 
-#[#[derive(Debug)]]
+#[derive(Debug)]
 pub enum  Color {
   Red(String),
   Green
