@@ -2,13 +2,8 @@
 
 - return a Reust<Data, Error>
 
-
-
-
-
-
-
 ## Option, Some, None, pattern matching, unwrap in Option
+
 ```
 fn find(haystack: &str, needle: char) -> Option<usize> {
     for (offset, c) in haystack.char_indices() {
@@ -28,18 +23,21 @@ fn main_find() {
 }
 ```
 
-Some is a variant or a value constructor for the Option type. 
-You can think of it as a function with the type 
+Some is a variant or a value constructor for the Option type.
+You can think of it as a function with the type
+
 ```
-  fn<T>(value: T) -> Option<T>. 
+  fn<T>(value: T) -> Option<T>.
 ```
 
-Correspondingly, None is also a value constructor with the type 
+Correspondingly, None is also a value constructor with the type
+
 ```
   fn<T>() -> Option<T>.
 ```
 
 unwrap in Option
+
 ```
 enum Option<T> {
     None,
@@ -57,7 +55,6 @@ impl<T> Option<T> {
 }
 ```
 
-
 ## Result, unwrap in Result
 
 可能产生异常的函数的返回值都是 Result 类型
@@ -70,7 +67,6 @@ enum Result<T, E> {
 
 type Option<T> = Result<T, ()>;
 ```
-
 
 ```
 impl<T, E: ::std::fmt::Debug> Result<T, E> {
