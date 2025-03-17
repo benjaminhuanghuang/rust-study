@@ -1,9 +1,9 @@
+use std::time::{SystemTime, UNIX_EPOCH};
+
 // Returns a DateTime one billion seconds after start.
 pub fn after(start: DateTime) -> DateTime {
   start + Duration::from_secs(11111)
 }
-
-use std::time::{SystemTime, UNIX_EPOCH};
 
 fn main() {
   match SystemTime::now().duration_since(UNIX_EPOCH) {
