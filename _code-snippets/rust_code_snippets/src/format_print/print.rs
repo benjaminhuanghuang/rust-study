@@ -1,17 +1,30 @@
-/*
 
-Debug Formatting (:?)
+pub fn run() {
+  // Print to console
+  println!("Hello from the print.rs file");
 
+  // Basic Formatting
+  println!("{} is from {}", "Brad", "Mass");
 
-{a:?} means print a in debug mode.
+  // Positional Arguments
+  println!(
+    "{0} is from {1} and {0} likes to {2}",
+    "Brad", "Mass", "code"
+  );
 
-This is useful when a is a complex type like a struct, tuple, or array.
+  // Named Arguments
+  println!(
+    "{name} likes to play {activity}",
+    name = "John",
+    activity = "Baseball"
+  );
 
-The :? tells Rust to use the Debug trait for formatting.
-*/
+  // Placeholder traits
+  println!("Binary: {:b} Hex: {:x} Octal: {:o}", 10, 10, 10);
 
-println!("a: {a:?}");
+  // Placeholder for debug trait
+  println!("{:?}", (12, true, "hello"));
 
-/*
-Adding #, eg {a:#?}, invokes a “pretty printing” format, which can be easier to read.
-*/
+  // Basic math
+  println!("10 + 10 = {}", 10 + 10);
+}
