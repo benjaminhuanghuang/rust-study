@@ -13,3 +13,13 @@ https://github.com/packtpublishing/building-reusable-code-with-rust
 - Defining Interfaces with Traits
 - Hacking the Language with Macros
 - Reusing the Code with Other People Using Modules and Crates
+
+## Code Reuse Mechanisms in Rust
+
+- Loop
+- Function
+- Generic - Reuse algorithm/data structure for multiple types
+- Trait - Define a clear interface; duck typing
+- Macro - Let code write code
+- Compiler plugin — Experimental
+- Crates and modules

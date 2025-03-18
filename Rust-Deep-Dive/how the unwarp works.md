@@ -31,4 +31,3 @@ impl<T, E: Debug> Result<T, E> {
     }
 }
 ```
-
