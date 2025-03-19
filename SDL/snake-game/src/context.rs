@@ -46,7 +46,7 @@ impl Context {
       last_tick_direction: PlayerDirection::Right,
       food: None,
       board_size: Point(40, 30),
-      rng: rand::thread_rng(),
+      rng: rand::rng(),
     }
   }
 
@@ -84,8 +84,8 @@ impl Context {
 
     loop {
       let food = Point(
-        self.rng.gen_range(1..(size_x - 1)),
-        self.rng.gen_range(1..(size_y - 1)),
+        self.rng.random_range(1..(size_x - 1)),
+        self.rng.random_range(1..(size_y - 1)),
       );
       if !self.player_position.iter().any(|dot| *dot == food) {
         self.food = Some(food);

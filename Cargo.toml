@@ -24,7 +24,7 @@ members = [
 , "KeyFeatures-Async/async-demo", "KeyFeatures-Async/chat_tokio_stream", 
 "_Books/Async Rust/demo","Axum/axum-sqlite-docker-crud","Specs/sokoban", "Rust-CLI-App/my_clap_test",
 "KeyFeatures-SmartPointer/smart-pointer-demo", "KeyFeatures-Macro/macro_demo", "KeyFeatures-Generic/generic_demo", 
-"_code-snippets/rust_code_snippets", "SDL/snake-game", "SDL/sdl_demo"]
+"_code-snippets/rust_code_snippets", "SDL/snake-game", "SDL/sdl_demo", "Projects/rust-clap-cli"]
 exclude = [
   "Tauri",
   "Projects/ToDoList/todo-rust",
