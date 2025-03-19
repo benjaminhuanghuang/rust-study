@@ -1,6 +1,5 @@
 [workspace]
 members = [
-  "_Libraries/serde/serde_demo",
   "#File/file_demo",
   "#Unsafe/unsafe-demo",
   "#Regex/regex_demo",
@@ -8,7 +7,6 @@ members = [
   "05-Test/testlib",
   "Projects/minesweeper_exercism",
   "Projects/minesweeper_gui",
-  "System/dotenv_demo",
   "Projects/kilo-ed",
   "_Courses/Hands-On Data Structures and Algorithms in Rust-2020/02-Sorting/v1-sorting",
   "_Courses/Hands-On Data Structures and Algorithms in Rust-2020/03-LinkdedList/v1-ll",
@@ -25,7 +23,8 @@ members = [
   "Rust-DB-Postgres/axum_postgres_api"
 , "KeyFeatures-Async/async-demo", "KeyFeatures-Async/chat_tokio_stream", 
 "_Books/Async Rust/demo","Axum/axum-sqlite-docker-crud","Specs/sokoban", "Rust-CLI-App/my_clap_test",
-"KeyFeatures-SmartPointer/smart-pointer-demo", "KeyFeatures-Macro/macro_demo", "KeyFeatures-Generic/generic_demo", "_code-snippets/rust_code_snippets"]
+"KeyFeatures-SmartPointer/smart-pointer-demo", "KeyFeatures-Macro/macro_demo", "KeyFeatures-Generic/generic_demo", 
+"_code-snippets/rust_code_snippets", "SDL/snake-game", "SDL/sdl_demo"]
 exclude = [
   "Tauri",
   "Projects/ToDoList/todo-rust",
