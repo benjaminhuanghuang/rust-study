@@ -2,12 +2,19 @@
 
 Box is a smart pointer with a `fixed size` which places its value `on the heap` rather than the stack
 
+`Box<T>` stores data on the heap instead of the stack.
+
+Useful for large data structures or recursive types.
+
+Use case: When you need to allocate memory on the heap explicitly.
+
+Without `Box<T>`, this would be stack-allocated and inefficient.
+
 ```rs
   let b = Box::new(5);
   println!("b = {}", b);
-```
 
-```
+
 type TestResult = Result<(), Box<dyn std::error::Error>>;
 ```
 
@@ -20,7 +27,7 @@ If a variable doesn’t have a fixed, known size, then Rust can’t store it
 on the stack. The solution is to instead allocate memory on
 the heap by putting the return value into a Box, which is a pointer with a known size.
 
-```
+```rs
   fn open(filename: &str) -> MyResult<Box<dyn BufRead>> {
 
   }
@@ -28,7 +35,7 @@ the heap by putting the return value into a Box, which is a pointer with a known
 
 To get data from a Box in Rust, you can use the .as_ref() or .as_mut() method to convert the Box into a reference, then access the data using the reference. For example:
 
-```
+```rs
 let mut box_data = Box::new(5);
 
 // Convert the Box into a mutable reference using .as_mut()

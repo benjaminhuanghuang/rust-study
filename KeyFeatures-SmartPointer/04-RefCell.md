@@ -1,6 +1,12 @@
 # RefCell
 
-RefCell<T> let us have `many immutable` borrows or `one mutable` borrow.
+Allows mutable borrowing inside immutable structures (interior mutability).
+
+`RefCell<T>` allows mutable borrowing at runtime, even if the variable is immutable.
+
+It enables interior mutability, which `Box<T>` and `Rc<T>` do not allow.
+
+`RefCell<T>` let us have `many immutable` borrows or `one mutable` borrow.
 
 in Rust, you generally cannot mutate data through an immutable reference (Rust enforces strict borrowing rules to ensure memory safety).
 However, RefCell allows you to bypass this restriction in a controlled way.

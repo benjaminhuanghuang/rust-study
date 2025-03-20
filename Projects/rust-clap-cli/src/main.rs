@@ -4,10 +4,11 @@ use clap::{Parser, Subcommand};
 mod cmd;
 mod utils;
 
-#[derive(Parser)]
-#[command(version, about, long_about = None )]
-#[command(propagate_version = true)]
+#[derive(Parser)] // macro comes from clap, generates argument parsing logic.
+#[command(version, about, long_about = None )] // applies settings to a CLI command or the top-level parser.
+#[command(propagate_version = true)] // attribute in clap ensures that the version number is automatically passed to subcommands.
 struct Cli {
+  // tells the parser that the given field represents a subcommand.
   #[command(subcommand)]
   command: Commands,
 }
