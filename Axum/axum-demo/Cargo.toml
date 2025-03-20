@@ -28,6 +28,11 @@ path = "src/axum_basic.rs"
 
 
 [[bin]]
+name = "extract_demo"
+path = "src/extract_demo.rs"
+
+
+[[bin]]
 name = "hello_axum"
 path = "src/hello_axum.rs"
 
