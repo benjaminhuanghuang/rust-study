@@ -23,6 +23,11 @@ httpc-test = "0.1.1"
 
 
 [[bin]]
+name = "axum_basic"
+path = "src/axum_basic.rs"
+
+
+[[bin]]
 name = "hello_axum"
 path = "src/hello_axum.rs"
 
