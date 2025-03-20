@@ -1,6 +1,8 @@
-# 
-We use Box::new(...) to allocate space on the heap and initialise that space with the supplied value
-```
+# Unique pointer
+
+We use Box::new(...) to allocate space on the heap and initialize that space with the supplied value
+
+```rs
 fn foo() {
   let x: Box<i32> = Box::new(75);
 
@@ -15,17 +17,16 @@ fn foo() {
   *x = 43;          // OK, *x is mutable.
 }
 ```
-Similar in C++
-```
-  int* x = new int(75)
-```
+
 In Rust, there is no need to call free or delete
 
-## Retrun 
+## Return
+
 Unique pointers behave similarly to values - they are deleted when the variable goes out of scope
 
 Owning pointers can be returned from a function and continue to live on
-```
+
+```rs
   fn foo() -> Box<i32> {
     let x = Box::new(75);
     x
@@ -36,11 +37,12 @@ Owning pointers can be returned from a function and continue to live on
       // ... use y ...
   }
 ```
+
 memory is initialised in foo, and returned to bar. x is returned from foo and stored in y, so it is not deleted. At the end of bar, y goes out of scope and so the memory is reclaimed.
 
-
 ## Owning pointers are unique
-```
+
+```rs
   fn foo() {
     let x = Box::new(75);
     let y = x;
@@ -59,10 +61,12 @@ memory is initialised in foo, and returned to bar. x is returned from foo and st
       // let z = *x;   // Error.
   }
 ```
+
 ## Pointer to method
+
 owning pointers must be dereferenced to use their values. However, method calls automatically dereference
 
-```
+```rs
   fn bar(x: Box<Foo>, y: Box<Box<Box<Box<Foo>>>>) {
     x.foo();
     y.foo();
@@ -70,9 +74,10 @@ owning pointers must be dereferenced to use their values. However, method calls 
 ```
 
 ## Point to existed value
+
 Calling Box::new() with an existing value does not take a reference to that value, it copies that value.
 
-```
+```rs
 fn foo() {
     let x = 3;
     let mut y = Box::new(x);
@@ -82,8 +87,3 @@ fn foo() {
 ```
 
 Primitive types have copy semantics, so in the above example the value 3 is copied, but for more complex values it would be moved
-
-
-
-
-
