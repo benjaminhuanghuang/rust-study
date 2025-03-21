@@ -20,3 +20,5 @@ sqlx migrate run
 
 cargo run
 ```
+
+## database/favorites.rs
