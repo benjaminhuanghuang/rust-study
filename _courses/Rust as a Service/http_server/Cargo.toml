@@ -26,3 +26,7 @@ path = "src/query_extract.rs"
 [[bin]]
 name = "header_extract"
 path = "src/header_extract.rs"
+
+[[bin]]
+name = "state"
+path = "src/state.rs"
