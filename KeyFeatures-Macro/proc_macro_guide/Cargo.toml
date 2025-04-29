@@ -1,0 +1,8 @@
+[package]
+name="proc_macro_guide"
+version = "0.1.0"
+edition = "2021"
+
+
+[dependencies]
+proc_macro_define_crate = { path = "proc_macro_define_crate" }
